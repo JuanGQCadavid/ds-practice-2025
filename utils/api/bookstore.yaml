@@ -19,7 +19,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrderStatusResponse'
-        '4xx':
+        '400': # TODO: Add more specific error codes, this is general for testing
           description: Client error
           content:
             application/json:
