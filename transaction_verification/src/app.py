@@ -1,3 +1,5 @@
+from datetime import datetime
+import json
 import sys
 import os
 
@@ -10,7 +12,6 @@ sys.path.insert(0, transaction_verification_grpc_path)
 import transaction_verification_pb2 as transaction_verification
 import transaction_verification_pb2_grpc as transaction_verification_grpc
 
-
 import grpc
 from concurrent import futures
 
@@ -19,12 +20,55 @@ from concurrent import futures
 class TransactionVerificationService(transaction_verification_grpc.TransactionVerificationServiceServicer):
     # Create an RPC function to say hello
     def checkTransaction(self, request, context):
-        # Create a HelloResponse object
+        # request is a stringified json, obtain the json object
+        request_data = json.loads(request.json)
+        print(request_data)
+        # Check if the list of items is not empty
+        if not request_data.get('items'):
+            response = transaction_verification.TransactionVerificationResponse()
+            response.code = "400"
+            print("No items in the request")
+            return response
+
+        # Check if required user data is filled in
+        required_fields = ['user', 'creditCard', 'items', 'billingAddress', 'shippingMethod', 'giftWrapping', 'termsAccepted']
+        for field in required_fields:
+            if field not in request_data or not request_data[field]:
+                response = transaction_verification.TransactionVerificationResponse()
+                response.code = "400"
+                print("Required field not filled in")
+                return response
+
+        # Check if credit card format is correct
+        credit_card = request_data['creditCard']
+        if 'number' not in credit_card or 'expirationDate' not in credit_card or 'cvv' not in credit_card:
+            response = transaction_verification.TransactionVerificationResponse()
+            response.code = "400"
+            print("Credit card format is incorrect")
+            return response
+
+        # Check if the expiration date is in the future
+        expiration_date = datetime.strptime(credit_card['expirationDate'], '%m/%y')
+        if expiration_date < datetime.now():
+            response = transaction_verification.TransactionVerificationResponse()
+            response.code = "400"
+            print("Credit card is expired")
+            return response
+
+        # If all checks pass, return a successful response
         response = transaction_verification.TransactionVerificationResponse()
+        response.code = "200"
+        print("Transaction is valid")
+        return response
+
+
+
+
+        # Create a TransactionVerificationResponse object
+        response = transaction_verification.TransactionVerificationResponse()
+        response.code = "200"
         # Set the greeting field of the response object
-        response.answer = "I am the transaction verification"
-        # Print the greeting message
-        print(response.answer)
+        # print(request)
         # Return the response object
         return response
 
