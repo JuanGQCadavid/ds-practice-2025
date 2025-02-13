@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package transaction;
+
+service TransactionVerificationService {
+    rpc checkTransaction (TransactionVerificationRequest) returns (TransactionVerificationResponse);
+}
+
+message TransactionVerificationRequest {
+    string json = 1; // first field of message
+}
+
+message TransactionVerificationResponse {
+    string code = 1;
+}
