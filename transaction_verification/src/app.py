@@ -39,22 +39,6 @@ class TransactionVerificationService(transaction_verification_grpc.TransactionVe
                 print("Required field not filled in")
                 return response
 
-        # Check if credit card format is correct
-        credit_card = request_data['creditCard']
-        if 'number' not in credit_card or 'expirationDate' not in credit_card or 'cvv' not in credit_card:
-            response = transaction_verification.TransactionVerificationResponse()
-            response.code = "400"
-            print("Credit card format is incorrect")
-            return response
-
-        # Check if the expiration date is in the future
-        expiration_date = datetime.strptime(credit_card['expirationDate'], '%m/%y')
-        if expiration_date < datetime.now():
-            response = transaction_verification.TransactionVerificationResponse()
-            response.code = "400"
-            print("Credit card is expired")
-            return response
-
         # If all checks pass, return a successful response
         response = transaction_verification.TransactionVerificationResponse()
         response.code = "200"
