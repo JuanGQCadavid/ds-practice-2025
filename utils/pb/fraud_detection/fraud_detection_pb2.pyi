@@ -4,14 +4,14 @@ from typing import ClassVar as _ClassVar, Optional as _Optional
 
 DESCRIPTOR: _descriptor.FileDescriptor
 
-class HelloRequest(_message.Message):
-    __slots__ = ("name",)
-    NAME_FIELD_NUMBER: _ClassVar[int]
-    name: str
-    def __init__(self, name: _Optional[str] = ...) -> None: ...
+class FraudDetectionRequest(_message.Message):
+    __slots__ = ("json",)
+    JSON_FIELD_NUMBER: _ClassVar[int]
+    json: str
+    def __init__(self, json: _Optional[str] = ...) -> None: ...
 
-class HelloResponse(_message.Message):
-    __slots__ = ("greeting",)
-    GREETING_FIELD_NUMBER: _ClassVar[int]
-    greeting: str
-    def __init__(self, greeting: _Optional[str] = ...) -> None: ...
+class FraudDetectionResponse(_message.Message):
+    __slots__ = ("code",)
+    CODE_FIELD_NUMBER: _ClassVar[int]
+    code: str
+    def __init__(self, code: _Optional[str] = ...) -> None: ...

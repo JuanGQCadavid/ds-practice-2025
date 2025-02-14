@@ -14,17 +14,17 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x15\x66raud_detection.proto\x12\x05hello\"\x1c\n\x0cHelloRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"!\n\rHelloResponse\x12\x10\n\x08greeting\x18\x01 \x01(\t2E\n\x0cHelloService\x12\x35\n\x08SayHello\x12\x13.hello.HelloRequest\x1a\x14.hello.HelloResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x15\x66raud_detection.proto\x12\x05\x66raud\"%\n\x15\x46raudDetectionRequest\x12\x0c\n\x04json\x18\x01 \x01(\t\"&\n\x16\x46raudDetectionResponse\x12\x0c\n\x04\x63ode\x18\x01 \x01(\t2b\n\x15\x46raudDetectionService\x12I\n\ncheckFraud\x12\x1c.fraud.FraudDetectionRequest\x1a\x1d.fraud.FraudDetectionResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fraud_detection_pb2', _globals)
 if _descriptor._USE_C_DESCRIPTORS == False:
   DESCRIPTOR._options = None
-  _globals['_HELLOREQUEST']._serialized_start=32
-  _globals['_HELLOREQUEST']._serialized_end=60
-  _globals['_HELLORESPONSE']._serialized_start=62
-  _globals['_HELLORESPONSE']._serialized_end=95
-  _globals['_HELLOSERVICE']._serialized_start=97
-  _globals['_HELLOSERVICE']._serialized_end=166
+  _globals['_FRAUDDETECTIONREQUEST']._serialized_start=32
+  _globals['_FRAUDDETECTIONREQUEST']._serialized_end=69
+  _globals['_FRAUDDETECTIONRESPONSE']._serialized_start=71
+  _globals['_FRAUDDETECTIONRESPONSE']._serialized_end=109
+  _globals['_FRAUDDETECTIONSERVICE']._serialized_start=111
+  _globals['_FRAUDDETECTIONSERVICE']._serialized_end=209
 # @@protoc_insertion_point(module_scope)

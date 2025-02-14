@@ -19,14 +19,15 @@ import transaction_verification_pb2_grpc as transaction_verification_grpc
 
 import grpc
 
-def greet(name='you'):
+def check_fraud(request):
+    request_json = json.dumps(request)
     # Establish a connection with the fraud-detection gRPC service.
     with grpc.insecure_channel('fraud_detection:50051') as channel:
         # Create a stub object.
-        stub = fraud_detection_grpc.HelloServiceStub(channel)
+        stub = fraud_detection_grpc.FraudDetectionServiceStub(channel)
         # Call the service through the stub object.
-        response = stub.SayHello(fraud_detection.HelloRequest(name=name))
-    return response.greeting
+        response = stub.checkFraud(fraud_detection.FraudDetectionRequest(json=request_json))
+    return response.code
 
 def check_transaction(request):
     request_json = json.dumps(request)
@@ -57,7 +58,7 @@ def index():
     Responds with 'Hello, [name]' when a GET request is made to '/' endpoint.
     """
     # Test the fraud-detection gRPC service.
-    response = greet(name='orchestrator')
+    response = "I am the orchestrator"
     # Return the response.
     return response
 
@@ -71,21 +72,21 @@ def checkout():
     # Print request object data
     print("Request Data:", request_data.get('items')) # on terminal
 
-    response = None
+    fraud_detection_code = None  # initialize fraud_detection_code
+    transaction_verification_code = None  # initialize transaction_verification_code
+    suggestions = None  # initialize suggestions
 
-    # TODO: create microservices
     with futures.ThreadPoolExecutor() as executor:
         # Check fraud
         future_fraud_detection = executor.submit(check_fraud, request_data)
         # Check transaction
         future_transaction_verification = executor.submit(check_transaction, request_data)
         # Get suggestions
-        future_suggestions = executor.submit(get_suggestions, request_data)
+        #future_suggestions = executor.submit(get_suggestions, request_data)
 
         fraud_detection_code = future_fraud_detection.result()
         transaction_verification_code = future_transaction_verification.result()
-        suggestions = future_suggestions.result()
-    transaction_verification_code = check_transaction(request_data)
+        #suggestions = future_suggestions.result()
     if fraud_detection_code != "200":
         # set error message
         error_response = {
@@ -107,7 +108,10 @@ def checkout():
     response = {
         'orderId': '12345',
         'status': 'Order Approved',
-        'suggestedBooks': suggestions
+        'suggestedBooks': [
+            {'bookId': '123', 'title': 'The Best Book', 'author': 'Author 1'},
+            {'bookId': '456', 'title': 'The Second Best Book', 'author': 'Author 2'}
+        ]
     }
     return response
 
