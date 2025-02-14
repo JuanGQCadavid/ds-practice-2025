@@ -22,7 +22,6 @@ class TransactionVerificationService(transaction_verification_grpc.TransactionVe
     def checkTransaction(self, request, context):
         # request is a stringified json, obtain the json object
         request_data = json.loads(request.json)
-        print(request_data)
         # Check if the list of items is not empty
         if not request_data.get('items'):
             response = transaction_verification.TransactionVerificationResponse()
