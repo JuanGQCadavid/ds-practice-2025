@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package fraud;
+option go_package = "github.com/JuanGQCadavid/ds-practice-2025/utils/pb/fraud_detection";
 
 service FraudDetectionService {
     rpc checkFraud (FraudDetectionRequest) returns (FraudDetectionResponse);
