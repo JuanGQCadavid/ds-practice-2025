@@ -15,6 +15,7 @@ import transaction_verification_pb2 as transaction_verification
 class TransactionVerificationService(transaction_verification_grpc.TransactionVerificationServiceServicer):
     def checkTransaction(self, request, context):
         request_data = json.loads(request.json)
+
         # Check if the list of items is not empty
         if not request_data.get('items'):
             response = transaction_verification.TransactionVerificationResponse()
@@ -38,28 +39,13 @@ class TransactionVerificationService(transaction_verification_grpc.TransactionVe
         return response
 
 
-
-
-        # Create a TransactionVerificationResponse object
-        response = transaction_verification.TransactionVerificationResponse()
-        response.code = "200"
-        # Set the greeting field of the response object
-        # print(request)
-        # Return the response object
-        return response
-
 def serve():
-    # Create a gRPC server
     server = grpc.server(futures.ThreadPoolExecutor())
-    # Add TransactionDetectionService
     transaction_verification_grpc.add_TransactionVerificationServiceServicer_to_server(TransactionVerificationService(), server)
-    # Listen on port 50051
     port = "50052"
     server.add_insecure_port("[::]:" + port)
-    # Start the server
     server.start()
     print("Server started. Listening on port 50052.")
-    # Keep thread alive
     server.wait_for_termination()
 
 if __name__ == '__main__':
