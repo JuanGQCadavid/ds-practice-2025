@@ -20,6 +20,7 @@ services:
         published: 8081
     environment:
       fraud_dns: "fraud_detection:50051"
+      transaction_verification_dns: "transaction_verification:50052"
 
   # orchestrator:
   #   build:

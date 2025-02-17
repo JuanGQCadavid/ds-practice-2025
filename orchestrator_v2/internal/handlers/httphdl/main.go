@@ -6,6 +6,7 @@ import (
 
 	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/core"
 	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/core/domain"
+	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/core/ports"
 	"github.com/gin-gonic/gin"
 )
 
@@ -39,15 +40,32 @@ func (hdl *HTTPHandler) CheckOut(context *gin.Context) {
 
 	response, err := hdl.service.Checkout(checkoutRequest)
 
-	if err != nil {
+	switch err {
+	case ports.ErrInternalError:
 		context.AbortWithStatusJSON(http.StatusInternalServerError, ErrorResponse{
 			ErrorType: ErrorType{
-				Code:    "Internal",
+				Code:    "Internal error",
+				Message: err.Error(),
+			},
+		})
+		return
+
+	case ports.ErrTransIsNotValid:
+		context.AbortWithStatusJSON(http.StatusBadRequest, ErrorResponse{
+			ErrorType: ErrorType{
+				Code:    "Bad request, trans is not valid",
+				Message: err.Error(),
+			},
+		})
+		return
+	case ports.ErrFraudDetected:
+		context.AbortWithStatusJSON(http.StatusForbidden, ErrorResponse{
+			ErrorType: ErrorType{
+				Code:    "It seems someone is trying to commit a crime..",
 				Message: err.Error(),
 			},
 		})
 		return
 	}
-
 	context.JSON(http.StatusOK, response)
 }

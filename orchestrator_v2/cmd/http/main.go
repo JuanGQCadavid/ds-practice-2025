@@ -9,31 +9,41 @@ import (
 	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/core/ports"
 	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/handlers/httphdl"
 	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/repositories/fraud"
+	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/repositories/transcheck"
 	"github.com/gin-gonic/gin"
 )
 
 const (
-	fraudDNSEnvName string = "fraud_dns"
-	SERVICE_PORT    string = ":8000"
+	FRAUD_DNS_ENV_NAME         string = "fraud_dns"
+	TRANS_CHECKER_DNS_ENV_NAME string = "transaction_verification_dns"
+	SERVICE_PORT               string = ":8000"
 )
 
 var (
-	fraudService   ports.IFraudDetection
-	defaultTimeOut = 4 * time.Second
+	fraudService        ports.IFraudDetection
+	transCheckerService ports.ITransactionVerification
+	defaultTimeOut      = 4 * time.Second
 )
 
 func init() {
-	fraudDNS, isThereFraud := os.LookupEnv(fraudDNSEnvName)
+	fraudDNS, isThereFraud := os.LookupEnv(FRAUD_DNS_ENV_NAME)
 	if !isThereFraud {
 		log.Panic("Fraud detection system DNS is needed")
 	}
 
 	fraudService = fraud.NewFraudDetectionService(fraudDNS, defaultTimeOut)
+
+	tranServiceDNS, ok := os.LookupEnv(TRANS_CHECKER_DNS_ENV_NAME)
+	if !ok {
+		log.Panic("transaction dns system DNS is needed")
+	}
+
+	transCheckerService = transcheck.NewTransactionVerification(tranServiceDNS, defaultTimeOut)
 }
 
 func main() {
 	var (
-		srv    = core.NewService(fraudService)
+		srv    = core.NewService(fraudService, transCheckerService)
 		hdl    = httphdl.NewHTTPHandler(srv)
 		router = gin.Default()
 	)
