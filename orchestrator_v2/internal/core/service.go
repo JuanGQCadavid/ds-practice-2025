@@ -11,12 +11,18 @@ import (
 type Service struct {
 	fraudDetection     ports.IFraudDetection
 	transactionChecker ports.ITransactionVerification
+	suggestedBooks     ports.ISuggestionsService
 }
 
-func NewService(fraudDetection ports.IFraudDetection, transactionChecker ports.ITransactionVerification) *Service {
+func NewService(
+	fraudDetection ports.IFraudDetection,
+	transactionChecker ports.ITransactionVerification,
+	suggestedBooks ports.ISuggestionsService,
+) *Service {
 	return &Service{
 		fraudDetection:     fraudDetection,
 		transactionChecker: transactionChecker,
+		suggestedBooks:     suggestedBooks,
 	}
 }
 
@@ -29,6 +35,8 @@ func (srv *Service) Checkout(checkout *domain.Checkout) (*domain.CheckoutRespons
 
 		transVereficationErrMessage string
 		transError                  error
+
+		suggestedBooks []*domain.SuggestedBook
 	)
 
 	wg.Add(1)
@@ -41,6 +49,18 @@ func (srv *Service) Checkout(checkout *domain.Checkout) (*domain.CheckoutRespons
 	go func() {
 		defer wg.Done()
 		transVereficationErrMessage, transError = srv.transactionChecker.CheckTransaction(checkout)
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		transVereficationErrMessage, transError = srv.transactionChecker.CheckTransaction(checkout)
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		suggestedBooks, _ = srv.suggestedBooks.SuggestBooks(checkout.Items)
 	}()
 
 	wg.Wait()
@@ -58,14 +78,8 @@ func (srv *Service) Checkout(checkout *domain.Checkout) (*domain.CheckoutRespons
 	}
 
 	return &domain.CheckoutResponse{
-		Status:  "Okey",
-		OrderId: "Pending",
-		SuggestedBooks: []domain.SuggestedBook{
-			{
-				BookId: "Pending",
-				Title:  "Pending",
-				Author: "Pending",
-			},
-		},
+		Status:         "Okey",
+		OrderId:        "Pending",
+		SuggestedBooks: suggestedBooks,
 	}, nil, nil
 }

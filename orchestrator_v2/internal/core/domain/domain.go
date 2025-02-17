@@ -61,7 +61,7 @@ type SuggestedBook struct {
 }
 
 type CheckoutResponse struct {
-	OrderId        string          `json:"orderId"`
-	Status         string          `json:"status"`
-	SuggestedBooks []SuggestedBook `json:"suggestedBooks"`
+	OrderId        string           `json:"orderId"`
+	Status         string           `json:"status"`
+	SuggestedBooks []*SuggestedBook `json:"suggestedBooks"`
 }

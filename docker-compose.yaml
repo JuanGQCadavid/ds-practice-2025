@@ -18,7 +18,7 @@ services:
       context: ./orchestrator_v2
     ports:
       - name: REST
-        target: 8000
+        target: 8081
         published: 8081
     environment:
       fraud_dns: "fraud_detection:50051"
