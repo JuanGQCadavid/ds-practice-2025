@@ -12,6 +12,8 @@ services:
   orchestrator_v2:
     depends_on:
       - fraud_detection
+      - suggestions
+      - transaction_verification
     build:
       context: ./orchestrator_v2
     ports:
@@ -21,6 +23,17 @@ services:
     environment:
       fraud_dns: "fraud_detection:50051"
       transaction_verification_dns: "transaction_verification:50052"
+      suggestions_dns: "suggestions:50053"
+
+  suggestions:
+    build:
+      context: ./suggestions
+    ports:
+      - name: gRPC
+        target: 50050
+        published: 50053
+    environment:
+      port_to_listening: 50050
 
   # orchestrator:
   #   build:
