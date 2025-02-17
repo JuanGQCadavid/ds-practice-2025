@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package transaction;
+option go_package = "github.com/JuanGQCadavid/ds-practice-2025/utils/pb/suggestions";
+
+service BookSuggestionsService {
+    rpc suggestBooks (ItemsBought) returns (BookSuggest);
+}
+
+message ItemsBought {
+    message Item {
+        string name = 1;
+        string quantity = 2;
+    }
+    repeated Item items = 1;
+}
+
+message BookSuggest {
+    message Book {
+        string  bookId = 1;
+        string title = 2;
+        string author = 3;
+    }
+
+    repeated Book books = 1;
+}
