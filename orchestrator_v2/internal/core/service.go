@@ -1,6 +1,7 @@
 package core
 
 import (
+	"errors"
 	"sync"
 
 	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/core/domain"
@@ -19,15 +20,15 @@ func NewService(fraudDetection ports.IFraudDetection, transactionChecker ports.I
 	}
 }
 
-func (srv *Service) Checkout(checkout *domain.Checkout) (*domain.CheckoutResponse, error) {
+func (srv *Service) Checkout(checkout *domain.Checkout) (*domain.CheckoutResponse, error, error) {
 
 	var (
 		wg                  sync.WaitGroup = sync.WaitGroup{}
 		fradDetectionStatus string
 		fraudError          error
 
-		transVereficationStatus string
-		transError              error
+		transVereficationErrMessage string
+		transError                  error
 	)
 
 	wg.Add(1)
@@ -39,21 +40,21 @@ func (srv *Service) Checkout(checkout *domain.Checkout) (*domain.CheckoutRespons
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		transVereficationStatus, transError = srv.transactionChecker.CheckTransaction(checkout)
+		transVereficationErrMessage, transError = srv.transactionChecker.CheckTransaction(checkout)
 	}()
 
 	wg.Wait()
 
-	if transError != nil || fraudError != nil {
-		return nil, ports.ErrInternalError
-	}
-
-	if transVereficationStatus != "200" {
-		return nil, ports.ErrTransIsNotValid
+	if fraudError != nil {
+		return nil, ports.ErrInternalError, nil
 	}
 
 	if fradDetectionStatus != "200" {
-		return nil, ports.ErrFraudDetected
+		return nil, ports.ErrFraudDetected, nil
+	}
+
+	if transError == ports.ErrTransIsNotValid {
+		return nil, transError, errors.New(transVereficationErrMessage)
 	}
 
 	return &domain.CheckoutResponse{
@@ -66,5 +67,5 @@ func (srv *Service) Checkout(checkout *domain.Checkout) (*domain.CheckoutRespons
 				Author: "Pending",
 			},
 		},
-	}, nil
+	}, nil, nil
 }

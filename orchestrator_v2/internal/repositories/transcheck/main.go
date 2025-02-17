@@ -53,5 +53,9 @@ func (srv *TransactionVerification) CheckTransaction(data *domain.Checkout) (str
 		return "", err
 	}
 
-	return resp.Code, nil
+	if !resp.IsValid {
+		return resp.ErrMessage, ports.ErrTransIsNotValid
+	}
+
+	return "", nil
 }
