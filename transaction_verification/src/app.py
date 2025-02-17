@@ -15,27 +15,25 @@ import transaction_verification_pb2 as transaction_verification
 class TransactionVerificationService(transaction_verification_grpc.TransactionVerificationServiceServicer):
     def checkTransaction(self, request, context):
         request_data = json.loads(request.json)
+        response = transaction_verification.TransactionVerificationResponse()
 
-        # Check if the list of items is not empty
-        if not request_data.get('items'):
-            response = transaction_verification.TransactionVerificationResponse()
-            response.code = "400"
+        if not request_data.get('items'):       
             print("No items in the request")
+            response.isValid = False
+            response.errMessage = "Missing items field"
             return response
 
-        # Check if required user data is filled in
+
         required_fields = ['user', 'creditCard', 'items', 'billingAddress', 'shippingMethod', 'giftWrapping', 'termsAndConditionsAccepted']
         for field in required_fields:
             if field not in request_data or not request_data[field]:
-                response = transaction_verification.TransactionVerificationResponse()
-                response.code = "400"
                 print(f"Required {field} field not filled in")
+                response.isValid = False
+                response.errMessage = f"Missing {field} field"
                 return response
 
-        # If all checks pass, return a successful response
-        response = transaction_verification.TransactionVerificationResponse()
-        response.code = "200"
         print("Transaction is valid")
+        response.isValid = True
         return response
 
 

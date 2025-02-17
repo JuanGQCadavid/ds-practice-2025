@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v5.29.3
-// source: pb/transaction_verification/transaction_verification.proto
+// source: utils/pb/transaction_verification/transaction_verification.proto
 
 package transaction_verification
 
@@ -118,5 +118,5 @@ var TransactionVerificationService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "pb/transaction_verification/transaction_verification.proto",
+	Metadata: "utils/pb/transaction_verification/transaction_verification.proto",
 }

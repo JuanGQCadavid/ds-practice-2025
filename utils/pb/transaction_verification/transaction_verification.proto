@@ -12,5 +12,6 @@ message TransactionVerificationRequest {
 }
 
 message TransactionVerificationResponse {
-    string code = 1;
+    bool isValid = 1;
+    string errMessage = 2;
 }

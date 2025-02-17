@@ -11,7 +11,9 @@ class TransactionVerificationRequest(_message.Message):
     def __init__(self, json: _Optional[str] = ...) -> None: ...
 
 class TransactionVerificationResponse(_message.Message):
-    __slots__ = ("code",)
-    CODE_FIELD_NUMBER: _ClassVar[int]
-    code: str
-    def __init__(self, code: _Optional[str] = ...) -> None: ...
+    __slots__ = ("isValid", "errMessage")
+    ISVALID_FIELD_NUMBER: _ClassVar[int]
+    ERRMESSAGE_FIELD_NUMBER: _ClassVar[int]
+    isValid: bool
+    errMessage: str
+    def __init__(self, isValid: bool = ..., errMessage: _Optional[str] = ...) -> None: ...
