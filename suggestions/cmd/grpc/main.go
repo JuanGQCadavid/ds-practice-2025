@@ -63,7 +63,7 @@ var (
 
 const (
 	PORT_NUMBER_ENV_NAME = "port_to_listening"
-	DEFAULT_PORT         = "50050"
+	DEFAULT_PORT         = "50053"
 	PROTOCOL             = "tcp"
 )
 

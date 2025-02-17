@@ -17,6 +17,6 @@ COPY go.sum go.sum
 RUN go build -o main ./cmd/${CMD}/main.go
 
 FROM alpine:3.21 as prod
-EXPOSE 50050
+EXPOSE 50053
 COPY --from=builder /app/main /bin/
 ENTRYPOINT  ["/bin/main"]
