@@ -1,6 +1,6 @@
-import json
 import sys
 import os
+from datetime import datetime
 
 # This set of lines are needed to import the gRPC stubs.
 # The path of the stubs is relative to the current file, or absolute inside the container.
@@ -74,7 +74,7 @@ class FraudDetectionService(fraud_detection_grpc.FraudDetectionServiceServicer):
         # Validation check
         if not all(validation_results.values()): # If any of the values is False
             risk_score += 50
-        print("Risk Score:", risk_score)
+        print("[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Risk Score:", risk_score)
         # Categorize risk
         if risk_score > 50:
             return "High Risk"
@@ -85,19 +85,26 @@ class FraudDetectionService(fraud_detection_grpc.FraudDetectionServiceServicer):
 
     # Create an RPC function to say checkFraud
     def checkFraud(self, request, context):
-        print("Checking fraud...")
-        request_data = request.json
-        request_data = json.loads(request_data)
-        credit_card = request_data['creditCard']
-        validation_results = self.validate_card_details(credit_card['number'], credit_card['cvv'], credit_card['expirationDate'])
-        risk_assessment = self.assess_fraud_risk(credit_card['number'], credit_card['cvv'], validation_results)
-        if risk_assessment == "High Risk":
-            response = fraud_detection.FraudDetectionResponse()
-            response.code = "400"
-            print("High risk detected")
-            return response
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Checking fraud...")
+        # Access credit card fields directly from the request
+        credit_card = request.creditCard
+        validation_results = self.validate_card_details(
+            credit_card.number,
+            credit_card.cvv,
+            credit_card.expirationDate
+        )
+        risk_assessment = self.assess_fraud_risk(
+            credit_card.number,
+            credit_card.cvv,
+            validation_results
+        )
+        # Create and return response
         response = fraud_detection.FraudDetectionResponse()
-        response.code = "200"
+        if risk_assessment == "High Risk":
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] High risk detected, fraud suspected, invalidating purchase")
+            response.code = "400"
+        else:
+            response.code = "200"
         return response
 
 def serve():
@@ -110,7 +117,7 @@ def serve():
     server.add_insecure_port("[::]:" + port)
     # Start the server
     server.start()
-    print("Server started. Listening on port 50051.")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Server started on port {port}")
     # Keep thread alive
     server.wait_for_termination()
 

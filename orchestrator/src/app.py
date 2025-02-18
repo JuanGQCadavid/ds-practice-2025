@@ -20,23 +20,35 @@ import transaction_verification_pb2_grpc as transaction_verification_grpc
 import grpc
 
 def check_fraud(request):
-    request_json = json.dumps(request)
-    # Establish a connection with the fraud-detection gRPC service.
+    # Get credit card details
+    card_data = request.get('creditCard')
+    if not card_data:
+        return "400"
+
+    # Create CreditCard message
+    credit_card = fraud_detection.CreditCard(
+        number=card_data.get('number'),
+        cvv=card_data.get('cvv'),
+        expirationDate=card_data.get('expirationDate')
+    )
+
+    # Create FraudDetectionRequest
+    fraud_request = fraud_detection.FraudDetectionRequest(creditCard=credit_card)
+
+    # Make gRPC call
     with grpc.insecure_channel('fraud_detection:50051') as channel:
-        # Create a stub object.
         stub = fraud_detection_grpc.FraudDetectionServiceStub(channel)
-        # Call the service through the stub object.
-        response = stub.checkFraud(fraud_detection.FraudDetectionRequest(json=request_json))
+        response = stub.checkFraud(fraud_request)  # Pass the request directly
     return response.code
 
 def check_transaction(request):
     request_json = json.dumps(request)
-    # Establish connection with the transaction_verification gRPC servive.
+    # Establish connection with the transaction_verification gRPC service.
     with grpc.insecure_channel('transaction_verification:50052') as channel:
         stub = transaction_verification_grpc.TransactionVerificationServiceStub(channel)
         # Call the service through the stub object
         response = stub.checkTransaction(transaction_verification.TransactionVerificationRequest(json=request_json))
-    return response.code
+    return response
 
 # Import Flask.
 # Flask is a web framework for Python.
@@ -70,7 +82,8 @@ def checkout():
     # Get request object data to json
     request_data = json.loads(request.data)
     # Print request object data
-    print("Request Data:", request_data.get('items')) # on terminal
+    # print("Request Data:", request_data.get('items')) # on terminal
+
 
     fraud_detection_code = None  # initialize fraud_detection_code
     transaction_verification_code = None  # initialize transaction_verification_code
@@ -85,7 +98,7 @@ def checkout():
         #future_suggestions = executor.submit(get_suggestions, request_data)
 
         fraud_detection_code = future_fraud_detection.result()
-        transaction_verification_code = future_transaction_verification.result()
+        transaction_verification_response = future_transaction_verification.result()
         #suggestions = future_suggestions.result()
     if fraud_detection_code != "200":
         # set error message
@@ -96,14 +109,9 @@ def checkout():
             }
         }
         return error_response, 400
-    elif transaction_verification_code != "200":
+    elif transaction_verification_response["isValid"] != "true":
         # set error message
-        response = {
-            'error': {
-                'code': '400',
-                'message': 'Transaction is invalid'
-            }
-        }
+        response = transaction_verification_response["message"]
         return response, 400
     response = {
         'orderId': '12345',
