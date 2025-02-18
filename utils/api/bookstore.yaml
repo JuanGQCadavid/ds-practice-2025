@@ -84,7 +84,7 @@ components:
               type: string
         giftWrapping:
           type: boolean
-        termsAndConditionsAccepted:
+        termsAccepted:
           type: boolean
         notificationPreferences:
           type: array
