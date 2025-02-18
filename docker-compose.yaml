@@ -25,6 +25,19 @@ services:
       transaction_verification_dns: "transaction_verification:50052"
       suggestions_dns: "suggestions_service:50053"
 
+#  orchestrator:
+#    build:
+#      context: ./
+#      dockerfile: ./orchestrator/Dockerfile
+#    ports:
+#      - 8081:5000
+#    environment:
+#      - PYTHONUNBUFFERED=TRUE
+#      - PYTHONFILE=/app/orchestrator/src/app.py
+#    volumes:
+#      - ./utils:/app/utils
+#      - ./orchestrator/src:/app/orchestrator/src
+
   suggestions_service:
     build:
       context: ./suggestions
@@ -34,19 +47,6 @@ services:
         published: 50053
     environment:
       port_to_listening: 50053
-
-  # orchestrator:
-  #   build:
-  #     context: ./
-  #     dockerfile: ./orchestrator/Dockerfile
-  #   ports:
-  #     - 8081:8000
-  #   environment:
-  #     - PYTHONUNBUFFERED=TRUE
-  #     - PYTHONFILE=/app/orchestrator/src/app.py
-  #   volumes:
-  #     - ./utils:/app/utils
-  #     - ./orchestrator/src:/app/orchestrator/src
 
   fraud_detection:
     build:

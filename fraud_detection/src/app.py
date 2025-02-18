@@ -74,7 +74,7 @@ class FraudDetectionService(fraud_detection_grpc.FraudDetectionServiceServicer):
         # Validation check
         if not all(validation_results.values()): # If any of the values is False
             risk_score += 50
-        print("[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Risk Score:", risk_score)
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Risk Score:", risk_score)
         # Categorize risk
         if risk_score > 50:
             return "High Risk"
