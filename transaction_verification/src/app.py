@@ -18,21 +18,21 @@ class TransactionVerificationService(transaction_verification_grpc.TransactionVe
         response = transaction_verification.TransactionVerificationResponse()
 
         if not request_data.get('items'):       
-            print("No items in the request")
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] No items in the request")
             response.isValid = False
             response.errMessage = "Missing items field"
             return response
 
 
-        required_fields = ['user', 'creditCard', 'items', 'billingAddress', 'shippingMethod', 'giftWrapping', 'termsAndConditionsAccepted']
+        required_fields = ['user', 'creditCard', 'items', 'billingAddress', 'shippingMethod', 'termsAccepted']
         for field in required_fields:
             if field not in request_data or not request_data[field]:
-                print(f"Required {field} field not filled in")
+                print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Required {field} field not filled in")
                 response.isValid = False
                 response.errMessage = f"Missing {field} field"
                 return response
 
-        print("Transaction is valid")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Transaction is valid")
         response.isValid = True
         return response
 
@@ -43,7 +43,7 @@ def serve():
     port = "50052"
     server.add_insecure_port("[::]:" + port)
     server.start()
-    print("Server started. Listening on port 50052.")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Server started. Listening on port 50052.")
     server.wait_for_termination()
 
 if __name__ == '__main__':
