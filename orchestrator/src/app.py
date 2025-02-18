@@ -1,6 +1,7 @@
 import sys
 import os
 from concurrent import futures
+from datetime import datetime
 from http.client import responses
 
 # This set of lines are needed to import the gRPC stubs.
@@ -20,19 +21,16 @@ import transaction_verification_pb2_grpc as transaction_verification_grpc
 import grpc
 
 def check_fraud(request):
-    # Get credit card details
     card_data = request.get('creditCard')
-    if not card_data:
+    if not card_data: # Check if creditCard key is present in the request
         return "400"
 
-    # Create CreditCard message
+    # Encapsulate in gRPC request object
     credit_card = fraud_detection.CreditCard(
         number=card_data.get('number'),
         cvv=card_data.get('cvv'),
         expirationDate=card_data.get('expirationDate')
     )
-
-    # Create FraudDetectionRequest
     fraud_request = fraud_detection.FraudDetectionRequest(creditCard=credit_card)
 
     # Make gRPC call
@@ -81,9 +79,6 @@ def checkout():
     """
     # Get request object data to json
     request_data = json.loads(request.data)
-    # Print request object data
-    # print("Request Data:", request_data.get('items')) # on terminal
-
 
     fraud_detection_code = None  # initialize fraud_detection_code
     transaction_verification_code = None  # initialize transaction_verification_code
@@ -128,4 +123,6 @@ if __name__ == '__main__':
     # Run the app in debug mode to enable hot reloading.
     # This is useful for development.
     # The default port is 5000.
+    # add logs with timestamp
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Orchestrator service started")
     app.run(host='0.0.0.0')
