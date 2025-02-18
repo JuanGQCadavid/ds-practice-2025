@@ -7,8 +7,14 @@ service FraudDetectionService {
     rpc checkFraud (FraudDetectionRequest) returns (FraudDetectionResponse);
 }
 
+message CreditCard {
+    string number = 1;
+    string cvv = 2;
+    string expirationDate = 3;
+}
+
 message FraudDetectionRequest {
-    string json = 1;
+    CreditCard creditCard = 1;
 }
 
 message FraudDetectionResponse {
