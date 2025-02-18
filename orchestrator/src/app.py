@@ -104,10 +104,14 @@ def checkout():
             }
         }
         return error_response, 400
-    elif transaction_verification_response["isValid"] != "true":
+    if not transaction_verification_response.isValid:
         # set error message
-        response = transaction_verification_response["message"]
-        return response, 400
+        return {
+            'error': {
+                'code': '400',
+                'message': transaction_verification_response.errMessage
+            }
+        }, 400
     response = {
         'orderId': '12345',
         'status': 'Order Approved',
