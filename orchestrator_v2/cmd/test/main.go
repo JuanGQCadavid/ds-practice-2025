@@ -18,7 +18,7 @@ func main() {
 	conn, err := grpc.NewClient(target, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	if err != nil {
-		log.Panic("Erro while creating conn: ", err.Error())
+		log.Panic("Error while creating conn: ", err.Error())
 	}
 
 	defer conn.Close()
@@ -39,7 +39,7 @@ func main() {
 	})
 
 	if err != nil {
-		log.Panic("Erro while calling: ", err.Error())
+		log.Panic("Error while calling: ", err.Error())
 	}
 	log.Println(r)
 

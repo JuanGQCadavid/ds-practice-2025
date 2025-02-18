@@ -23,7 +23,7 @@ func NewTransactionVerification(target string, defaultTimeOut time.Duration) *Tr
 	conn, err := grpc.NewClient(target, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	if err != nil {
-		log.Panic("Erro while creating conn: ", err.Error())
+		log.Panic("Error while creating conn: ", err.Error())
 	}
 
 	return &TransactionVerification{
