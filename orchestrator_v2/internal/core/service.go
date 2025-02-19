@@ -78,7 +78,7 @@ func (srv *Service) Checkout(checkout *domain.Checkout) (*domain.CheckoutRespons
 	}
 
 	return &domain.CheckoutResponse{
-		Status:         "Okey",
+		Status:         "Order Approved",
 		OrderId:        "Pending",
 		SuggestedBooks: suggestedBooks,
 	}, nil, nil
