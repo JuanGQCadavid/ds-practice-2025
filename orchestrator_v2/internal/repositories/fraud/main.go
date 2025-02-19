@@ -2,7 +2,6 @@ package fraud
 
 import (
 	"context"
-	"encoding/json"
 	"log"
 	"time"
 
@@ -10,7 +9,6 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/core/domain"
-	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/core/ports"
 	pb "github.com/JuanGQCadavid/ds-practice-2025/utils/pb/fraud_detection"
 )
 
@@ -36,16 +34,20 @@ func (srv *FraudDetectionService) CheckFraud(data *domain.Checkout) (string, err
 	ctx, cancel := context.WithTimeout(context.Background(), srv.defaultTimeOut)
 	defer cancel()
 
-	// TODO - This should not be a JSON!
-	jsonData, err := json.MarshalIndent(data, "", "	")
+	// // TODO - This should not be a JSON!
+	// jsonData, err := json.MarshalIndent(data, "", "	")
 
-	if err != nil {
-		log.Println("err while converting struct to JSON, struct: ", *data, " err: ", err.Error())
-		return "", ports.ErrMarshaling
-	}
+	// if err != nil {
+	// 	log.Println("err while converting struct to JSON, struct: ", *data, " err: ", err.Error())
+	// 	return "", ports.ErrMarshaling
+	// }
 
 	resp, err := srv.client.CheckFraud(ctx, &pb.FraudDetectionRequest{
-		Json: string(jsonData),
+		CreditCard: &pb.CreditCard{
+			Number:         data.CreditCard.Number,
+			Cvv:            data.CreditCard.Cvv,
+			ExpirationDate: data.CreditCard.ExpirationDate,
+		},
 	})
 
 	if err != nil {

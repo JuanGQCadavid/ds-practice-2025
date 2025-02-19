@@ -24,7 +24,7 @@ class TransactionVerificationService(transaction_verification_grpc.TransactionVe
             return response
 
 
-        required_fields = ['user', 'creditCard', 'items', 'billingAddress', 'shippingMethod', 'termsAccepted']
+        required_fields = ['user', 'creditCard', 'items', 'billingAddress', 'shippingMethod', 'termsAndConditionsAccepted']
         for field in required_fields:
             if field not in request_data or not request_data[field]:
                 print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Required {field} field not filled in")
