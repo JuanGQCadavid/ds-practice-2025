@@ -73,3 +73,5 @@ services:
     volumes:
       - ./utils:/app/utils
       - ./transaction_verification/src:/app/transaction_verification/src
+    env_file:
+      - .env
