@@ -1,5 +1,7 @@
 from datetime import datetime
 from concurrent import futures
+from dotenv import load_dotenv
+import google.generativeai as genai
 import grpc
 import json
 import sys
@@ -12,31 +14,27 @@ sys.path.insert(0, transaction_verification_grpc_path)
 import transaction_verification_pb2_grpc as transaction_verification_grpc
 import transaction_verification_pb2 as transaction_verification
 
+# Load the environment variables
+load_dotenv()
+genai.configure(api_key=os.environ["GEMINI_API_KEY"])
+
+
 class TransactionVerificationService(transaction_verification_grpc.TransactionVerificationServiceServicer):
     def checkTransaction(self, request, context):
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Checking transaction...")
         request_data = json.loads(request.json)
         response = transaction_verification.TransactionVerificationResponse()
+        model = genai.GenerativeModel("gemini-1.5-flash")
 
-        if not request_data.get('items'):       
-            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] No items in the request")
+        # TODO: need to improve logic, not using request data
+        response_gemini = model.generate_content("Give me a random number from 0 to 99, just the number")
+        number = int(response_gemini.text)
+        if number > 70:
             response.isValid = False
-            response.errMessage = "Missing items field"
+            response.errMessage = "Not valid transaction"
             return response
-
-
-        required_fields = ['user', 'creditCard', 'items', 'billingAddress', 'shippingMethod']
-        print(request_data)
-        for field in required_fields:
-            if field not in request_data or not request_data[field]:
-                print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Required {field} field not filled in")
-                response.isValid = False
-                response.errMessage = f"Missing {field} field"
-                return response
-
-        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Transaction is valid")
         response.isValid = True
         return response
-
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor())
