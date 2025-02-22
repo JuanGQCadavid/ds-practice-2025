@@ -26,10 +26,20 @@ class TransactionVerificationService(transaction_verification_grpc.TransactionVe
         response = transaction_verification.TransactionVerificationResponse()
         model = genai.GenerativeModel("gemini-1.5-flash")
 
-        # TODO: need to improve logic, not using request data
-        response_gemini = model.generate_content("Give me a random number from 0 to 99, just the number")
-        number = int(response_gemini.text)
-        if number > 70:
+        prompt = (
+            "Based on the following transaction details, return a risk score from 0 to 99 (just the number), the more, "
+            "the most risk:\n"
+            f"User: {request_data['user']}\n"
+            f"Credit Card: {request_data['creditCard']}\n"
+            f"Billing Address: {request_data['billingAddress']}\n"
+            f"Shipping Address: {request_data['shippingMethod']}\n"
+            f"Items: {request_data['items']}\n"
+        )
+
+        response_gemini = model.generate_content(prompt)
+        number = int(response_gemini.text.strip())
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Transaction validity score: {number}")
+        if number > 80:
             response.isValid = False
             response.errMessage = "Not valid transaction"
             return response
