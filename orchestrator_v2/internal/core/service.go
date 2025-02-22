@@ -30,10 +30,10 @@ func (srv *Service) Checkout(checkout *domain.Checkout) (*domain.CheckoutRespons
 
 	var (
 		wg                  sync.WaitGroup = sync.WaitGroup{}
-		fradDetectionStatus string
+		fraudDetectionStatus string
 		fraudError          error
 
-		transVereficationErrMessage string
+		transVerificationErrMessage string
 		transError                  error
 
 		suggestedBooks []*domain.SuggestedBook
@@ -42,19 +42,13 @@ func (srv *Service) Checkout(checkout *domain.Checkout) (*domain.CheckoutRespons
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		fradDetectionStatus, fraudError = srv.fraudDetection.CheckFraud(checkout)
+		fraudDetectionStatus, fraudError = srv.fraudDetection.CheckFraud(checkout)
 	}()
 
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		transVereficationErrMessage, transError = srv.transactionChecker.CheckTransaction(checkout)
-	}()
-
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		transVereficationErrMessage, transError = srv.transactionChecker.CheckTransaction(checkout)
+		transVerificationErrMessage, transError = srv.transactionChecker.CheckTransaction(checkout)
 	}()
 
 	wg.Add(1)
@@ -69,12 +63,12 @@ func (srv *Service) Checkout(checkout *domain.Checkout) (*domain.CheckoutRespons
 		return nil, ports.ErrInternalError, nil
 	}
 
-	if fradDetectionStatus != "200" {
+	if fraudDetectionStatus != "200" {
 		return nil, ports.ErrFraudDetected, nil
 	}
 
 	if transError == ports.ErrTransIsNotValid {
-		return nil, transError, errors.New(transVereficationErrMessage)
+		return nil, transError, errors.New(transVerificationErrMessage)
 	}
 
 	return &domain.CheckoutResponse{
