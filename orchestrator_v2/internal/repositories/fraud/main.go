@@ -34,14 +34,6 @@ func (srv *FraudDetectionService) CheckFraud(data *domain.Checkout) (string, err
 	ctx, cancel := context.WithTimeout(context.Background(), srv.defaultTimeOut)
 	defer cancel()
 
-	// // TODO - This should not be a JSON!
-	// jsonData, err := json.MarshalIndent(data, "", "	")
-
-	// if err != nil {
-	// 	log.Println("err while converting struct to JSON, struct: ", *data, " err: ", err.Error())
-	// 	return "", ports.ErrMarshaling
-	// }
-
 	resp, err := srv.client.CheckFraud(ctx, &pb.FraudDetectionRequest{
 		CreditCard: &pb.CreditCard{
 			Number:         data.CreditCard.Number,
