@@ -21,7 +21,7 @@ genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
 class TransactionVerificationService(transaction_verification_grpc.TransactionVerificationServiceServicer):
     def checkTransaction(self, request, context):
-        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Checking transaction...")
+        print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Checking transaction...")
         request_data = json.loads(request.json)
         response = transaction_verification.TransactionVerificationResponse()
         model = genai.GenerativeModel("gemini-1.5-flash")
@@ -38,7 +38,7 @@ class TransactionVerificationService(transaction_verification_grpc.TransactionVe
 
         response_gemini = model.generate_content(prompt)
         number = int(response_gemini.text.strip())
-        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Transaction validity score: {number}")
+        print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Transaction validity score: {number}")
         if number > 80:
             response.isValid = False
             response.errMessage = "Not valid transaction"
@@ -52,7 +52,7 @@ def serve():
     port = "50052"
     server.add_insecure_port("[::]:" + port)
     server.start()
-    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Server started. Listening on port 50052.")
+    print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Server started. Listening on port 50052.")
     server.wait_for_termination()
 
 if __name__ == '__main__':
