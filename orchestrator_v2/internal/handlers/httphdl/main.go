@@ -67,5 +67,11 @@ func (hdl *HTTPHandler) CheckOut(context *gin.Context) {
 		})
 		return
 	}
+
+	log.Printf("%+v\n", response)
+
+	for _, b := range response.SuggestedBooks {
+		log.Printf("%+v\n", b)
+	}
 	context.JSON(http.StatusOK, response)
 }

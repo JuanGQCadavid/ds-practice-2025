@@ -7,7 +7,7 @@ SPECIFIC = \
 	utils/pb/fraud_detection/fraud_detection.proto
 
 run:
-	docker compose up --build
+	docker compose --env-file .env up --build
 
 # python3 -m grpc_tools.protoc -I. --python_out=. --pyi_out=. --grpc_python_out=. $$proto;
 

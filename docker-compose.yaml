@@ -47,6 +47,7 @@ services:
         published: 50053
     environment:
       port_to_listening: 50053
+      gemini_api_key: ${GEMINI_API_KEY}
 
   fraud_detection:
     build:
