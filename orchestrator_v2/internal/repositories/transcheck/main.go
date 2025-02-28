@@ -36,7 +36,6 @@ func (srv *TransactionVerification) CheckTransaction(data *domain.Checkout) (str
 	ctx, cancel := context.WithTimeout(context.Background(), srv.defaultTimeOut)
 	defer cancel()
 
-	// TODO - This should not be a JSON!
 	jsonData, err := json.MarshalIndent(data, "", "	")
 
 	if err != nil {

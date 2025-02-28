@@ -74,7 +74,7 @@ class FraudDetectionService(fraud_detection_grpc.FraudDetectionServiceServicer):
         # Validation check
         if not all(validation_results.values()): # If any of the values is False
             risk_score += 50
-        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Risk Score:", risk_score)
+        print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Risk Score:", risk_score)
         # Categorize risk
         if risk_score > 50:
             return "High Risk"
@@ -101,7 +101,7 @@ class FraudDetectionService(fraud_detection_grpc.FraudDetectionServiceServicer):
         # Create and return response
         response = fraud_detection.FraudDetectionResponse()
         if risk_assessment == "High Risk":
-            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] High risk detected, fraud suspected, invalidating purchase")
+            print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} High risk detected, fraud suspected, invalidating purchase")
             response.code = "400"
         else:
             response.code = "200"
@@ -117,7 +117,7 @@ def serve():
     server.add_insecure_port("[::]:" + port)
     # Start the server
     server.start()
-    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Server started on port {port}")
+    print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Server started on port {port}")
     # Keep thread alive
     server.wait_for_termination()
 
