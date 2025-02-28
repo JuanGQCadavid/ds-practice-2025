@@ -7,45 +7,29 @@ import (
 	"net"
 	"os"
 
+	"github.com/JuanGQCadavid/ds-practice-2025/suggestions/internal/core"
+	"github.com/JuanGQCadavid/ds-practice-2025/suggestions/internal/repositories/gemeni"
 	pb "github.com/JuanGQCadavid/ds-practice-2025/utils/pb/suggestions"
 	"google.golang.org/grpc"
 )
 
+var (
+	listener net.Listener
+	coreSrv  *core.SuggestionSrv
+)
+
+const (
+	PORT_NUMBER_ENV_NAME = "port_to_listening"
+	GEMINI_API_ENV_NAME  = "gemini_api_key"
+	DEFAULT_PORT         = "50053"
+	PROTOCOL             = "tcp"
+	SUGGESTIONS_SIZE     = 5
+)
+
 type Server struct {
 	pb.UnimplementedBookSuggestionsServiceServer
+	coreService *core.SuggestionSrv
 }
-
-var (
-	defaultResponse *pb.BookSuggest = &pb.BookSuggest{
-		Books: []*pb.BookSuggest_Book{
-			{
-				BookId: "1",
-				Author: "George Orwell",
-				Title:  "1984",
-			},
-			{
-				BookId: "2",
-				Author: "F. Scott Fitzgerald",
-				Title:  "The Great Gatsby",
-			},
-			{
-				BookId: "3",
-				Author: "Harper Lee",
-				Title:  "To Kill a Mockingbird",
-			},
-			{
-				BookId: "4",
-				Author: "J.R.R. Tolkien",
-				Title:  "The Hobbit",
-			},
-			{
-				BookId: "5",
-				Author: "Mary Shelley",
-				Title:  "Frankenstein",
-			},
-		},
-	}
-)
 
 func (srv *Server) SuggestBooks(ctx context.Context, rq *pb.ItemsBought) (*pb.BookSuggest, error) {
 	log.Println("Request, len of items", len(rq.Items))
@@ -54,18 +38,8 @@ func (srv *Server) SuggestBooks(ctx context.Context, rq *pb.ItemsBought) (*pb.Bo
 		log.Println(i, item.Name, item.Quantity)
 	}
 
-	return defaultResponse, nil
+	return srv.coreService.BooksSuggestions(rq), nil
 }
-
-var (
-	listener net.Listener
-)
-
-const (
-	PORT_NUMBER_ENV_NAME = "port_to_listening"
-	DEFAULT_PORT         = "50053"
-	PROTOCOL             = "tcp"
-)
 
 func init() {
 
@@ -74,6 +48,16 @@ func init() {
 	if !ok {
 		portTo = DEFAULT_PORT
 	}
+
+	gemAPIKey, ok := os.LookupEnv(GEMINI_API_ENV_NAME)
+
+	if !ok {
+		log.Fatal("Missing gem key env")
+
+	}
+
+	gem := gemeni.NewGemeniAI(gemAPIKey)
+	coreSrv = core.NewSuggestionSrv(gem, SUGGESTIONS_SIZE)
 
 	var err error
 	listener, err = net.Listen(PROTOCOL, fmt.Sprintf(":%s", portTo))
@@ -86,7 +70,9 @@ func init() {
 
 func main() {
 	grpcServer := grpc.NewServer()
-	pb.RegisterBookSuggestionsServiceServer(grpcServer, &Server{})
+	pb.RegisterBookSuggestionsServiceServer(grpcServer, &Server{
+		coreService: coreSrv,
+	})
 
 	log.Println("Suggestions server start process")
 	if err := grpcServer.Serve(listener); err != nil {
