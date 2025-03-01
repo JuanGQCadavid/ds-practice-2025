@@ -2,6 +2,7 @@
 
 ## Architecture
 
+
 ![Diagram](./utils/img/architecture.png)
 
 This repository contains the initial code for the practice sessions of the Distributed Systems course at the University of Tartu.
