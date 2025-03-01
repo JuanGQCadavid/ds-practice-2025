@@ -13,7 +13,6 @@ import (
 )
 
 var (
-	//go:embed queries/random.txt
 	randomBooksQuery string
 )
 
@@ -26,7 +25,7 @@ func NewGemeniAI(apiKey string) *GemeniAI {
 	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
 
 	if err != nil {
-		log.Fatal("Error creating the geminar client, error: ", err.Error())
+		log.Fatal("Error creating the Gemini AI client, error: ", err.Error())
 	}
 
 	return &GemeniAI{
@@ -36,10 +35,9 @@ func NewGemeniAI(apiKey string) *GemeniAI {
 
 func (svc *GemeniAI) SuggestBooks(books []string, size int) []*domain.Book {
 	ctx := context.Background()
-	log.Println(randomBooksQuery)
 	resp, err := svc.model.GenerateContent(ctx, genai.Text(randomBooksQuery))
 	if err != nil {
-		log.Println("Error on calling Geminar AI, ", err.Error())
+		log.Println("Error on calling Gemini AI, ", err.Error())
 	}
 
 	return svc.castBooks(resp)
@@ -47,19 +45,17 @@ func (svc *GemeniAI) SuggestBooks(books []string, size int) []*domain.Book {
 }
 
 func (svc *GemeniAI) castBooks(resp *genai.GenerateContentResponse) []*domain.Book {
-	log.Println("Geminar -> Candidates - ", len(resp.Candidates))
 	for _, cand := range resp.Candidates {
 		msg := ""
 		if cand.Content != nil {
-			log.Println("Geminar -> Candidates - Content - Parts", len(cand.Content.Parts))
 			for _, part := range cand.Content.Parts {
 				msg += fmt.Sprintf("%s", part)
 			}
 		}
-		log.Println(msg)
 		var books []*domain.Book = make([]*domain.Book, 0)
 		if err := json.Unmarshal([]byte(msg), &books); err != nil {
-			log.Println("Error on casting Geminar AI, ", err.Error())
+			log.Println("Error on casting Gemini AI, ", err.Error())
+			log.Println("Using static recommendations")
 			return nil
 		}
 		return books

@@ -85,7 +85,7 @@ class FraudDetectionService(fraud_detection_grpc.FraudDetectionServiceServicer):
 
     # Create an RPC function to say checkFraud
     def checkFraud(self, request, context):
-        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Checking fraud...")
+        print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Checking fraud...")
         # Access credit card fields directly from the request
         credit_card = request.creditCard
         validation_results = self.validate_card_details(

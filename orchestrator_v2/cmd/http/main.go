@@ -38,14 +38,14 @@ func init() {
 
 	tranServiceDNS, ok := os.LookupEnv(TRANS_CHECKER_DNS_ENV_NAME)
 	if !ok {
-		log.Panic("transaction dns system DNS is needed")
+		log.Panic("Transaction dns system DNS is needed")
 	}
 
 	transCheckerService = transcheck.NewTransactionVerification(tranServiceDNS, defaultTimeOut)
 
 	suggestionsServiceDNS, ok := os.LookupEnv(SUGGEST_BOOKS_DNS_ENV_NAME)
 	if !ok {
-		log.Panic("transaction dns system DNS is needed")
+		log.Panic("Suggestions dns system DNS is needed")
 	}
 
 	suggestService = suggestions.NewSuggestionService(suggestionsServiceDNS, defaultTimeOut)

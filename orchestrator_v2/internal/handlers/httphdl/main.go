@@ -61,8 +61,8 @@ func (hdl *HTTPHandler) CheckOut(context *gin.Context) {
 	case ports.ErrFraudDetected:
 		context.AbortWithStatusJSON(http.StatusForbidden, ErrorResponse{
 			ErrorType: ErrorType{
-				Code:    "It seems someone is trying to commit a crime..",
-				Message: genErr.Error(),
+				Code:    genErr.Error(),
+				Message: "It seems someone is trying to commit a crime...",
 			},
 		})
 		return
@@ -70,8 +70,5 @@ func (hdl *HTTPHandler) CheckOut(context *gin.Context) {
 
 	log.Printf("%+v\n", response)
 
-	for _, b := range response.SuggestedBooks {
-		log.Printf("%+v\n", b)
-	}
 	context.JSON(http.StatusOK, response)
 }

@@ -2,8 +2,6 @@ package core
 
 import (
 	"fmt"
-	"log"
-
 	"github.com/JuanGQCadavid/ds-practice-2025/suggestions/internal/core/ports"
 	pb "github.com/JuanGQCadavid/ds-practice-2025/utils/pb/suggestions"
 )
@@ -63,18 +61,14 @@ func (svc *SuggestionSrv) BooksSuggestions(items *pb.ItemsBought) *pb.BookSugges
 				Books: make([]*pb.BookSuggest_Book, len(booksToSuggest)),
 			}
 		)
-		log.Println(len(resp.Books))
-		log.Println("Holi 1")
 
 		for i, b := range booksToSuggest {
-			log.Println("Holi 2")
 			resp.Books[i] = &pb.BookSuggest_Book{
 				BookId: fmt.Sprintf("%d", i),
 				Title:  b.Title,
 				Author: b.Author,
 			}
 		}
-		log.Println("Holi 3")
 
 		return resp
 	}
