@@ -24,7 +24,7 @@ We use:
 - Run the services with docker-compose using make
 
 ```bash
- $ make run
+ make run
 ```
 
 ### Grade this work?
