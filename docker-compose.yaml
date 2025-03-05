@@ -25,19 +25,6 @@ services:
       transaction_verification_dns: "transaction_verification:50052"
       suggestions_dns: "suggestions_service:50053"
 
-#  orchestrator:
-#    build:
-#      context: ./
-#      dockerfile: ./orchestrator/Dockerfile
-#    ports:
-#      - 8081:5000
-#    environment:
-#      - PYTHONUNBUFFERED=TRUE
-#      - PYTHONFILE=/app/orchestrator/src/app.py
-#    volumes:
-#      - ./utils:/app/utils
-#      - ./orchestrator/src:/app/orchestrator/src
-
   suggestions_service:
     build:
       context: ./suggestions
@@ -56,7 +43,6 @@ services:
     ports:
       - 50051:50051
     environment:
-      # The PYTHONUNBUFFERED environment variable ensures that the output from the application is logged to the console
       - PYTHONUNBUFFERED=TRUE
       - PYTHONFILE=/app/fraud_detection/src/app.py
     volumes:
