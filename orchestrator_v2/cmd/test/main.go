@@ -15,6 +15,32 @@ const (
 )
 
 func main() {
+	mainV2()
+	conn, err := grpc.NewClient(target, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Panic("Error while creating conn: ", err.Error())
+	}
+
+	defer conn.Close()
+
+	c := pb.NewTransactionVerificationServiceClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), 4*time.Second)
+	defer cancel()
+
+	r, err := c.CheckOrder(ctx, &pb.TransactionVerificationRequestClock{
+		OrderId: "1",
+		Clock:   []int32{0, 0, 0},
+	})
+
+	if err != nil {
+		log.Panic("Error while calling: ", err.Error())
+	}
+	log.Println("2 Valid: ", r.Response.IsValid)
+	// log.Println("2 error message : ", r.Response.ErrMessage)
+	// log.Println("clock", r.Clock)
+}
+
+func mainV2() {
 	conn, err := grpc.NewClient(target, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	if err != nil {

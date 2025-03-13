@@ -54,19 +54,37 @@ class TransactionVerificationService(transaction_verification_grpc.TransactionVe
         local_vc[self.service_index] += 1
         self.vector_clock_access = True
 
+    def checkOrder(self, request, context):
+        order_id = request.orderId 
+        incoming_vc = request.clock
 
-    def check_order(self, order_id, incoming_vc):
+        # print(self.orders)
+
         entry = self.orders[order_id]
+        print(entry)
+
         self.merge_and_increment(entry["vc"], incoming_vc)
 
         print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order {order_id} check_order {entry['vc']}")
 
-        response = transaction_verification.TransactionVerificationResponseClock()
+        hola = transaction_verification.TransactionVerificationResponseClock()
         standard_response = transaction_verification.TransactionVerificationResponse()
-        if (not entry["user"] or not entry["creditCard"] or not entry["items"] or not entry["shippingMethod"] or
-                not entry["billingAddress"]):
+        
+        print("--------------------------------------")
+        print(type(entry["fields"]) )
+        print(entry.get("user"))
+
+        if (not entry["fields"].user or not entry["fields"].creditCard or not entry["fields"].items or not entry["fields"].shippingMethod or
+                not entry["fields"].billingAddress):
             standard_response.isValid = False
-            standard_response.message = "No data"
+            standard_response.errMessage = "No data"
+            # response.clock = entry["vc"]
+            # hola.response = standard_response
+            return transaction_verification.TransactionVerificationResponseClock(
+                response=standard_response,
+            )
+    
+
         print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order {order_id} check_order completed")
         standard_response.isValid = True
         response.clock = entry["vc"]
