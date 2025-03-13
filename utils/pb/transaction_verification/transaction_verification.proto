@@ -73,7 +73,7 @@ message TransactionVerificationRequestInit {
 
 message TransactionVerificationRequestClock {
     string orderId = 1;
-    repeat int clock = 2;
+    repeated int32 clock = 2;
 }
 
 message TransactionVerificationResponse {
@@ -83,5 +83,5 @@ message TransactionVerificationResponse {
 
 message TransactionVerificationResponseClock {
     TransactionVerificationResponse response = 1;
-    repeat int clock = 2;
+    repeated int32 clock = 2;
 }
