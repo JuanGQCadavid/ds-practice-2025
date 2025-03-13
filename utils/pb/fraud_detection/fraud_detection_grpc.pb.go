@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v5.29.3
-// source: utils/pb/fraud_detection/fraud_detection.proto
+// source: pb/fraud_detection/fraud_detection.proto
 
 package fraud_detection
 
@@ -117,5 +117,5 @@ var FraudDetectionService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "utils/pb/fraud_detection/fraud_detection.proto",
+	Metadata: "pb/fraud_detection/fraud_detection.proto",
 }

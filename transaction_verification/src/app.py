@@ -26,16 +26,23 @@ class TransactionVerificationService(transaction_verification_grpc.TransactionVe
         self.ai_model = genai.GenerativeModel("gemini-1.5-flash")
         self.vector_clock_access = True  # variable to check vc access on concurrent execution
 
-    def init_order(self, order_id, order_data):
+    def initOrder(self,request, context):
+        order_id = request.orderId
+        order_data = request.order
+
+        print(order_id)
+        print(order_data)
         response = transaction_verification.TransactionVerificationResponse()
+
         if order_id not in self.orders:
-            for field in order_data.fields:
-                self.orders[field] = order_data.fields[field]
-            self.orders[order_id]["vc"] = [0] * self.max_services
+            self.orders[order_id] = {
+                "fields": order_data,
+                "vc":  [0] * self.max_services
+            }
             response.isValid = True
         else:
             response.isValid = False
-            response.message = "OrderID already exists"
+            response.errMessage = "OrderID already exists"
         return response
 
     def merge_and_increment(self, local_vc, received_vc):
