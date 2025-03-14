@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x15\x66raud_detection.proto\x12\x05\x66raud\"A\n\nCreditCard\x12\x0e\n\x06number\x18\x01 \x01(\t\x12\x0b\n\x03\x63vv\x18\x02 \x01(\t\x12\x16\n\x0e\x65xpirationDate\x18\x03 \x01(\t\">\n\x15\x46raudDetectionRequest\x12%\n\ncreditCard\x18\x01 \x01(\x0b\x32\x11.fraud.CreditCard\"&\n\x16\x46raudDetectionResponse\x12\x0c\n\x04\x63ode\x18\x01 \x01(\t2b\n\x15\x46raudDetectionService\x12I\n\ncheckFraud\x12\x1c.fraud.FraudDetectionRequest\x1a\x1d.fraud.FraudDetectionResponseBDZBgithub.com/JuanGQCadavid/ds-practice-2025/utils/pb/fraud_detectionb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x15\x66raud_detection.proto\x12\x05\x66raud\"%\n\x04User\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07\x63ontact\x18\x02 \x01(\t\"A\n\nCreditCard\x12\x0e\n\x06number\x18\x01 \x01(\t\x12\x16\n\x0e\x65xpirationDate\x18\x02 \x01(\t\x12\x0b\n\x03\x63vv\x18\x03 \x01(\t\"&\n\x04Item\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08quantity\x18\x02 \x01(\x05\"T\n\x07\x41\x64\x64ress\x12\x0e\n\x06street\x18\x01 \x01(\t\x12\x0c\n\x04\x63ity\x18\x02 \x01(\t\x12\r\n\x05state\x18\x03 \x01(\t\x12\x0b\n\x03zip\x18\x04 \x01(\t\x12\x0f\n\x07\x63ountry\x18\x05 \x01(\t\"1\n\x06\x44\x65vice\x12\x0c\n\x04type\x18\x01 \x01(\t\x12\r\n\x05model\x18\x02 \x01(\t\x12\n\n\x02os\x18\x03 \x01(\t\"(\n\x07\x42rowser\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\"\xcb\x03\n\x05Order\x12\x19\n\x04user\x18\x01 \x01(\x0b\x32\x0b.fraud.User\x12%\n\ncreditCard\x18\x02 \x01(\x0b\x32\x11.fraud.CreditCard\x12\x13\n\x0buserComment\x18\x03 \x01(\t\x12\x1a\n\x05items\x18\x04 \x03(\x0b\x32\x0b.fraud.Item\x12\x14\n\x0c\x64iscountCode\x18\x05 \x01(\t\x12\x16\n\x0eshippingMethod\x18\x06 \x01(\t\x12\x13\n\x0bgiftMessage\x18\x07 \x01(\t\x12&\n\x0e\x62illingAddress\x18\x08 \x01(\x0b\x32\x0e.fraud.Address\x12\x14\n\x0cgiftWrapping\x18\t \x01(\x08\x12\x15\n\rtermsAccepted\x18\n \x01(\x08\x12\x1f\n\x17notificationPreferences\x18\x0b \x03(\t\x12\x1d\n\x06\x64\x65vice\x18\x0c \x01(\x0b\x32\r.fraud.Device\x12\x1f\n\x07\x62rowser\x18\r \x01(\x0b\x32\x0e.fraud.Browser\x12\x12\n\nappVersion\x18\x0e \x01(\t\x12\x18\n\x10screenResolution\x18\x0f \x01(\t\x12\x10\n\x08referrer\x18\x10 \x01(\t\x12\x16\n\x0e\x64\x65viceLanguage\x18\x11 \x01(\t\"I\n\x19\x46raudDetectionRequestInit\x12\x0f\n\x07orderId\x18\x01 \x01(\t\x12\x1b\n\x05order\x18\x02 \x01(\x0b\x32\x0c.fraud.Order\"<\n\x1a\x46raudDetectionRequestClock\x12\x0f\n\x07orderId\x18\x01 \x01(\t\x12\r\n\x05\x63lock\x18\x02 \x03(\x05\"&\n\x16\x46raudDetectionResponse\x12\x0c\n\x04\x63ode\x18\x01 \x01(\t\"]\n\x1b\x46raudDetectionResponseClock\x12/\n\x08response\x18\x01 \x01(\x0b\x32\x1d.fraud.FraudDetectionResponse\x12\r\n\x05\x63lock\x18\x02 \x03(\x05\x32\x93\x02\n\x15\x46raudDetectionService\x12L\n\tinitOrder\x12 .fraud.FraudDetectionRequestInit\x1a\x1d.fraud.FraudDetectionResponse\x12R\n\tcheckUser\x12!.fraud.FraudDetectionRequestClock\x1a\".fraud.FraudDetectionResponseClock\x12X\n\x0f\x63heckCreditCard\x12!.fraud.FraudDetectionRequestClock\x1a\".fraud.FraudDetectionResponseClockBDZBgithub.com/JuanGQCadavid/ds-practice-2025/utils/pb/fraud_detectionb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -22,12 +22,28 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fraud_detection_pb2', _glob
 if _descriptor._USE_C_DESCRIPTORS == False:
   _globals['DESCRIPTOR']._options = None
   _globals['DESCRIPTOR']._serialized_options = b'ZBgithub.com/JuanGQCadavid/ds-practice-2025/utils/pb/fraud_detection'
-  _globals['_CREDITCARD']._serialized_start=32
-  _globals['_CREDITCARD']._serialized_end=97
-  _globals['_FRAUDDETECTIONREQUEST']._serialized_start=99
-  _globals['_FRAUDDETECTIONREQUEST']._serialized_end=161
-  _globals['_FRAUDDETECTIONRESPONSE']._serialized_start=163
-  _globals['_FRAUDDETECTIONRESPONSE']._serialized_end=201
-  _globals['_FRAUDDETECTIONSERVICE']._serialized_start=203
-  _globals['_FRAUDDETECTIONSERVICE']._serialized_end=301
+  _globals['_USER']._serialized_start=32
+  _globals['_USER']._serialized_end=69
+  _globals['_CREDITCARD']._serialized_start=71
+  _globals['_CREDITCARD']._serialized_end=136
+  _globals['_ITEM']._serialized_start=138
+  _globals['_ITEM']._serialized_end=176
+  _globals['_ADDRESS']._serialized_start=178
+  _globals['_ADDRESS']._serialized_end=262
+  _globals['_DEVICE']._serialized_start=264
+  _globals['_DEVICE']._serialized_end=313
+  _globals['_BROWSER']._serialized_start=315
+  _globals['_BROWSER']._serialized_end=355
+  _globals['_ORDER']._serialized_start=358
+  _globals['_ORDER']._serialized_end=817
+  _globals['_FRAUDDETECTIONREQUESTINIT']._serialized_start=819
+  _globals['_FRAUDDETECTIONREQUESTINIT']._serialized_end=892
+  _globals['_FRAUDDETECTIONREQUESTCLOCK']._serialized_start=894
+  _globals['_FRAUDDETECTIONREQUESTCLOCK']._serialized_end=954
+  _globals['_FRAUDDETECTIONRESPONSE']._serialized_start=956
+  _globals['_FRAUDDETECTIONRESPONSE']._serialized_end=994
+  _globals['_FRAUDDETECTIONRESPONSECLOCK']._serialized_start=996
+  _globals['_FRAUDDETECTIONRESPONSECLOCK']._serialized_end=1089
+  _globals['_FRAUDDETECTIONSERVICE']._serialized_start=1092
+  _globals['_FRAUDDETECTIONSERVICE']._serialized_end=1367
 # @@protoc_insertion_point(module_scope)

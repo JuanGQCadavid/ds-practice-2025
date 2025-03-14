@@ -14,17 +14,39 @@ class FraudDetectionServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.checkFraud = channel.unary_unary(
-                '/fraud.FraudDetectionService/checkFraud',
-                request_serializer=fraud__detection__pb2.FraudDetectionRequest.SerializeToString,
+        self.initOrder = channel.unary_unary(
+                '/fraud.FraudDetectionService/initOrder',
+                request_serializer=fraud__detection__pb2.FraudDetectionRequestInit.SerializeToString,
                 response_deserializer=fraud__detection__pb2.FraudDetectionResponse.FromString,
+                )
+        self.checkUser = channel.unary_unary(
+                '/fraud.FraudDetectionService/checkUser',
+                request_serializer=fraud__detection__pb2.FraudDetectionRequestClock.SerializeToString,
+                response_deserializer=fraud__detection__pb2.FraudDetectionResponseClock.FromString,
+                )
+        self.checkCreditCard = channel.unary_unary(
+                '/fraud.FraudDetectionService/checkCreditCard',
+                request_serializer=fraud__detection__pb2.FraudDetectionRequestClock.SerializeToString,
+                response_deserializer=fraud__detection__pb2.FraudDetectionResponseClock.FromString,
                 )
 
 
 class FraudDetectionServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def checkFraud(self, request, context):
+    def initOrder(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def checkUser(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def checkCreditCard(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -33,10 +55,20 @@ class FraudDetectionServiceServicer(object):
 
 def add_FraudDetectionServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'checkFraud': grpc.unary_unary_rpc_method_handler(
-                    servicer.checkFraud,
-                    request_deserializer=fraud__detection__pb2.FraudDetectionRequest.FromString,
+            'initOrder': grpc.unary_unary_rpc_method_handler(
+                    servicer.initOrder,
+                    request_deserializer=fraud__detection__pb2.FraudDetectionRequestInit.FromString,
                     response_serializer=fraud__detection__pb2.FraudDetectionResponse.SerializeToString,
+            ),
+            'checkUser': grpc.unary_unary_rpc_method_handler(
+                    servicer.checkUser,
+                    request_deserializer=fraud__detection__pb2.FraudDetectionRequestClock.FromString,
+                    response_serializer=fraud__detection__pb2.FraudDetectionResponseClock.SerializeToString,
+            ),
+            'checkCreditCard': grpc.unary_unary_rpc_method_handler(
+                    servicer.checkCreditCard,
+                    request_deserializer=fraud__detection__pb2.FraudDetectionRequestClock.FromString,
+                    response_serializer=fraud__detection__pb2.FraudDetectionResponseClock.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -49,7 +81,7 @@ class FraudDetectionService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def checkFraud(request,
+    def initOrder(request,
             target,
             options=(),
             channel_credentials=None,
@@ -59,8 +91,42 @@ class FraudDetectionService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/fraud.FraudDetectionService/checkFraud',
-            fraud__detection__pb2.FraudDetectionRequest.SerializeToString,
+        return grpc.experimental.unary_unary(request, target, '/fraud.FraudDetectionService/initOrder',
+            fraud__detection__pb2.FraudDetectionRequestInit.SerializeToString,
             fraud__detection__pb2.FraudDetectionResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def checkUser(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/fraud.FraudDetectionService/checkUser',
+            fraud__detection__pb2.FraudDetectionRequestClock.SerializeToString,
+            fraud__detection__pb2.FraudDetectionResponseClock.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def checkCreditCard(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/fraud.FraudDetectionService/checkCreditCard',
+            fraud__detection__pb2.FraudDetectionRequestClock.SerializeToString,
+            fraud__detection__pb2.FraudDetectionResponseClock.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
