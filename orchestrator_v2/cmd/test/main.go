@@ -14,8 +14,8 @@ const (
 	target = "localhost:50052"
 )
 
-func main() {
-	mainV2()
+func mainV3() {
+	mainV2() // InitOrder
 	conn, err := grpc.NewClient(target, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Panic("Error while creating conn: ", err.Error())
@@ -35,11 +35,68 @@ func main() {
 	if err != nil {
 		log.Panic("Error while calling: ", err.Error())
 	}
-	log.Println("2 Valid: ", r.Response.IsValid)
-	// log.Println("2 error message : ", r.Response.ErrMessage)
-	// log.Println("clock", r.Clock)
+    log.Println("CheckOrder")
+	log.Println("isValid: ", r.Response.IsValid)
+	log.Println("Error message: ", r.Response.ErrMessage)
+	log.Println("clock: ", r.Clock)
+	log.Println("------------------")
 }
 
+func mainV4() {
+	mainV3() // InitOrder
+	conn, err := grpc.NewClient(target, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Panic("Error while creating conn: ", err.Error())
+	}
+
+	defer conn.Close()
+
+	c := pb.NewTransactionVerificationServiceClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), 4*time.Second)
+	defer cancel()
+
+	r, err := c.CheckUser(ctx, &pb.TransactionVerificationRequestClock{
+		OrderId: "1",
+		Clock:   []int32{0, 0, 0},
+	})
+
+	if err != nil {
+		log.Panic("Error while calling: ", err.Error())
+	}
+    log.Println("CheckUser")
+	log.Println("isValid: ", r.Response.IsValid)
+	log.Println("Error message: ", r.Response.ErrMessage)
+	log.Println("clock: ", r.Clock)
+	log.Println("------------------")
+}
+
+func main() {
+	mainV4() // InitOrder
+	conn, err := grpc.NewClient(target, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Panic("Error while creating conn: ", err.Error())
+	}
+
+	defer conn.Close()
+
+	c := pb.NewTransactionVerificationServiceClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), 4*time.Second)
+	defer cancel()
+
+	r, err := c.CheckFormatCreditCard(ctx, &pb.TransactionVerificationRequestClock{
+		OrderId: "1",
+		Clock:   []int32{0, 0, 0},
+	})
+
+	if err != nil {
+		log.Panic("Error while calling: ", err.Error())
+	}
+    log.Println("CheckFormatCreditCard")
+	log.Println("isValid: ", r.Response.IsValid)
+	log.Println("Error message: ", r.Response.ErrMessage)
+	log.Println("clock: ", r.Clock)
+	log.Println("------------------")
+}
 func mainV2() {
 	conn, err := grpc.NewClient(target, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
@@ -57,7 +114,12 @@ func mainV2() {
 	r, err := c.InitOrder(ctx, &pb.TransactionVerificationRequestInit{
 		OrderId: "1",
 		Order: &pb.Order{
-			Items:                   []*pb.Item{},
+			Items:  []*pb.Item{
+			    {
+			        Name: "Book A",
+			        Quantity: 1,
+			    },
+			},
 			DiscountCode:            "holi",
 			GiftMessage:             "Grr",
 			GiftWrapping:            true,
@@ -77,41 +139,32 @@ func mainV2() {
 			Referrer:         "",
 			DeviceLanguage:   "",
 			CreditCard: &pb.CreditCard{
-				Number:         "1111",
-				ExpirationDate: "1234",
-				Cvv:            "1234",
+				Number:         "1111111111111111",
+				ExpirationDate: "04/27",
+				Cvv:            "903",
 			},
-			ShippingMethod: "Por domicilio",
+			ShippingMethod: "Standard",
 			BillingAddress: &pb.Address{
 				Street:  "Tartu",
 				City:    "Tartu",
 				Country: "Estonia",
 				State:   "Tartu",
-				Zip:     "Holi",
+				Zip:     "35500",
 			},
 			UserComment: "Hi",
 			User: &pb.User{
 				Name: "Test",
+				Contact: "test@example.com",
 			},
 		},
 	})
 
-	// r, err := c.CheckFraud(ctx, &pb.FraudDetectionRequest{
-	// 	Json: `{
-	// 		"creditCard": {
-	// 			"number": "4111111111111111",
-	// 			"cvv": "123",
-	// 			"expirationDate": "12/26"
-	// 		}
-	// 	}`,
-	// })
-
 	if err != nil {
 		log.Panic("Error while calling: ", err.Error())
 	}
-	log.Println(r)
 
-	log.Println("Response: ", r.IsValid)
+    log.Println("InitOrder")
+	log.Println("isValid: ", r.IsValid) // if isValid is false, handle ID repetition
 	log.Println("Error message: ", r.ErrMessage)
-
+	log.Println("------------------")
 }
