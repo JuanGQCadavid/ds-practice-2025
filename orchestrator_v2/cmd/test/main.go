@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	pb "github.com/JuanGQCadavid/ds-practice-2025/utils/pb/transaction_verification"
+	pb "github.com/JuanGQCadavid/ds-practice-2025/utils/pb/fraud_detection"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -14,8 +14,7 @@ const (
 	target = "localhost:50052"
 )
 
-func mainV3() {
-	mainV2() // InitOrder
+func initOrder() {
 	conn, err := grpc.NewClient(target, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Panic("Error while creating conn: ", err.Error())
@@ -23,95 +22,12 @@ func mainV3() {
 
 	defer conn.Close()
 
-	c := pb.NewTransactionVerificationServiceClient(conn)
+	c := pb.NewFraudDetectionServiceClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), 4*time.Second)
 	defer cancel()
 
-	r, err := c.CheckOrder(ctx, &pb.TransactionVerificationRequestClock{
-		OrderId: "1",
-		Clock:   []int32{0, 0, 0},
-	})
 
-	if err != nil {
-		log.Panic("Error while calling: ", err.Error())
-	}
-    log.Println("CheckOrder")
-	log.Println("isValid: ", r.Response.IsValid)
-	log.Println("Error message: ", r.Response.ErrMessage)
-	log.Println("clock: ", r.Clock)
-	log.Println("------------------")
-}
-
-func mainV4() {
-	mainV3() // InitOrder
-	conn, err := grpc.NewClient(target, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		log.Panic("Error while creating conn: ", err.Error())
-	}
-
-	defer conn.Close()
-
-	c := pb.NewTransactionVerificationServiceClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), 4*time.Second)
-	defer cancel()
-
-	r, err := c.CheckUser(ctx, &pb.TransactionVerificationRequestClock{
-		OrderId: "1",
-		Clock:   []int32{0, 0, 0},
-	})
-
-	if err != nil {
-		log.Panic("Error while calling: ", err.Error())
-	}
-    log.Println("CheckUser")
-	log.Println("isValid: ", r.Response.IsValid)
-	log.Println("Error message: ", r.Response.ErrMessage)
-	log.Println("clock: ", r.Clock)
-	log.Println("------------------")
-}
-
-func main() {
-	mainV4() // InitOrder
-	conn, err := grpc.NewClient(target, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		log.Panic("Error while creating conn: ", err.Error())
-	}
-
-	defer conn.Close()
-
-	c := pb.NewTransactionVerificationServiceClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), 4*time.Second)
-	defer cancel()
-
-	r, err := c.CheckFormatCreditCard(ctx, &pb.TransactionVerificationRequestClock{
-		OrderId: "1",
-		Clock:   []int32{0, 0, 0},
-	})
-
-	if err != nil {
-		log.Panic("Error while calling: ", err.Error())
-	}
-    log.Println("CheckFormatCreditCard")
-	log.Println("isValid: ", r.Response.IsValid)
-	log.Println("Error message: ", r.Response.ErrMessage)
-	log.Println("clock: ", r.Clock)
-	log.Println("------------------")
-}
-func mainV2() {
-	conn, err := grpc.NewClient(target, grpc.WithTransportCredentials(insecure.NewCredentials()))
-
-	if err != nil {
-		log.Panic("Error while creating conn: ", err.Error())
-	}
-
-	defer conn.Close()
-
-	c := pb.NewTransactionVerificationServiceClient(conn)
-
-	ctx, cancel := context.WithTimeout(context.Background(), 4*time.Second)
-	defer cancel()
-
-	r, err := c.InitOrder(ctx, &pb.TransactionVerificationRequestInit{
+	r, err := c.InitOrder(ctx, &pb.FraudDetectionRequestInit{
 		OrderId: "1",
 		Order: &pb.Order{
 			Items:  []*pb.Item{
@@ -163,8 +79,11 @@ func mainV2() {
 		log.Panic("Error while calling: ", err.Error())
 	}
 
-    log.Println("InitOrder")
-	log.Println("isValid: ", r.IsValid) // if isValid is false, handle ID repetition
-	log.Println("Error message: ", r.ErrMessage)
+	log.Println("InitOrder")
+	log.Println("code: ", r.code) // if code is 400, handle error
 	log.Println("------------------")
+}
+
+func main() {
+	initOrder()
 }
