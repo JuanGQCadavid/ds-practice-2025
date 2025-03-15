@@ -1,6 +1,7 @@
 import sys
 import os
 from datetime import datetime
+from google.protobuf import json_format
 
 # This set of lines are needed to import the gRPC stubs.
 # The path of the stubs is relative to the current file, or absolute inside the container.
@@ -10,107 +11,151 @@ fraud_detection_grpc_path = os.path.abspath(os.path.join(FILE, '../../../utils/p
 sys.path.insert(0, fraud_detection_grpc_path)
 import fraud_detection_pb2 as fraud_detection
 import fraud_detection_pb2_grpc as fraud_detection_grpc
-
 import grpc
 from concurrent import futures
 
-# Create a class to define the server functions, derived from
-# fraud_detection_pb2_grpc.HelloServiceServicer
 class FraudDetectionService(fraud_detection_grpc.FraudDetectionServiceServicer):
-    def validate_card_details(self, card_number, cvv, expiration_date):
-        # Card Number Validation
-        def validate_card_number(card_number):
-            # Luhn Algorithm for card number validation
-            def luhn_checksum(card_num):
-                digits = [int(d) for d in str(card_num)]
-                checksum = 0
-                is_even = False
-                for digit in reversed(digits):
-                    if is_even:
-                        digit *= 2
-                        if digit > 9:
-                            digit -= 9
-                    checksum += digit
-                    is_even = not is_even
-                return checksum % 10 == 0
-            return (len(str(card_number)) in [13, 14, 15, 16]) and luhn_checksum(card_number)
-        # CVV Validation
-        def validate_cvv(cvv):
-            return len(str(cvv)) in [3, 4]
-        # Expiration Date Validation
-        def validate_expiration_date(exp_date):
-            import datetime
-            try:
-                # Assuming format is MM/YY
-                month, year = map(int, exp_date.split('/'))
-                current_date = datetime.datetime.now()
-                exp_date = datetime.datetime(2000 + year, month, 1)
-                return exp_date > current_date
-            except:
-                return False
-        # Combine validations
-        results = {
-            'card_number_valid': validate_card_number(card_number),
-            'cvv_valid': validate_cvv(cvv),
-            'expiration_valid': validate_expiration_date(expiration_date)
-        }
-        return results
+    def __init__(self, service_index=1, total_services=3):
+        self.service_index = service_index
+        self.max_services = total_services
+        self.orders = {}
+        self.vector_clock_access = True
 
-    def assess_fraud_risk(self, card_number, cvv, validation_results):
-        risk_factors = {
-            'high_risk_bins': ['4111', '5500', '3400'],  # Example BIN numbers
-            'suspicious_cvv_patterns': ['000', '111', '123']
-        }
-        risk_score = 0
+    def initOrder(self, request, context):
+        order_id = request.orderId
+        order = request.order
 
-        # Check BIN (first 4 digits)
-        if str(card_number)[:4] in risk_factors['high_risk_bins']:
-            risk_score += 30
+        order_json = json_format.MessageToDict(order)
+        print(f"Received order ID {order_id}")
+        print(f"{order_json}")
 
-        # Check CVV pattern
-        if str(cvv) in risk_factors['suspicious_cvv_patterns']:
-            risk_score += 20
-
-        # Validation check
-        if not all(validation_results.values()): # If any of the values is False
-            risk_score += 50
-        print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Risk Score:", risk_score)
-        # Categorize risk
-        if risk_score > 50:
-            return "High Risk"
-        elif risk_score > 20:
-            return "Medium Risk"
-        else:
-            return "Low Risk"
-
-    # Create an RPC function to say checkFraud
-    def checkFraud(self, request, context):
-        print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Checking fraud...")
-        # Access credit card fields directly from the request
-        credit_card = request.creditCard
-        validation_results = self.validate_card_details(
-            credit_card.number,
-            credit_card.cvv,
-            credit_card.expirationDate
-        )
-        risk_assessment = self.assess_fraud_risk(
-            credit_card.number,
-            credit_card.cvv,
-            validation_results
-        )
-        # Create and return response
         response = fraud_detection.FraudDetectionResponse()
-        if risk_assessment == "High Risk":
-            print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} High risk detected, fraud suspected, invalidating purchase")
-            response.code = "400"
+
+        if order_id not in self.orders:
+            self.orders[order_id] = {
+                "user": order.user,
+                "credit_card": order.creditCard,
+                "user_comment": order.userComment,
+                "items": order.items,
+                "discount_code": order.discountCode,
+                "shipping_method": order.shippingMethod,
+                "gift_message": order.giftMessage,
+                "billing_address": order.billingAddress,
+                "gift_wrapping": order.giftWrapping,
+                "terms_accepted": order.termsAccepted,
+                "notification_preferences": order.notificationPreferences,
+                "device": order.device,
+                "browser": order.browser,
+                "app_version": order.appVersion,
+                "screen_resolution": order.screenResolution,
+                "referrer": order.referrer,
+                "device_language": order.deviceLanguage,
+                "vc": [0] * self.max_services,
+            }
+            response.isValid = True
         else:
-            response.code = "200"
+            response.isValid = False
+            response.errMessage = "OrderID already exists"
         return response
+
+    def merge_and_increment(self, local_vc, received_vc):
+        while not self.vector_clock_access:
+            continue
+        self.vector_clock_access = False
+        for i in range(self.max_services):
+            local_vc[i] = max(local_vc[i], received_vc[i])
+        local_vc[self.service_index] += 1
+        self.vector_clock_access = True
+
+    def exists_order(self, order_id):
+        if order_id not in self.orders:
+            return False
+        return True
+
+    def error_response(self):
+        return fraud_detection.FraudDetectionResponseClock(
+            response = fraud_detection.FraudDetectionResponse(
+                code = "200",
+            )
+        )
+
+    def checkUser(self, request, context):
+        order_id = request.orderId
+
+        if not self.exists_order(order_id):
+            print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order ID {order_id} does not exist")
+            return self.error_response()
+
+        incoming_vc = request.clock
+        entry = self.orders[order_id]
+        self.merge_and_increment(entry["vc"], incoming_vc)
+
+        print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order ID {order_id} checkUser {entry['vc']}")
+
+        user_data = entry["user"]
+        name = entry["user"].name
+        contact = entry["user"].contact
+
+        suspicious_names = ["John Doe", "Jane Doe", "Test User"]
+        suspicious_contact = ["john.doe@example.com", "jane.doe@example.com", "test.user@example.com"]
+
+        if name in suspicious_names or contact in suspicious_contact:
+            print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order ID {order_id} checkUser: User is suspicious")
+            return fraud_detection.FraudDetectionResponseClock(
+                response = fraud_detection.FraudDetectionResponse(
+                    code = "400",
+                ),
+            )
+
+        print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order ID {order_id} checkUser completed")
+        return fraud_detection.FraudDetectionResponseClock(
+            response = fraud_detection.FraudDetectionResponse(
+                code = "200",
+            ),
+            clock = entry["vc"],
+        )
+
+    def checkCreditCard(self, request, context):
+        order_id = request.orderId
+
+        if not self.exists_order(order_id):
+            print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order ID {order_id} does not exist")
+            return self.error_response()
+
+        incoming_vc = request.clock
+        entry = self.orders[order_id]
+        self.merge_and_increment(entry["vc"], incoming_vc)
+
+        print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order {order_id} checkCreditCard {entry['vc']}")
+
+        card_number = entry["credit_card"].number
+        cvv = entry["credit_card"].cvv
+        expiration_date = entry["credit_card"].expirationDate
+
+        suspicious_card_numbers = ["4111111111111111", "5500000000000004", "340000000000009"]
+        suspicious_cvv = ["000", "111", "123"]
+
+        if card_number in suspicious_card_numbers or cvv in suspicious_cvv:
+            print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order {order_id} check_credit_card: Credit card is suspicious")
+            return self.error_response()
+
+        expiration_date = datetime.strptime(expiration_date, "%m/%y")
+        if expiration_date < datetime.now():
+            print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order {order_id} check_credit_card: Credit card is expired")
+            return self.error_response()
+
+        print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order {order_id} check_credit_card completed")
+        return fraud_detection.FraudDetectionResponseClock(
+            response = fraud_detection.FraudDetectionResponse(
+                code = "200",
+            ),
+            clock = entry["vc"],
+        )
 
 def serve():
     # Create a gRPC server
     server = grpc.server(futures.ThreadPoolExecutor())
-    # Add HelloService
+    # Add FraudDetectionService to the server
     fraud_detection_grpc.add_FraudDetectionServiceServicer_to_server(FraudDetectionService(), server)
     # Listen on port 50051
     port = "50051"
