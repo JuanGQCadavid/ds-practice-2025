@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	target = "localhost:50052"
+	target = "localhost:50051"
 )
 
 func initOrder() {
@@ -26,15 +26,14 @@ func initOrder() {
 	ctx, cancel := context.WithTimeout(context.Background(), 4*time.Second)
 	defer cancel()
 
-
 	r, err := c.InitOrder(ctx, &pb.FraudDetectionRequestInit{
 		OrderId: "1",
 		Order: &pb.Order{
-			Items:  []*pb.Item{
-			    {
-			        Name: "Book A",
-			        Quantity: 1,
-			    },
+			Items: []*pb.Item{
+				{
+					Name:     "Book A",
+					Quantity: 1,
+				},
 			},
 			DiscountCode:            "holi",
 			GiftMessage:             "Grr",
@@ -69,7 +68,7 @@ func initOrder() {
 			},
 			UserComment: "Hi",
 			User: &pb.User{
-				Name: "Test",
+				Name:    "Test",
 				Contact: "test@example.com",
 			},
 		},
@@ -80,7 +79,7 @@ func initOrder() {
 	}
 
 	log.Println("InitOrder")
-	log.Println("code: ", r.code) // if code is 400, handle error
+	log.Println("code: ", r.Code) // if code is 400, handle error
 	log.Println("------------------")
 }
 

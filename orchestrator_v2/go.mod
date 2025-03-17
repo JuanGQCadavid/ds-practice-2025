@@ -3,7 +3,7 @@ module github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2
 go 1.23.6
 
 require (
-	github.com/JuanGQCadavid/ds-practice-2025/utils v0.0.0-20250313124024-de82603675c6
+	github.com/JuanGQCadavid/ds-practice-2025/utils v0.0.0-20250315102114-38224bb07e7a
 	github.com/gin-gonic/gin v1.10.0
 	google.golang.org/grpc v1.70.0
 )
