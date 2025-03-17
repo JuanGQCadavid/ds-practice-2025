@@ -52,10 +52,9 @@ class FraudDetectionService(fraud_detection_grpc.FraudDetectionServiceServicer):
                 "device_language": order.deviceLanguage,
                 "vc": [0] * self.max_services,
             }
-            response.isValid = True
+            response.code = "200"
         else:
-            response.isValid = False
-            response.errMessage = "OrderID already exists"
+            response.code = "400"
         return response
 
     def merge_and_increment(self, local_vc, received_vc):
@@ -92,7 +91,6 @@ class FraudDetectionService(fraud_detection_grpc.FraudDetectionServiceServicer):
 
         print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order ID {order_id} checkUser {entry['vc']}")
 
-        user_data = entry["user"]
         name = entry["user"].name
         contact = entry["user"].contact
 
