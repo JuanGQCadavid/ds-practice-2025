@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package common;
+option go_package = "github.com/JuanGQCadavid/ds-practice-2025/utils/pb/common";
+
+message User {
+    string name = 1;
+    string contact = 2;
+}
+
+message CreditCard {
+    string number = 1;
+    string expirationDate = 2;
+    string cvv = 3;
+}
+
+message Item {
+    string name = 1;
+    int32 quantity = 2;
+}
+
+message Address {
+    string street = 1;
+    string city = 2;
+    string state = 3;
+    string zip = 4;
+    string country = 5;
+}
+
+message Device {
+    string type = 1;
+    string model = 2;
+    string os = 3;
+}
+
+message Browser {
+    string name = 1;
+    string version = 2;
+}
+
+message Order {
+    User user = 1;
+    CreditCard creditCard = 2;
+    string userComment = 3;
+    repeated Item items = 4;
+    string discountCode = 5;
+    string shippingMethod = 6;
+    string giftMessage = 7;
+    Address billingAddress = 8;
+    bool giftWrapping = 9;
+    bool termsAccepted = 10;
+    repeated string notificationPreferences = 11;
+    Device device = 12;
+    Browser browser = 13;
+    string appVersion = 14;
+    string screenResolution = 15;
+    string referrer = 16;
+    string deviceLanguage = 17;
+}
+
+message InitRequest {
+    string orderId = 1;
+    Order order = 2;
+}
+
+message InitResponse {
+    string orderId = 1;
+    Order order = 2;
+}
+
+message NextRequest {
+    string orderId = 1;
+    repeated int32 incommingVectorClock = 2;
+}
+
+message NextResponse {
+    string orderId = 1;
+    repeated int32 vectorClock = 2;
+    string errMessage = 3;
+    bool isOk = 4; 
+}
