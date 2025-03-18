@@ -1,7 +1,5 @@
-github.com/JuanGQCadavid/ds-practice-2025/utils v0.0.0-20250317082912-1d85ea7951ad h1:1bf3mSaOnpK2zoUkcpp8MKWTLUdzcfpvDzKCkBxt9d8=
-github.com/JuanGQCadavid/ds-practice-2025/utils v0.0.0-20250317082912-1d85ea7951ad/go.mod h1:7FCyfKwTeGqgy9Bn856gsP50IZFBFnXkdwlg36ReoXY=
-github.com/JuanGQCadavid/ds-practice-2025/utils v0.0.0-20250318102611-1e5856bfbec2 h1:6xtytxwFNYju/fn5ejxTPnPHyD70vnPy6lGYvJkIrxY=
-github.com/JuanGQCadavid/ds-practice-2025/utils v0.0.0-20250318102611-1e5856bfbec2/go.mod h1:7FCyfKwTeGqgy9Bn856gsP50IZFBFnXkdwlg36ReoXY=
+github.com/JuanGQCadavid/ds-practice-2025/utils v0.0.0-20250318110340-ebb03c07b12d h1:hhiGTmu2fsRQQAnONjsKlFlEj7w+AsplXCDYJRJOrq0=
+github.com/JuanGQCadavid/ds-practice-2025/utils v0.0.0-20250318110340-ebb03c07b12d/go.mod h1:7FCyfKwTeGqgy9Bn856gsP50IZFBFnXkdwlg36ReoXY=
 github.com/bytedance/sonic v1.12.6 h1:/isNmCUF2x3Sh8RAp/4mh4ZGkcFAX/hLrzrK3AvpRzk=
 github.com/bytedance/sonic v1.12.6/go.mod h1:B8Gt/XvtZ3Fqj+iSKMypzymZxw/FVwgIGKzMzT9r/rk=
 github.com/bytedance/sonic/loader v0.1.1/go.mod h1:ncP89zfokxS5LZrJxl5z0UJcsk4M4yY2JpfqGeCtNLU=
