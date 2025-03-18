@@ -1,7 +1,8 @@
 PROTOS = \
 	utils/pb/fraud_detection/fraud_detection.proto \
 	utils/pb/transaction_verification/transaction_verification.proto \
-	utils/pb/suggestions/suggestions.proto
+	utils/pb/suggestions/suggestions.proto \
+	utils/pb/common/common.proto \
 
 SPECIFIC = \
 	utils/pb/fraud_detection/fraud_detection.proto
@@ -12,10 +13,10 @@ run:
 # python3 -m grpc_tools.protoc -I. --python_out=. --pyi_out=. --grpc_python_out=. $$proto;
 
 gen_go:
-	@for proto in $(SPECIFIC); do \
+	@for proto in $(PROTOS); do \
 		echo $$proto; \
 		protoc --proto_path=utils/pb --go_out=utils/pb/ --go_opt=paths=source_relative \
-		--go-grpc_out=. --go-grpc_opt=paths=source_relative \
+		--go-grpc_out=utils/pb/ --go-grpc_opt=paths=source_relative \
 		$$proto; \
 	done
 

@@ -83,8 +83,6 @@ func initOrder() {
 	log.Println("------------------")
 }
 
-
-
 func checkUser() {
 	conn, err := grpc.NewClient(target, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
@@ -103,9 +101,9 @@ func checkUser() {
 	})
 
 	if err != nil {
-        log.Panic("Error while calling: ", err.Error())
+		log.Panic("Error while calling: ", err.Error())
 	}
-    log.Println("CheckUser")
+	log.Println("CheckUser")
 	log.Println("code: ", r.Response.Code) // if code is 400, handle error
 	log.Println("clock: ", r.Clock)
 	log.Println("------------------")
@@ -129,9 +127,9 @@ func checkCreditCard() {
 	})
 
 	if err != nil {
-        log.Panic("Error while calling: ", err.Error())
+		log.Panic("Error while calling: ", err.Error())
 	}
-    log.Println("CheckCreditCard")
+	log.Println("CheckCreditCard")
 	log.Println("code: ", r.Response.Code) // if code is 400, handle error
 	log.Println("clock: ", r.Clock)
 	log.Println("------------------")

@@ -2,12 +2,13 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v5.29.3
-// source: utils/pb/suggestions/suggestions.proto
+// source: suggestions/suggestions.proto
 
 package suggestions
 
 import (
 	context "context"
+	common "github.com/JuanGQCadavid/ds-practice-2025/utils/pb/common"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -19,6 +20,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	BookSuggestionsService_InitOrder_FullMethodName    = "/transaction.BookSuggestionsService/initOrder"
 	BookSuggestionsService_SuggestBooks_FullMethodName = "/transaction.BookSuggestionsService/suggestBooks"
 )
 
@@ -26,6 +28,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BookSuggestionsServiceClient interface {
+	InitOrder(ctx context.Context, in *common.InitRequest, opts ...grpc.CallOption) (*common.InitResponse, error)
 	SuggestBooks(ctx context.Context, in *ItemsBought, opts ...grpc.CallOption) (*BookSuggest, error)
 }
 
@@ -35,6 +38,16 @@ type bookSuggestionsServiceClient struct {
 
 func NewBookSuggestionsServiceClient(cc grpc.ClientConnInterface) BookSuggestionsServiceClient {
 	return &bookSuggestionsServiceClient{cc}
+}
+
+func (c *bookSuggestionsServiceClient) InitOrder(ctx context.Context, in *common.InitRequest, opts ...grpc.CallOption) (*common.InitResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(common.InitResponse)
+	err := c.cc.Invoke(ctx, BookSuggestionsService_InitOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *bookSuggestionsServiceClient) SuggestBooks(ctx context.Context, in *ItemsBought, opts ...grpc.CallOption) (*BookSuggest, error) {
@@ -51,6 +64,7 @@ func (c *bookSuggestionsServiceClient) SuggestBooks(ctx context.Context, in *Ite
 // All implementations must embed UnimplementedBookSuggestionsServiceServer
 // for forward compatibility.
 type BookSuggestionsServiceServer interface {
+	InitOrder(context.Context, *common.InitRequest) (*common.InitResponse, error)
 	SuggestBooks(context.Context, *ItemsBought) (*BookSuggest, error)
 	mustEmbedUnimplementedBookSuggestionsServiceServer()
 }
@@ -62,6 +76,9 @@ type BookSuggestionsServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedBookSuggestionsServiceServer struct{}
 
+func (UnimplementedBookSuggestionsServiceServer) InitOrder(context.Context, *common.InitRequest) (*common.InitResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method InitOrder not implemented")
+}
 func (UnimplementedBookSuggestionsServiceServer) SuggestBooks(context.Context, *ItemsBought) (*BookSuggest, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SuggestBooks not implemented")
 }
@@ -85,6 +102,24 @@ func RegisterBookSuggestionsServiceServer(s grpc.ServiceRegistrar, srv BookSugge
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&BookSuggestionsService_ServiceDesc, srv)
+}
+
+func _BookSuggestionsService_InitOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(common.InitRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BookSuggestionsServiceServer).InitOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BookSuggestionsService_InitOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BookSuggestionsServiceServer).InitOrder(ctx, req.(*common.InitRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _BookSuggestionsService_SuggestBooks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -113,10 +148,14 @@ var BookSuggestionsService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*BookSuggestionsServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "initOrder",
+			Handler:    _BookSuggestionsService_InitOrder_Handler,
+		},
+		{
 			MethodName: "suggestBooks",
 			Handler:    _BookSuggestionsService_SuggestBooks_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "utils/pb/suggestions/suggestions.proto",
+	Metadata: "suggestions/suggestions.proto",
 }
