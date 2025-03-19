@@ -10,6 +10,7 @@ import (
 
 	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/core/domain"
 	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/repositories/utils"
+	common "github.com/JuanGQCadavid/ds-practice-2025/utils/pb/common"
 	pb "github.com/JuanGQCadavid/ds-practice-2025/utils/pb/suggestions"
 )
 
@@ -35,19 +36,13 @@ func (srv *SuggestionService) Init(orderId string, data *domain.Checkout) error 
 	return utils.Init(orderId, srv.defaultTimeOut, data, srv.client.InitOrder)
 }
 
-func (srv *SuggestionService) SuggestBooks(data []domain.Item) ([]*domain.SuggestedBook, error) {
+func (srv *SuggestionService) SuggestBooks(orderId string, clock []int32) ([]*domain.SuggestedBook, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), srv.defaultTimeOut)
 	defer cancel()
 
-	request := &pb.ItemsBought{
-		Items: make([]*pb.ItemsBought_Item, len(data)),
-	}
-
-	for i, val := range data {
-		request.Items[i] = &pb.ItemsBought_Item{
-			Name:     val.Name,
-			Quantity: string(val.Quantity), // TODO Set as int in proto
-		}
+	request := &common.NextRequest{
+		OrderId:             orderId,
+		IncomingVectorClock: clock,
 	}
 
 	resp, err := srv.client.SuggestBooks(ctx, request)

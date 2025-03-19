@@ -5,5 +5,6 @@ import (
 )
 
 type ISuggestionsService interface {
-	SuggestBooks(data []domain.Item) ([]*domain.SuggestedBook, error)
+	SuggestBooks(orderId string, clock []int32) ([]*domain.SuggestedBook, error)
+	Init(orderId string, data *domain.Checkout) error
 }

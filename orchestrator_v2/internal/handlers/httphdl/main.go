@@ -38,7 +38,7 @@ func (hdl *HTTPHandler) CheckOut(context *gin.Context) {
 		return
 	}
 
-	response, genErr, detailErr := hdl.service.Checkout(checkoutRequest)
+	response, genErr := hdl.service.Checkout(checkoutRequest)
 
 	switch genErr {
 	case ports.ErrInternalError:
@@ -53,8 +53,7 @@ func (hdl *HTTPHandler) CheckOut(context *gin.Context) {
 	case ports.ErrTransIsNotValid:
 		context.AbortWithStatusJSON(http.StatusBadRequest, ErrorResponse{
 			ErrorType: ErrorType{
-				Code:    "Bad request, trans is not valid",
-				Message: detailErr.Error(),
+				Code: "Bad request, trans is not valid",
 			},
 		})
 		return
@@ -63,6 +62,16 @@ func (hdl *HTTPHandler) CheckOut(context *gin.Context) {
 			ErrorType: ErrorType{
 				Code:    genErr.Error(),
 				Message: "It seems someone is trying to commit a crime...",
+			},
+		})
+		return
+	}
+
+	if genErr != nil {
+		context.AbortWithStatusJSON(http.StatusBadRequest, ErrorResponse{
+			ErrorType: ErrorType{
+				Code:    genErr.Error(),
+				Message: genErr.Error(),
 			},
 		})
 		return

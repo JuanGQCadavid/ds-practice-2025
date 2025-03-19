@@ -76,7 +76,7 @@ func (srv *Service) checkState(clock, state []int32) bool {
 	return true
 }
 
-func (srv *Service) Checkout(checkout *domain.Checkout) (*domain.CheckoutResponse, error, error) {
+func (srv *Service) Checkout(checkout *domain.Checkout) (*domain.CheckoutResponse, error) {
 	var (
 		orderId string  = uuid.NewString()
 		clock   []int32 = []int32{
@@ -93,6 +93,7 @@ func (srv *Service) Checkout(checkout *domain.Checkout) (*domain.CheckoutRespons
 		orderId, checkout,
 		srv.fraudDetection.Init,
 		srv.transactionChecker.Init,
+		srv.suggestedBooks.Init,
 	)
 
 	wg.Add(1)
@@ -146,29 +147,29 @@ func (srv *Service) Checkout(checkout *domain.Checkout) (*domain.CheckoutRespons
 	wg.Wait()
 
 	if genErr != nil {
-		return nil, genErr, genErr
+		return nil, genErr
 	}
 
 	log.Println(clock)
 
 	if !srv.checkState(clock, eState) {
 		stateErr := fmt.Errorf("err Clock no on state, clock %v", clock)
-		return nil, stateErr, stateErr
+		return nil, stateErr
 	}
 
 	tack, err := srv.fraudDetection.CheckCreditCard(orderId, clock)
 
 	if err != nil {
-		return nil, err, err
+		return nil, err
 	}
 
 	clock = srv.updateClock(clock, tack)
 
-	suggestedBooks, _ := srv.suggestedBooks.SuggestBooks(checkout.Items)
+	suggestedBooks, _ := srv.suggestedBooks.SuggestBooks(orderId, clock)
 
 	return &domain.CheckoutResponse{
 		Status:         "Order Approved",
 		OrderId:        orderId,
 		SuggestedBooks: suggestedBooks,
-	}, nil, nil
+	}, nil
 }
