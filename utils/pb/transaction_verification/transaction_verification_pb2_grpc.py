@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-import transaction_verification_pb2 as transaction__verification__pb2
+from transaction_verification import transaction_verification_pb2 as transaction__verification_dot_transaction__verification__pb2
 
 GRPC_GENERATED_VERSION = '1.70.0'
 GRPC_VERSION = grpc.__version__
@@ -18,7 +18,7 @@ except ImportError:
 if _version_not_supported:
     raise RuntimeError(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + f' but the generated code in transaction_verification_pb2_grpc.py depends on'
+        + f' but the generated code in transaction_verification/transaction_verification_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
@@ -36,23 +36,23 @@ class TransactionVerificationServiceStub(object):
         """
         self.initOrder = channel.unary_unary(
                 '/transaction.TransactionVerificationService/initOrder',
-                request_serializer=transaction__verification__pb2.TransactionVerificationRequestInit.SerializeToString,
-                response_deserializer=transaction__verification__pb2.TransactionVerificationResponse.FromString,
+                request_serializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationRequestInit.SerializeToString,
+                response_deserializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationResponse.FromString,
                 _registered_method=True)
         self.checkOrder = channel.unary_unary(
                 '/transaction.TransactionVerificationService/checkOrder',
-                request_serializer=transaction__verification__pb2.TransactionVerificationRequestClock.SerializeToString,
-                response_deserializer=transaction__verification__pb2.TransactionVerificationResponseClock.FromString,
+                request_serializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationRequestClock.SerializeToString,
+                response_deserializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationResponseClock.FromString,
                 _registered_method=True)
         self.checkUser = channel.unary_unary(
                 '/transaction.TransactionVerificationService/checkUser',
-                request_serializer=transaction__verification__pb2.TransactionVerificationRequestClock.SerializeToString,
-                response_deserializer=transaction__verification__pb2.TransactionVerificationResponseClock.FromString,
+                request_serializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationRequestClock.SerializeToString,
+                response_deserializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationResponseClock.FromString,
                 _registered_method=True)
         self.checkFormatCreditCard = channel.unary_unary(
                 '/transaction.TransactionVerificationService/checkFormatCreditCard',
-                request_serializer=transaction__verification__pb2.TransactionVerificationRequestClock.SerializeToString,
-                response_deserializer=transaction__verification__pb2.TransactionVerificationResponseClock.FromString,
+                request_serializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationRequestClock.SerializeToString,
+                response_deserializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationResponseClock.FromString,
                 _registered_method=True)
 
 
@@ -88,23 +88,23 @@ def add_TransactionVerificationServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'initOrder': grpc.unary_unary_rpc_method_handler(
                     servicer.initOrder,
-                    request_deserializer=transaction__verification__pb2.TransactionVerificationRequestInit.FromString,
-                    response_serializer=transaction__verification__pb2.TransactionVerificationResponse.SerializeToString,
+                    request_deserializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationRequestInit.FromString,
+                    response_serializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationResponse.SerializeToString,
             ),
             'checkOrder': grpc.unary_unary_rpc_method_handler(
                     servicer.checkOrder,
-                    request_deserializer=transaction__verification__pb2.TransactionVerificationRequestClock.FromString,
-                    response_serializer=transaction__verification__pb2.TransactionVerificationResponseClock.SerializeToString,
+                    request_deserializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationRequestClock.FromString,
+                    response_serializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationResponseClock.SerializeToString,
             ),
             'checkUser': grpc.unary_unary_rpc_method_handler(
                     servicer.checkUser,
-                    request_deserializer=transaction__verification__pb2.TransactionVerificationRequestClock.FromString,
-                    response_serializer=transaction__verification__pb2.TransactionVerificationResponseClock.SerializeToString,
+                    request_deserializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationRequestClock.FromString,
+                    response_serializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationResponseClock.SerializeToString,
             ),
             'checkFormatCreditCard': grpc.unary_unary_rpc_method_handler(
                     servicer.checkFormatCreditCard,
-                    request_deserializer=transaction__verification__pb2.TransactionVerificationRequestClock.FromString,
-                    response_serializer=transaction__verification__pb2.TransactionVerificationResponseClock.SerializeToString,
+                    request_deserializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationRequestClock.FromString,
+                    response_serializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationResponseClock.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -132,8 +132,8 @@ class TransactionVerificationService(object):
             request,
             target,
             '/transaction.TransactionVerificationService/initOrder',
-            transaction__verification__pb2.TransactionVerificationRequestInit.SerializeToString,
-            transaction__verification__pb2.TransactionVerificationResponse.FromString,
+            transaction__verification_dot_transaction__verification__pb2.TransactionVerificationRequestInit.SerializeToString,
+            transaction__verification_dot_transaction__verification__pb2.TransactionVerificationResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -159,8 +159,8 @@ class TransactionVerificationService(object):
             request,
             target,
             '/transaction.TransactionVerificationService/checkOrder',
-            transaction__verification__pb2.TransactionVerificationRequestClock.SerializeToString,
-            transaction__verification__pb2.TransactionVerificationResponseClock.FromString,
+            transaction__verification_dot_transaction__verification__pb2.TransactionVerificationRequestClock.SerializeToString,
+            transaction__verification_dot_transaction__verification__pb2.TransactionVerificationResponseClock.FromString,
             options,
             channel_credentials,
             insecure,
@@ -186,8 +186,8 @@ class TransactionVerificationService(object):
             request,
             target,
             '/transaction.TransactionVerificationService/checkUser',
-            transaction__verification__pb2.TransactionVerificationRequestClock.SerializeToString,
-            transaction__verification__pb2.TransactionVerificationResponseClock.FromString,
+            transaction__verification_dot_transaction__verification__pb2.TransactionVerificationRequestClock.SerializeToString,
+            transaction__verification_dot_transaction__verification__pb2.TransactionVerificationResponseClock.FromString,
             options,
             channel_credentials,
             insecure,
@@ -213,8 +213,8 @@ class TransactionVerificationService(object):
             request,
             target,
             '/transaction.TransactionVerificationService/checkFormatCreditCard',
-            transaction__verification__pb2.TransactionVerificationRequestClock.SerializeToString,
-            transaction__verification__pb2.TransactionVerificationResponseClock.FromString,
+            transaction__verification_dot_transaction__verification__pb2.TransactionVerificationRequestClock.SerializeToString,
+            transaction__verification_dot_transaction__verification__pb2.TransactionVerificationResponseClock.FromString,
             options,
             channel_credentials,
             insecure,

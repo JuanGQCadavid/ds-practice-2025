@@ -64,8 +64,8 @@ message InitRequest {
 }
 
 message InitResponse {
-    string orderId = 1;
-    Order order = 2;
+    string errMessage = 1;
+    bool isValid = 2;
 }
 
 message NextRequest {

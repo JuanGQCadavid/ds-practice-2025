@@ -4,7 +4,7 @@ import grpc
 import warnings
 
 from common import common_pb2 as common_dot_common__pb2
-from fraud_detection import fraud_detection_pb2 as fraud__detection_dot_fraud__detection__pb2
+from suggestions import suggestions_pb2 as suggestions_dot_suggestions__pb2
 
 GRPC_GENERATED_VERSION = '1.70.0'
 GRPC_VERSION = grpc.__version__
@@ -19,14 +19,14 @@ except ImportError:
 if _version_not_supported:
     raise RuntimeError(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + f' but the generated code in fraud_detection/fraud_detection_pb2_grpc.py depends on'
+        + f' but the generated code in suggestions/suggestions_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
     )
 
 
-class FraudDetectionServiceStub(object):
+class BookSuggestionsServiceStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -36,23 +36,18 @@ class FraudDetectionServiceStub(object):
             channel: A grpc.Channel.
         """
         self.initOrder = channel.unary_unary(
-                '/fraud.FraudDetectionService/initOrder',
+                '/transaction.BookSuggestionsService/initOrder',
                 request_serializer=common_dot_common__pb2.InitRequest.SerializeToString,
                 response_deserializer=common_dot_common__pb2.InitResponse.FromString,
                 _registered_method=True)
-        self.checkUser = channel.unary_unary(
-                '/fraud.FraudDetectionService/checkUser',
-                request_serializer=fraud__detection_dot_fraud__detection__pb2.FraudDetectionRequestClock.SerializeToString,
-                response_deserializer=fraud__detection_dot_fraud__detection__pb2.FraudDetectionResponseClock.FromString,
-                _registered_method=True)
-        self.checkCreditCard = channel.unary_unary(
-                '/fraud.FraudDetectionService/checkCreditCard',
-                request_serializer=fraud__detection_dot_fraud__detection__pb2.FraudDetectionRequestClock.SerializeToString,
-                response_deserializer=fraud__detection_dot_fraud__detection__pb2.FraudDetectionResponseClock.FromString,
+        self.suggestBooks = channel.unary_unary(
+                '/transaction.BookSuggestionsService/suggestBooks',
+                request_serializer=suggestions_dot_suggestions__pb2.ItemsBought.SerializeToString,
+                response_deserializer=suggestions_dot_suggestions__pb2.BookSuggest.FromString,
                 _registered_method=True)
 
 
-class FraudDetectionServiceServicer(object):
+class BookSuggestionsServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def initOrder(self, request, context):
@@ -61,45 +56,34 @@ class FraudDetectionServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def checkUser(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def checkCreditCard(self, request, context):
+    def suggestBooks(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
 
-def add_FraudDetectionServiceServicer_to_server(servicer, server):
+def add_BookSuggestionsServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'initOrder': grpc.unary_unary_rpc_method_handler(
                     servicer.initOrder,
                     request_deserializer=common_dot_common__pb2.InitRequest.FromString,
                     response_serializer=common_dot_common__pb2.InitResponse.SerializeToString,
             ),
-            'checkUser': grpc.unary_unary_rpc_method_handler(
-                    servicer.checkUser,
-                    request_deserializer=fraud__detection_dot_fraud__detection__pb2.FraudDetectionRequestClock.FromString,
-                    response_serializer=fraud__detection_dot_fraud__detection__pb2.FraudDetectionResponseClock.SerializeToString,
-            ),
-            'checkCreditCard': grpc.unary_unary_rpc_method_handler(
-                    servicer.checkCreditCard,
-                    request_deserializer=fraud__detection_dot_fraud__detection__pb2.FraudDetectionRequestClock.FromString,
-                    response_serializer=fraud__detection_dot_fraud__detection__pb2.FraudDetectionResponseClock.SerializeToString,
+            'suggestBooks': grpc.unary_unary_rpc_method_handler(
+                    servicer.suggestBooks,
+                    request_deserializer=suggestions_dot_suggestions__pb2.ItemsBought.FromString,
+                    response_serializer=suggestions_dot_suggestions__pb2.BookSuggest.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'fraud.FraudDetectionService', rpc_method_handlers)
+            'transaction.BookSuggestionsService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('fraud.FraudDetectionService', rpc_method_handlers)
+    server.add_registered_method_handlers('transaction.BookSuggestionsService', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
-class FraudDetectionService(object):
+class BookSuggestionsService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
@@ -116,7 +100,7 @@ class FraudDetectionService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/fraud.FraudDetectionService/initOrder',
+            '/transaction.BookSuggestionsService/initOrder',
             common_dot_common__pb2.InitRequest.SerializeToString,
             common_dot_common__pb2.InitResponse.FromString,
             options,
@@ -130,7 +114,7 @@ class FraudDetectionService(object):
             _registered_method=True)
 
     @staticmethod
-    def checkUser(request,
+    def suggestBooks(request,
             target,
             options=(),
             channel_credentials=None,
@@ -143,36 +127,9 @@ class FraudDetectionService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/fraud.FraudDetectionService/checkUser',
-            fraud__detection_dot_fraud__detection__pb2.FraudDetectionRequestClock.SerializeToString,
-            fraud__detection_dot_fraud__detection__pb2.FraudDetectionResponseClock.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def checkCreditCard(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/fraud.FraudDetectionService/checkCreditCard',
-            fraud__detection_dot_fraud__detection__pb2.FraudDetectionRequestClock.SerializeToString,
-            fraud__detection_dot_fraud__detection__pb2.FraudDetectionResponseClock.FromString,
+            '/transaction.BookSuggestionsService/suggestBooks',
+            suggestions_dot_suggestions__pb2.ItemsBought.SerializeToString,
+            suggestions_dot_suggestions__pb2.BookSuggest.FromString,
             options,
             channel_credentials,
             insecure,
