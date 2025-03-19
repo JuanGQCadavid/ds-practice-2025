@@ -3,16 +3,25 @@ from concurrent import futures
 from dotenv import load_dotenv
 from google.protobuf import json_format
 import google.generativeai as genai
-import grpc
 import sys
 import os
 
 FILE = __file__ if '__file__' in globals() else os.getenv("PYTHONFILE", "")
+
+all_pb = os.path.abspath(os.path.join(FILE, '../../../utils/pb'))
+sys.path.insert(0, all_pb)
+
+common_grpc_path = os.path.abspath(os.path.join(FILE, '../../../utils/pb/common'))
+sys.path.insert(0, common_grpc_path)
+
 transaction_verification_grpc_path = os.path.abspath(os.path.join(FILE, '../../../utils/pb/transaction_verification'))
 sys.path.insert(0, transaction_verification_grpc_path)
 
 import transaction_verification_pb2_grpc as transaction_verification_grpc
 import transaction_verification_pb2 as transaction_verification
+import common_pb2 as common_pb
+import grpc
+from concurrent import futures
 
 # Load the environment variables
 load_dotenv()
@@ -34,33 +43,34 @@ class TransactionVerificationService(transaction_verification_grpc.TransactionVe
         print(f"Received order ID {order_id}")
         print(f"{order_json}")
 
-        response = transaction_verification.TransactionVerificationResponse()
-
-        if order_id not in self.orders:
-            self.orders[order_id] = {
-                "user": order.user,
-                "credit_card": order.creditCard,
-                "user_comment": order.userComment,
-                "items": order.items,
-                "discount_code": order.discountCode,
-                "shipping_method": order.shippingMethod,
-                "gift_message": order.giftMessage,
-                "billing_address": order.billingAddress,
-                "gift_wrapping": order.giftWrapping,
-                "terms_accepted": order.termsAccepted,
-                "notification_preferences": order.notificationPreferences,
-                "device": order.device,
-                "browser": order.browser,
-                "app_version": order.appVersion,
-                "screen_resolution": order.screenResolution,
-                "referrer": order.referrer,
-                "device_language": order.deviceLanguage,
-                "vc": [0] * self.max_services,
-            }
-            response.isValid = True
-        else:
+        response = common_pb.InitResponse()
+        
+        if order_id in self.orders:
             response.isValid = False
-            response.errMessage = "OrderID already exists"
+            response.errMessage = "Order ID already exists"
+            return response
+
+        self.orders[order_id] = {
+            "user": order.user,
+            "credit_card": order.creditCard,
+            "user_comment": order.userComment,
+            "items": order.items,
+            "discount_code": order.discountCode,
+            "shipping_method": order.shippingMethod,
+            "gift_message": order.giftMessage,
+            "billing_address": order.billingAddress,
+            "gift_wrapping": order.giftWrapping,
+            "terms_accepted": order.termsAccepted,
+            "notification_preferences": order.notificationPreferences,
+            "device": order.device,
+            "browser": order.browser,
+            "app_version": order.appVersion,
+            "screen_resolution": order.screenResolution,
+            "referrer": order.referrer,
+            "device_language": order.deviceLanguage,
+            "vc": [0] * self.max_services,
+        }
+        response.isValid = True
         return response
 
     def merge_and_increment(self, local_vc, received_vc):
@@ -78,23 +88,20 @@ class TransactionVerificationService(transaction_verification_grpc.TransactionVe
         return True
 
     def error_response(self, message):
-        return transaction_verification.TransactionVerificationResponseClock(
-            response = transaction_verification.TransactionVerificationResponse(
-                isValid = False,
-                errMessage = message,
-            )
+        return common_pb.NextResponse(
+            errMessage = message,
+            isValid = False,
         )
 
     def checkOrder(self, request, context):
         order_id = request.orderId 
-        incoming_vc = request.clock
 
         if not self.exist_order(order_id):
             print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order ID{order_id} does not exist")
             return self.error_response("Order does not exist")
 
         entry = self.orders[order_id]
-        self.merge_and_increment(entry["vc"], incoming_vc)
+        self.merge_and_increment(entry["vc"], request.incomingVectorClock)
 
         print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order ID {order_id} checkOrder {entry['vc']}")
 
@@ -104,23 +111,20 @@ class TransactionVerificationService(transaction_verification_grpc.TransactionVe
             return self.error_response("Invalid order: some fields are empty")
 
         print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order ID {order_id} checkOrder completed")
-        return transaction_verification.TransactionVerificationResponseClock(
-            response=transaction_verification.TransactionVerificationResponse(
-                isValid=True,
-            ),
-            clock=entry["vc"],
+        return common_pb.NextResponse(
+            vectorClock = entry["vc"],
+            isValid = True,
         )
 
     def checkUser(self, request, context):
         order_id = request.orderId
-        incoming_vc = request.clock
 
         if not self.exist_order(order_id):
             print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order ID {order_id} does not exist")
             return self.error_response("Order does not exist")
 
         entry = self.orders[order_id]
-        self.merge_and_increment(entry["vc"], incoming_vc)
+        self.merge_and_increment(entry["vc"], request.incomingVectorClock)
 
         print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order ID {order_id} checkUser {entry['vc']}")
 
@@ -140,23 +144,20 @@ class TransactionVerificationService(transaction_verification_grpc.TransactionVe
             return self.error_response("User data is untruthful")
         print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order ID {order_id} checkUser completed")
 
-        return transaction_verification.TransactionVerificationResponseClock(
-            response = transaction_verification.TransactionVerificationResponse(
-                isValid = True,
-            ),
-            clock = entry["vc"],
+        return common_pb.NextResponse(
+            vectorClock = entry["vc"],
+            isValid = True,
         )
 
     def checkFormatCreditCard(self, request, context):
         order_id = request.orderId
-        incoming_vc = request.clock
 
         if not self.exist_order(order_id):
             print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order ID {order_id} does not exist")
             return self.error_response("Order does not exist")
 
         entry = self.orders[order_id]
-        self.merge_and_increment(entry["vc"], incoming_vc)
+        self.merge_and_increment(entry["vc"], request.incomingVectorClock)
 
         print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order ID {order_id} checkFormatCreditCard {entry['vc']}")
 
@@ -175,13 +176,24 @@ class TransactionVerificationService(transaction_verification_grpc.TransactionVe
             return self.error_response("Expiration date format is not valid")
 
         print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order ID {order_id} checkFormatCreditCard completed")
-        return transaction_verification.TransactionVerificationResponseClock(
-            response = transaction_verification.TransactionVerificationResponse(
-                isValid = True,
-            ),
-            clock = entry["vc"],
+        return common_pb.NextResponse(
+            vectorClock = entry["vc"],
+            isValid = True,
         )
-
+        
+    def cleanOrder(self, request, context):
+        order_id = request.orderId
+        
+        if not self.exist_order(order_id):
+            print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order ID {order_id} does not exist")
+            return self.error_response("Order does not exist")
+        
+        self.orders.pop(order_id)
+        print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order ID {order_id} removed from pending")
+        return common_pb.NextResponse(
+            isValid = True,
+        )
+        
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor())
     transaction_verification_grpc.add_TransactionVerificationServiceServicer_to_server(TransactionVerificationService(), server)

@@ -41,10 +41,9 @@ class FraudDetectionService(fraud_detection_grpc.FraudDetectionServiceServicer):
         response = common_pb.InitResponse()
 
         if order_id in self.orders:
-            return common_pb.InitResponse(
-                errMessage = "Order ID already exists",
-                isValid = False
-            )
+            response.isValid = False
+            response.errMessage = "Order ID already exists"
+            return response
 
         self.orders[order_id] = {
             "user": order.user,
@@ -66,9 +65,8 @@ class FraudDetectionService(fraud_detection_grpc.FraudDetectionServiceServicer):
             "device_language": order.deviceLanguage,
             "vc": [0] * self.max_services,
         }
-        return common_pb.InitResponse(
-            isValid = True,
-        )
+        response.isValid = True
+        return response
 
     def merge_and_increment(self, local_vc, received_vc):
         while not self.vector_clock_access:
@@ -86,8 +84,8 @@ class FraudDetectionService(fraud_detection_grpc.FraudDetectionServiceServicer):
 
     def error_response(self, message):
         return common_pb.NextResponse(
-            errMessage=message,
-            isValid=False,
+            errMessage = message,
+            isValid = False,
         )
 
     def checkUser(self, request, context):
@@ -97,9 +95,8 @@ class FraudDetectionService(fraud_detection_grpc.FraudDetectionServiceServicer):
             print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order ID {order_id} does not exist")
             return self.error_response("Order does not exist")
 
-        incoming_vc = request.incomingVectorClock
         entry = self.orders[order_id]
-        self.merge_and_increment(entry["vc"], incoming_vc)
+        self.merge_and_increment(entry["vc"], request.incomingVectorClock)
 
         print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order ID {order_id} checkUser {entry['vc']}")
 
