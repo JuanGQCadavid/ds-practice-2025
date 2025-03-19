@@ -160,7 +160,11 @@ class TransactionVerificationService(transaction_verification_grpc.TransactionVe
         self.merge_and_increment(entry["vc"], request.incomingVectorClock)
 
         print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order ID {order_id} checkFormatCreditCard {entry['vc']}")
-
+        
+        print("================")
+        print(entry["credit_card"].number)
+        print("================")
+        
         if len(entry["credit_card"].number) != 16:
             print(entry["credit_card"].number)
             print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Credit card number format is not valid")
