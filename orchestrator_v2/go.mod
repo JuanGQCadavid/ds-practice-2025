@@ -3,13 +3,14 @@ module github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2
 go 1.23.6
 
 require (
-	// github.com/JuanGQCadavid/ds-practice-2025/utils v0.0.0-20250318123020-2b05da7e3c91
+	//github.com/JuanGQCadavid/ds-practice-2025/utils v0.0.0-20250319090955-44e9df4b1f65
 	github.com/gin-gonic/gin v1.10.0
 	google.golang.org/grpc v1.70.0
 )
 
+require github.com/JuanGQCadavid/ds-practice-2025/utils v0.0.0-20250319093114-eef3d6ea8a67
+
 require (
-	github.com/JuanGQCadavid/ds-practice-2025/utils v0.0.0-20250319084113-ebe069ee4181 // indirect
 	github.com/bytedance/sonic v1.12.6 // indirect
 	github.com/bytedance/sonic/loader v0.2.1 // indirect
 	github.com/cloudwego/base64x v0.1.4 // indirect
