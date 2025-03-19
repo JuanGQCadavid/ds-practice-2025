@@ -118,21 +118,19 @@ class InitResponse(_message.Message):
     def __init__(self, errMessage: _Optional[str] = ..., isValid: bool = ...) -> None: ...
 
 class NextRequest(_message.Message):
-    __slots__ = ("orderId", "incommingVectorClock")
+    __slots__ = ("orderId", "incomingVectorClock")
     ORDERID_FIELD_NUMBER: _ClassVar[int]
-    INCOMMINGVECTORCLOCK_FIELD_NUMBER: _ClassVar[int]
+    INCOMINGVECTORCLOCK_FIELD_NUMBER: _ClassVar[int]
     orderId: str
-    incommingVectorClock: _containers.RepeatedScalarFieldContainer[int]
-    def __init__(self, orderId: _Optional[str] = ..., incommingVectorClock: _Optional[_Iterable[int]] = ...) -> None: ...
+    incomingVectorClock: _containers.RepeatedScalarFieldContainer[int]
+    def __init__(self, orderId: _Optional[str] = ..., incomingVectorClock: _Optional[_Iterable[int]] = ...) -> None: ...
 
 class NextResponse(_message.Message):
-    __slots__ = ("orderId", "vectorClock", "errMessage", "isOk")
-    ORDERID_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("vectorClock", "errMessage", "isValid")
     VECTORCLOCK_FIELD_NUMBER: _ClassVar[int]
     ERRMESSAGE_FIELD_NUMBER: _ClassVar[int]
-    ISOK_FIELD_NUMBER: _ClassVar[int]
-    orderId: str
+    ISVALID_FIELD_NUMBER: _ClassVar[int]
     vectorClock: _containers.RepeatedScalarFieldContainer[int]
     errMessage: str
-    isOk: bool
-    def __init__(self, orderId: _Optional[str] = ..., vectorClock: _Optional[_Iterable[int]] = ..., errMessage: _Optional[str] = ..., isOk: bool = ...) -> None: ...
+    isValid: bool
+    def __init__(self, vectorClock: _Optional[_Iterable[int]] = ..., errMessage: _Optional[str] = ..., isValid: bool = ...) -> None: ...

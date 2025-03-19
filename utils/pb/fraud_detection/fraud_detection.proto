@@ -7,26 +7,7 @@ import "common/common.proto";
 
 service FraudDetectionService {
     rpc initOrder (common.InitRequest) returns (common.InitResponse);
-    rpc checkUser (FraudDetectionRequestClock) returns (FraudDetectionResponseClock);
-    rpc checkCreditCard (FraudDetectionRequestClock) returns (FraudDetectionResponseClock);
+    rpc checkUser (common.NextRequest) returns (common.NextResponse);
+    rpc checkCreditCard (common.NextRequest) returns (common.NextResponse);
 
-}
-
-message FraudDetectionRequestInit {
-    string orderId = 1;
-    common.Order order = 2; // FAIL
-}
-
-message FraudDetectionRequestClock {
-    string orderId = 1;
-    repeated int32 clock = 2;
-}
-
-message FraudDetectionResponse {
-    string code = 1;
-}
-
-message FraudDetectionResponseClock {
-    FraudDetectionResponse response = 1;
-    repeated int32 clock = 2;
 }

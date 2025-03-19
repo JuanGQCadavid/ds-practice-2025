@@ -70,12 +70,11 @@ message InitResponse {
 
 message NextRequest {
     string orderId = 1;
-    repeated int32 incommingVectorClock = 2;
+    repeated int32 incomingVectorClock = 2;
 }
 
 message NextResponse {
-    string orderId = 1;
-    repeated int32 vectorClock = 2;
-    string errMessage = 3;
-    bool isOk = 4; 
+    repeated int32 vectorClock = 1;
+    string errMessage = 2;
+    bool isValid = 3;
 }
