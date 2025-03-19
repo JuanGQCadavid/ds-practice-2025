@@ -13,5 +13,8 @@ var (
 )
 
 type IFraudDetection interface {
-	CheckFraud(*domain.Checkout) (string, error)
+	Init(orderId string, data *domain.Checkout) error
+	CheckUser(orderId string, clock []int32) ([]int32, error)
+	CheckCreditCard(orderId string, clock []int32) ([]int32, error)
+	CleanOrder(orderId string, clock []int32) ([]int32, error)
 }

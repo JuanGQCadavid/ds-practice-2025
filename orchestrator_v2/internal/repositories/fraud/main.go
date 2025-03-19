@@ -1,7 +1,6 @@
 package fraud
 
 import (
-	"context"
 	"log"
 	"time"
 
@@ -9,6 +8,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/core/domain"
+	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/repositories/utils"
 	pb "github.com/JuanGQCadavid/ds-practice-2025/utils/pb/fraud_detection"
 )
 
@@ -30,22 +30,17 @@ func NewFraudDetectionService(target string, defaultTimeOut time.Duration) *Frau
 	}
 }
 
-func (srv *FraudDetectionService) CheckFraud(data *domain.Checkout) (string, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), srv.defaultTimeOut)
-	defer cancel()
+func (srv *FraudDetectionService) CheckUser(orderId string, clock []int32) ([]int32, error) {
+	return utils.SimpleCall(orderId, clock, srv.defaultTimeOut, srv.client.CheckUser)
+}
 
-	resp, err := srv.client.CheckFraud(ctx, &pb.FraudDetectionRequest{
-		CreditCard: &pb.CreditCard{
-			Number:         data.CreditCard.Number,
-			Cvv:            data.CreditCard.Cvv,
-			ExpirationDate: data.CreditCard.ExpirationDate,
-		},
-	})
+func (srv *FraudDetectionService) CheckCreditCard(orderId string, clock []int32) ([]int32, error) {
+	return utils.SimpleCall(orderId, clock, srv.defaultTimeOut, srv.client.CheckCreditCard)
+}
+func (srv *FraudDetectionService) CleanOrder(orderId string, clock []int32) ([]int32, error) {
+	return utils.SimpleCall(orderId, clock, srv.defaultTimeOut, srv.client.CleanOrder)
+}
 
-	if err != nil {
-		log.Println("Ups! we got an error on fraud: ", err.Error())
-		return "", err
-	}
-
-	return resp.Code, nil
+func (srv *FraudDetectionService) Init(orderId string, data *domain.Checkout) error {
+	return utils.Init(orderId, srv.defaultTimeOut, data, srv.client.InitOrder)
 }

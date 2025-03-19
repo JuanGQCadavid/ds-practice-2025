@@ -1,5 +1,7 @@
 package domain
 
+import "github.com/JuanGQCadavid/ds-practice-2025/utils/pb/common"
+
 type User struct {
 	Name    string `json:"name"`
 	Contact string `json:"contact"`
@@ -64,4 +66,58 @@ type CheckoutResponse struct {
 	OrderId        string           `json:"orderId"`
 	Status         string           `json:"status"`
 	SuggestedBooks []*SuggestedBook `json:"suggestedBooks"`
+}
+
+func FromCheckoutToCommon(checkout *Checkout) *common.Order {
+
+	var (
+		items []*common.Item = make([]*common.Item, len(checkout.Items))
+	)
+
+	for i := range items {
+		items[i] = &common.Item{
+			Name:     checkout.Items[i].Name,
+			Quantity: int32(checkout.Items[i].Quantity),
+		}
+	}
+
+	return &common.Order{
+		User: &common.User{
+			Name:    checkout.User.Name,
+			Contact: checkout.User.Contact,
+		},
+		CreditCard: &common.CreditCard{
+			Number:         checkout.CreditCard.Number,
+			Cvv:            checkout.CreditCard.Cvv,
+			ExpirationDate: checkout.CreditCard.ExpirationDate,
+		},
+		UserComment:    checkout.UserComment,
+		DiscountCode:   checkout.DiscountCode,
+		ShippingMethod: checkout.ShippingMethod,
+		GiftMessage:    checkout.GiftMessage,
+		BillingAddress: &common.Address{
+			Street:  checkout.BillingAddress.Street,
+			City:    checkout.BillingAddress.City,
+			State:   checkout.BillingAddress.State,
+			Zip:     checkout.BillingAddress.Zip,
+			Country: checkout.BillingAddress.Country,
+		},
+		GiftWrapping:  checkout.GiftWrapping,
+		TermsAccepted: checkout.TermsAndConditionsAccepted,
+		Device: &common.Device{
+			Model: checkout.Device.Model,
+			Os:    checkout.Device.Os,
+			Type:  checkout.Device.Type,
+		},
+		Browser: &common.Browser{
+			Name:    checkout.Browser.Name,
+			Version: checkout.Browser.Version,
+		},
+		Items:            items,
+		AppVersion:       checkout.AppVersion,
+		ScreenResolution: checkout.ScreenResolution,
+		Referrer:         checkout.Referrer,
+		DeviceLanguage:   checkout.DeviceLanguage,
+	}
+
 }
