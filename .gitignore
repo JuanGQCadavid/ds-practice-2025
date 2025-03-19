@@ -1,2 +1,4 @@
 __pycache__
 .env
+utils/go.sum
+orchestrator_v2/go.sum
