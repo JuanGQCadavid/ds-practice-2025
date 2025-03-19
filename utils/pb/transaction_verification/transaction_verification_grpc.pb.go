@@ -8,6 +8,7 @@ package transaction_verification
 
 import (
 	context "context"
+	common "github.com/JuanGQCadavid/ds-practice-2025/utils/pb/common"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -23,16 +24,18 @@ const (
 	TransactionVerificationService_CheckOrder_FullMethodName            = "/transaction.TransactionVerificationService/checkOrder"
 	TransactionVerificationService_CheckUser_FullMethodName             = "/transaction.TransactionVerificationService/checkUser"
 	TransactionVerificationService_CheckFormatCreditCard_FullMethodName = "/transaction.TransactionVerificationService/checkFormatCreditCard"
+	TransactionVerificationService_CleanOrder_FullMethodName            = "/transaction.TransactionVerificationService/cleanOrder"
 )
 
 // TransactionVerificationServiceClient is the client API for TransactionVerificationService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TransactionVerificationServiceClient interface {
-	InitOrder(ctx context.Context, in *TransactionVerificationRequestInit, opts ...grpc.CallOption) (*TransactionVerificationResponse, error)
-	CheckOrder(ctx context.Context, in *TransactionVerificationRequestClock, opts ...grpc.CallOption) (*TransactionVerificationResponseClock, error)
-	CheckUser(ctx context.Context, in *TransactionVerificationRequestClock, opts ...grpc.CallOption) (*TransactionVerificationResponseClock, error)
-	CheckFormatCreditCard(ctx context.Context, in *TransactionVerificationRequestClock, opts ...grpc.CallOption) (*TransactionVerificationResponseClock, error)
+	InitOrder(ctx context.Context, in *common.InitRequest, opts ...grpc.CallOption) (*common.InitResponse, error)
+	CheckOrder(ctx context.Context, in *common.NextRequest, opts ...grpc.CallOption) (*common.NextResponse, error)
+	CheckUser(ctx context.Context, in *common.NextRequest, opts ...grpc.CallOption) (*common.NextResponse, error)
+	CheckFormatCreditCard(ctx context.Context, in *common.NextRequest, opts ...grpc.CallOption) (*common.NextResponse, error)
+	CleanOrder(ctx context.Context, in *common.NextRequest, opts ...grpc.CallOption) (*common.NextResponse, error)
 }
 
 type transactionVerificationServiceClient struct {
@@ -43,9 +46,9 @@ func NewTransactionVerificationServiceClient(cc grpc.ClientConnInterface) Transa
 	return &transactionVerificationServiceClient{cc}
 }
 
-func (c *transactionVerificationServiceClient) InitOrder(ctx context.Context, in *TransactionVerificationRequestInit, opts ...grpc.CallOption) (*TransactionVerificationResponse, error) {
+func (c *transactionVerificationServiceClient) InitOrder(ctx context.Context, in *common.InitRequest, opts ...grpc.CallOption) (*common.InitResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(TransactionVerificationResponse)
+	out := new(common.InitResponse)
 	err := c.cc.Invoke(ctx, TransactionVerificationService_InitOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -53,9 +56,9 @@ func (c *transactionVerificationServiceClient) InitOrder(ctx context.Context, in
 	return out, nil
 }
 
-func (c *transactionVerificationServiceClient) CheckOrder(ctx context.Context, in *TransactionVerificationRequestClock, opts ...grpc.CallOption) (*TransactionVerificationResponseClock, error) {
+func (c *transactionVerificationServiceClient) CheckOrder(ctx context.Context, in *common.NextRequest, opts ...grpc.CallOption) (*common.NextResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(TransactionVerificationResponseClock)
+	out := new(common.NextResponse)
 	err := c.cc.Invoke(ctx, TransactionVerificationService_CheckOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -63,9 +66,9 @@ func (c *transactionVerificationServiceClient) CheckOrder(ctx context.Context, i
 	return out, nil
 }
 
-func (c *transactionVerificationServiceClient) CheckUser(ctx context.Context, in *TransactionVerificationRequestClock, opts ...grpc.CallOption) (*TransactionVerificationResponseClock, error) {
+func (c *transactionVerificationServiceClient) CheckUser(ctx context.Context, in *common.NextRequest, opts ...grpc.CallOption) (*common.NextResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(TransactionVerificationResponseClock)
+	out := new(common.NextResponse)
 	err := c.cc.Invoke(ctx, TransactionVerificationService_CheckUser_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -73,10 +76,20 @@ func (c *transactionVerificationServiceClient) CheckUser(ctx context.Context, in
 	return out, nil
 }
 
-func (c *transactionVerificationServiceClient) CheckFormatCreditCard(ctx context.Context, in *TransactionVerificationRequestClock, opts ...grpc.CallOption) (*TransactionVerificationResponseClock, error) {
+func (c *transactionVerificationServiceClient) CheckFormatCreditCard(ctx context.Context, in *common.NextRequest, opts ...grpc.CallOption) (*common.NextResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(TransactionVerificationResponseClock)
+	out := new(common.NextResponse)
 	err := c.cc.Invoke(ctx, TransactionVerificationService_CheckFormatCreditCard_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *transactionVerificationServiceClient) CleanOrder(ctx context.Context, in *common.NextRequest, opts ...grpc.CallOption) (*common.NextResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(common.NextResponse)
+	err := c.cc.Invoke(ctx, TransactionVerificationService_CleanOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -87,10 +100,11 @@ func (c *transactionVerificationServiceClient) CheckFormatCreditCard(ctx context
 // All implementations must embed UnimplementedTransactionVerificationServiceServer
 // for forward compatibility.
 type TransactionVerificationServiceServer interface {
-	InitOrder(context.Context, *TransactionVerificationRequestInit) (*TransactionVerificationResponse, error)
-	CheckOrder(context.Context, *TransactionVerificationRequestClock) (*TransactionVerificationResponseClock, error)
-	CheckUser(context.Context, *TransactionVerificationRequestClock) (*TransactionVerificationResponseClock, error)
-	CheckFormatCreditCard(context.Context, *TransactionVerificationRequestClock) (*TransactionVerificationResponseClock, error)
+	InitOrder(context.Context, *common.InitRequest) (*common.InitResponse, error)
+	CheckOrder(context.Context, *common.NextRequest) (*common.NextResponse, error)
+	CheckUser(context.Context, *common.NextRequest) (*common.NextResponse, error)
+	CheckFormatCreditCard(context.Context, *common.NextRequest) (*common.NextResponse, error)
+	CleanOrder(context.Context, *common.NextRequest) (*common.NextResponse, error)
 	mustEmbedUnimplementedTransactionVerificationServiceServer()
 }
 
@@ -101,17 +115,20 @@ type TransactionVerificationServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedTransactionVerificationServiceServer struct{}
 
-func (UnimplementedTransactionVerificationServiceServer) InitOrder(context.Context, *TransactionVerificationRequestInit) (*TransactionVerificationResponse, error) {
+func (UnimplementedTransactionVerificationServiceServer) InitOrder(context.Context, *common.InitRequest) (*common.InitResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InitOrder not implemented")
 }
-func (UnimplementedTransactionVerificationServiceServer) CheckOrder(context.Context, *TransactionVerificationRequestClock) (*TransactionVerificationResponseClock, error) {
+func (UnimplementedTransactionVerificationServiceServer) CheckOrder(context.Context, *common.NextRequest) (*common.NextResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckOrder not implemented")
 }
-func (UnimplementedTransactionVerificationServiceServer) CheckUser(context.Context, *TransactionVerificationRequestClock) (*TransactionVerificationResponseClock, error) {
+func (UnimplementedTransactionVerificationServiceServer) CheckUser(context.Context, *common.NextRequest) (*common.NextResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckUser not implemented")
 }
-func (UnimplementedTransactionVerificationServiceServer) CheckFormatCreditCard(context.Context, *TransactionVerificationRequestClock) (*TransactionVerificationResponseClock, error) {
+func (UnimplementedTransactionVerificationServiceServer) CheckFormatCreditCard(context.Context, *common.NextRequest) (*common.NextResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckFormatCreditCard not implemented")
+}
+func (UnimplementedTransactionVerificationServiceServer) CleanOrder(context.Context, *common.NextRequest) (*common.NextResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CleanOrder not implemented")
 }
 func (UnimplementedTransactionVerificationServiceServer) mustEmbedUnimplementedTransactionVerificationServiceServer() {
 }
@@ -136,7 +153,7 @@ func RegisterTransactionVerificationServiceServer(s grpc.ServiceRegistrar, srv T
 }
 
 func _TransactionVerificationService_InitOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TransactionVerificationRequestInit)
+	in := new(common.InitRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -148,13 +165,13 @@ func _TransactionVerificationService_InitOrder_Handler(srv interface{}, ctx cont
 		FullMethod: TransactionVerificationService_InitOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TransactionVerificationServiceServer).InitOrder(ctx, req.(*TransactionVerificationRequestInit))
+		return srv.(TransactionVerificationServiceServer).InitOrder(ctx, req.(*common.InitRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _TransactionVerificationService_CheckOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TransactionVerificationRequestClock)
+	in := new(common.NextRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -166,13 +183,13 @@ func _TransactionVerificationService_CheckOrder_Handler(srv interface{}, ctx con
 		FullMethod: TransactionVerificationService_CheckOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TransactionVerificationServiceServer).CheckOrder(ctx, req.(*TransactionVerificationRequestClock))
+		return srv.(TransactionVerificationServiceServer).CheckOrder(ctx, req.(*common.NextRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _TransactionVerificationService_CheckUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TransactionVerificationRequestClock)
+	in := new(common.NextRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -184,13 +201,13 @@ func _TransactionVerificationService_CheckUser_Handler(srv interface{}, ctx cont
 		FullMethod: TransactionVerificationService_CheckUser_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TransactionVerificationServiceServer).CheckUser(ctx, req.(*TransactionVerificationRequestClock))
+		return srv.(TransactionVerificationServiceServer).CheckUser(ctx, req.(*common.NextRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _TransactionVerificationService_CheckFormatCreditCard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TransactionVerificationRequestClock)
+	in := new(common.NextRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -202,7 +219,25 @@ func _TransactionVerificationService_CheckFormatCreditCard_Handler(srv interface
 		FullMethod: TransactionVerificationService_CheckFormatCreditCard_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TransactionVerificationServiceServer).CheckFormatCreditCard(ctx, req.(*TransactionVerificationRequestClock))
+		return srv.(TransactionVerificationServiceServer).CheckFormatCreditCard(ctx, req.(*common.NextRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TransactionVerificationService_CleanOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(common.NextRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TransactionVerificationServiceServer).CleanOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TransactionVerificationService_CleanOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TransactionVerificationServiceServer).CleanOrder(ctx, req.(*common.NextRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -229,6 +264,10 @@ var TransactionVerificationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "checkFormatCreditCard",
 			Handler:    _TransactionVerificationService_CheckFormatCreditCard_Handler,
+		},
+		{
+			MethodName: "cleanOrder",
+			Handler:    _TransactionVerificationService_CleanOrder_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

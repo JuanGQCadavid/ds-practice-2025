@@ -9,5 +9,5 @@ service FraudDetectionService {
     rpc initOrder (common.InitRequest) returns (common.InitResponse);
     rpc checkUser (common.NextRequest) returns (common.NextResponse);
     rpc checkCreditCard (common.NextRequest) returns (common.NextResponse);
-
+    rpc cleanOrder (common.NextRequest) returns (common.NextResponse);
 }

@@ -23,6 +23,7 @@ const (
 	FraudDetectionService_InitOrder_FullMethodName       = "/fraud.FraudDetectionService/initOrder"
 	FraudDetectionService_CheckUser_FullMethodName       = "/fraud.FraudDetectionService/checkUser"
 	FraudDetectionService_CheckCreditCard_FullMethodName = "/fraud.FraudDetectionService/checkCreditCard"
+	FraudDetectionService_CleanOrder_FullMethodName      = "/fraud.FraudDetectionService/cleanOrder"
 )
 
 // FraudDetectionServiceClient is the client API for FraudDetectionService service.
@@ -32,6 +33,7 @@ type FraudDetectionServiceClient interface {
 	InitOrder(ctx context.Context, in *common.InitRequest, opts ...grpc.CallOption) (*common.InitResponse, error)
 	CheckUser(ctx context.Context, in *common.NextRequest, opts ...grpc.CallOption) (*common.NextResponse, error)
 	CheckCreditCard(ctx context.Context, in *common.NextRequest, opts ...grpc.CallOption) (*common.NextResponse, error)
+	CleanOrder(ctx context.Context, in *common.NextRequest, opts ...grpc.CallOption) (*common.NextResponse, error)
 }
 
 type fraudDetectionServiceClient struct {
@@ -72,6 +74,16 @@ func (c *fraudDetectionServiceClient) CheckCreditCard(ctx context.Context, in *c
 	return out, nil
 }
 
+func (c *fraudDetectionServiceClient) CleanOrder(ctx context.Context, in *common.NextRequest, opts ...grpc.CallOption) (*common.NextResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(common.NextResponse)
+	err := c.cc.Invoke(ctx, FraudDetectionService_CleanOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FraudDetectionServiceServer is the server API for FraudDetectionService service.
 // All implementations must embed UnimplementedFraudDetectionServiceServer
 // for forward compatibility.
@@ -79,6 +91,7 @@ type FraudDetectionServiceServer interface {
 	InitOrder(context.Context, *common.InitRequest) (*common.InitResponse, error)
 	CheckUser(context.Context, *common.NextRequest) (*common.NextResponse, error)
 	CheckCreditCard(context.Context, *common.NextRequest) (*common.NextResponse, error)
+	CleanOrder(context.Context, *common.NextRequest) (*common.NextResponse, error)
 	mustEmbedUnimplementedFraudDetectionServiceServer()
 }
 
@@ -97,6 +110,9 @@ func (UnimplementedFraudDetectionServiceServer) CheckUser(context.Context, *comm
 }
 func (UnimplementedFraudDetectionServiceServer) CheckCreditCard(context.Context, *common.NextRequest) (*common.NextResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckCreditCard not implemented")
+}
+func (UnimplementedFraudDetectionServiceServer) CleanOrder(context.Context, *common.NextRequest) (*common.NextResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CleanOrder not implemented")
 }
 func (UnimplementedFraudDetectionServiceServer) mustEmbedUnimplementedFraudDetectionServiceServer() {}
 func (UnimplementedFraudDetectionServiceServer) testEmbeddedByValue()                               {}
@@ -173,6 +189,24 @@ func _FraudDetectionService_CheckCreditCard_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FraudDetectionService_CleanOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(common.NextRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FraudDetectionServiceServer).CleanOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FraudDetectionService_CleanOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FraudDetectionServiceServer).CleanOrder(ctx, req.(*common.NextRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FraudDetectionService_ServiceDesc is the grpc.ServiceDesc for FraudDetectionService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -191,6 +225,10 @@ var FraudDetectionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "checkCreditCard",
 			Handler:    _FraudDetectionService_CheckCreditCard_Handler,
+		},
+		{
+			MethodName: "cleanOrder",
+			Handler:    _FraudDetectionService_CleanOrder_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from transaction_verification import transaction_verification_pb2 as transaction__verification_dot_transaction__verification__pb2
+from common import common_pb2 as common_dot_common__pb2
 
 
 class TransactionVerificationServiceStub(object):
@@ -16,23 +16,28 @@ class TransactionVerificationServiceStub(object):
         """
         self.initOrder = channel.unary_unary(
                 '/transaction.TransactionVerificationService/initOrder',
-                request_serializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationRequestInit.SerializeToString,
-                response_deserializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationResponse.FromString,
+                request_serializer=common_dot_common__pb2.InitRequest.SerializeToString,
+                response_deserializer=common_dot_common__pb2.InitResponse.FromString,
                 )
         self.checkOrder = channel.unary_unary(
                 '/transaction.TransactionVerificationService/checkOrder',
-                request_serializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationRequestClock.SerializeToString,
-                response_deserializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationResponseClock.FromString,
+                request_serializer=common_dot_common__pb2.NextRequest.SerializeToString,
+                response_deserializer=common_dot_common__pb2.NextResponse.FromString,
                 )
         self.checkUser = channel.unary_unary(
                 '/transaction.TransactionVerificationService/checkUser',
-                request_serializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationRequestClock.SerializeToString,
-                response_deserializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationResponseClock.FromString,
+                request_serializer=common_dot_common__pb2.NextRequest.SerializeToString,
+                response_deserializer=common_dot_common__pb2.NextResponse.FromString,
                 )
         self.checkFormatCreditCard = channel.unary_unary(
                 '/transaction.TransactionVerificationService/checkFormatCreditCard',
-                request_serializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationRequestClock.SerializeToString,
-                response_deserializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationResponseClock.FromString,
+                request_serializer=common_dot_common__pb2.NextRequest.SerializeToString,
+                response_deserializer=common_dot_common__pb2.NextResponse.FromString,
+                )
+        self.cleanOrder = channel.unary_unary(
+                '/transaction.TransactionVerificationService/cleanOrder',
+                request_serializer=common_dot_common__pb2.NextRequest.SerializeToString,
+                response_deserializer=common_dot_common__pb2.NextResponse.FromString,
                 )
 
 
@@ -63,28 +68,39 @@ class TransactionVerificationServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def cleanOrder(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_TransactionVerificationServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'initOrder': grpc.unary_unary_rpc_method_handler(
                     servicer.initOrder,
-                    request_deserializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationRequestInit.FromString,
-                    response_serializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationResponse.SerializeToString,
+                    request_deserializer=common_dot_common__pb2.InitRequest.FromString,
+                    response_serializer=common_dot_common__pb2.InitResponse.SerializeToString,
             ),
             'checkOrder': grpc.unary_unary_rpc_method_handler(
                     servicer.checkOrder,
-                    request_deserializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationRequestClock.FromString,
-                    response_serializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationResponseClock.SerializeToString,
+                    request_deserializer=common_dot_common__pb2.NextRequest.FromString,
+                    response_serializer=common_dot_common__pb2.NextResponse.SerializeToString,
             ),
             'checkUser': grpc.unary_unary_rpc_method_handler(
                     servicer.checkUser,
-                    request_deserializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationRequestClock.FromString,
-                    response_serializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationResponseClock.SerializeToString,
+                    request_deserializer=common_dot_common__pb2.NextRequest.FromString,
+                    response_serializer=common_dot_common__pb2.NextResponse.SerializeToString,
             ),
             'checkFormatCreditCard': grpc.unary_unary_rpc_method_handler(
                     servicer.checkFormatCreditCard,
-                    request_deserializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationRequestClock.FromString,
-                    response_serializer=transaction__verification_dot_transaction__verification__pb2.TransactionVerificationResponseClock.SerializeToString,
+                    request_deserializer=common_dot_common__pb2.NextRequest.FromString,
+                    response_serializer=common_dot_common__pb2.NextResponse.SerializeToString,
+            ),
+            'cleanOrder': grpc.unary_unary_rpc_method_handler(
+                    servicer.cleanOrder,
+                    request_deserializer=common_dot_common__pb2.NextRequest.FromString,
+                    response_serializer=common_dot_common__pb2.NextResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -108,8 +124,8 @@ class TransactionVerificationService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/transaction.TransactionVerificationService/initOrder',
-            transaction__verification_dot_transaction__verification__pb2.TransactionVerificationRequestInit.SerializeToString,
-            transaction__verification_dot_transaction__verification__pb2.TransactionVerificationResponse.FromString,
+            common_dot_common__pb2.InitRequest.SerializeToString,
+            common_dot_common__pb2.InitResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -125,8 +141,8 @@ class TransactionVerificationService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/transaction.TransactionVerificationService/checkOrder',
-            transaction__verification_dot_transaction__verification__pb2.TransactionVerificationRequestClock.SerializeToString,
-            transaction__verification_dot_transaction__verification__pb2.TransactionVerificationResponseClock.FromString,
+            common_dot_common__pb2.NextRequest.SerializeToString,
+            common_dot_common__pb2.NextResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -142,8 +158,8 @@ class TransactionVerificationService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/transaction.TransactionVerificationService/checkUser',
-            transaction__verification_dot_transaction__verification__pb2.TransactionVerificationRequestClock.SerializeToString,
-            transaction__verification_dot_transaction__verification__pb2.TransactionVerificationResponseClock.FromString,
+            common_dot_common__pb2.NextRequest.SerializeToString,
+            common_dot_common__pb2.NextResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -159,7 +175,24 @@ class TransactionVerificationService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/transaction.TransactionVerificationService/checkFormatCreditCard',
-            transaction__verification_dot_transaction__verification__pb2.TransactionVerificationRequestClock.SerializeToString,
-            transaction__verification_dot_transaction__verification__pb2.TransactionVerificationResponseClock.FromString,
+            common_dot_common__pb2.NextRequest.SerializeToString,
+            common_dot_common__pb2.NextResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def cleanOrder(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/transaction.TransactionVerificationService/cleanOrder',
+            common_dot_common__pb2.NextRequest.SerializeToString,
+            common_dot_common__pb2.NextResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

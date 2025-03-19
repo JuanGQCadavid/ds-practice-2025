@@ -15,7 +15,7 @@ _sym_db = _symbol_database.Default()
 from common import common_pb2 as common_dot_common__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n%fraud_detection/fraud_detection.proto\x12\x05\x66raud\x1a\x13\x63ommon/common.proto2\xc5\x01\n\x15\x46raudDetectionService\x12\x36\n\tinitOrder\x12\x13.common.InitRequest\x1a\x14.common.InitResponse\x12\x36\n\tcheckUser\x12\x13.common.NextRequest\x1a\x14.common.NextResponse\x12<\n\x0f\x63heckCreditCard\x12\x13.common.NextRequest\x1a\x14.common.NextResponseBDZBgithub.com/JuanGQCadavid/ds-practice-2025/utils/pb/fraud_detectionb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n%fraud_detection/fraud_detection.proto\x12\x05\x66raud\x1a\x13\x63ommon/common.proto2\xfe\x01\n\x15\x46raudDetectionService\x12\x36\n\tinitOrder\x12\x13.common.InitRequest\x1a\x14.common.InitResponse\x12\x36\n\tcheckUser\x12\x13.common.NextRequest\x1a\x14.common.NextResponse\x12<\n\x0f\x63heckCreditCard\x12\x13.common.NextRequest\x1a\x14.common.NextResponse\x12\x37\n\ncleanOrder\x12\x13.common.NextRequest\x1a\x14.common.NextResponseBDZBgithub.com/JuanGQCadavid/ds-practice-2025/utils/pb/fraud_detectionb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -24,5 +24,5 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _globals['DESCRIPTOR']._options = None
   _globals['DESCRIPTOR']._serialized_options = b'ZBgithub.com/JuanGQCadavid/ds-practice-2025/utils/pb/fraud_detection'
   _globals['_FRAUDDETECTIONSERVICE']._serialized_start=70
-  _globals['_FRAUDDETECTIONSERVICE']._serialized_end=267
+  _globals['_FRAUDDETECTIONSERVICE']._serialized_end=324
 # @@protoc_insertion_point(module_scope)
