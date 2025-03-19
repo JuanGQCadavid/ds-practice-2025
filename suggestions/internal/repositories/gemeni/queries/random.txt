@@ -1,2 +1,2 @@
-Recommend other 5 random books, just return me always a raw on text not markdown JSON following the next schema
+A customer bought the next books titles %v, Recommend me %d similar books, if you dont know which one to recommend, then recomend %d random love books, just return me a raw JSON on text; not markdown, following the next schema
 [ {"title":"<Name of a book>", "author":"<Author of the book>" }]

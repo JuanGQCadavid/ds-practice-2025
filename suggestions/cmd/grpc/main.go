@@ -9,6 +9,7 @@ import (
 
 	"github.com/JuanGQCadavid/ds-practice-2025/suggestions/internal/core"
 	"github.com/JuanGQCadavid/ds-practice-2025/suggestions/internal/repositories/gemeni"
+	common "github.com/JuanGQCadavid/ds-practice-2025/utils/pb/common"
 	pb "github.com/JuanGQCadavid/ds-practice-2025/utils/pb/suggestions"
 	"google.golang.org/grpc"
 )
@@ -31,14 +32,14 @@ type Server struct {
 	coreService *core.SuggestionSrv
 }
 
-func (srv *Server) SuggestBooks(ctx context.Context, rq *pb.ItemsBought) (*pb.BookSuggest, error) {
-	log.Println("Request, len of items", len(rq.Items))
-
-	for i, item := range rq.Items {
-		log.Println(i, item.Name, item.Quantity)
-	}
-
+func (srv *Server) SuggestBooks(ctx context.Context, rq *common.NextRequest) (*pb.BookSuggest, error) {
+	log.Println("SUGGEST, Id", rq.OrderId)
 	return srv.coreService.BooksSuggestions(rq), nil
+}
+
+func (srv *Server) InitOrder(ctx context.Context, rq *common.InitRequest) (*common.InitResponse, error) {
+	log.Println("INIT, Id", rq.OrderId)
+	return srv.coreService.Init(rq), nil
 }
 
 func init() {

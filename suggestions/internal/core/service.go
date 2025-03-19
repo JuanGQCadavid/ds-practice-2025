@@ -2,19 +2,26 @@ package core
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/JuanGQCadavid/ds-practice-2025/suggestions/internal/core/ports"
+	common "github.com/JuanGQCadavid/ds-practice-2025/utils/pb/common"
 	pb "github.com/JuanGQCadavid/ds-practice-2025/utils/pb/suggestions"
 )
 
 type SuggestionSrv struct {
 	aiRepository    ports.ISuggestionsAI
 	suggestionsSize int
+	state           map[string]*common.Order
+	svcId           int
 }
 
 func NewSuggestionSrv(aiRepository ports.ISuggestionsAI, suggestionsSize int) *SuggestionSrv {
 	return &SuggestionSrv{
 		aiRepository:    aiRepository,
 		suggestionsSize: suggestionsSize,
+		svcId:           2,
+		state:           make(map[string]*common.Order),
 	}
 }
 
@@ -50,10 +57,20 @@ var (
 	}
 )
 
-func (svc *SuggestionSrv) BooksSuggestions(items *pb.ItemsBought) *pb.BookSuggest {
+func (svc *SuggestionSrv) BooksSuggestions(next *common.NextRequest) *pb.BookSuggest {
+	if svc.state[next.OrderId] == nil {
+		log.Println("Error, the order id ", next.OrderId, " is not on the state.")
+		return defaultResponse
+	}
+
 	var (
+		items = svc.state[next.OrderId]
 		books = make([]string, len(items.Items))
 	)
+
+	for i := range books {
+		books[i] = items.Items[i].Name
+	}
 
 	if booksToSuggest := svc.aiRepository.SuggestBooks(books, svc.suggestionsSize); booksToSuggest != nil {
 		var (
@@ -75,4 +92,11 @@ func (svc *SuggestionSrv) BooksSuggestions(items *pb.ItemsBought) *pb.BookSugges
 
 	return defaultResponse
 
+}
+
+func (svc *SuggestionSrv) Init(request *common.InitRequest) *common.InitResponse {
+	svc.state[request.OrderId] = request.Order
+	return &common.InitResponse{
+		IsValid: true,
+	}
 }
