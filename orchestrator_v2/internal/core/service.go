@@ -7,7 +7,6 @@ import (
 
 	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/core/domain"
 	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/core/ports"
-	"github.com/JuanGQCadavid/ds-practice-2025/utils/pb/common"
 	"github.com/google/uuid"
 )
 
@@ -30,8 +29,11 @@ func NewService(
 }
 
 func (srv *Service) Bradcast(
-	payload interface{},
-	functions ...func(interface{}) interface{},
+	orderId string,
+	data *domain.Checkout,
+	functions ...func(string, *domain.Checkout) error,
+	// payload interface{},
+	// functions ...func(interface{}) interface{},
 ) {
 	wg := sync.WaitGroup{}
 	for i, f := range functions {
@@ -39,7 +41,7 @@ func (srv *Service) Bradcast(
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			f(payload)
+			f(orderId, data)
 		}()
 	}
 
@@ -87,9 +89,11 @@ func (srv *Service) Checkout(checkout *domain.Checkout) (*domain.CheckoutRespons
 		wg         = sync.WaitGroup{}
 	)
 
-	srv.Bradcast(common.InitRequest{
-		OrderId: orderId,
-	})
+	srv.Bradcast(
+		orderId, checkout,
+		srv.fraudDetection.Init,
+		srv.transactionChecker.Init,
+	)
 
 	wg.Add(1)
 	// A - C
