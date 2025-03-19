@@ -9,21 +9,21 @@ services:
     volumes:
       - ./frontend/src:/usr/share/nginx/html
 
-  # orchestrator_v2:
-  #   depends_on:
-  #     - fraud_detection
-  #     - suggestions_service
-  #     - transaction_verification
-  #   build:
-  #     context: ./orchestrator_v2
-  #   ports:
-  #     - name: REST
-  #       target: 8081
-  #       published: 8081
-  #   environment:
-  #     fraud_dns: "fraud_detection:50051"
-  #     transaction_verification_dns: "transaction_verification:50052"
-  #     suggestions_dns: "suggestions_service:50053"
+  orchestrator_v2:
+    depends_on:
+      - fraud_detection
+      - suggestions_service
+      - transaction_verification
+    build:
+      context: ./orchestrator_v2
+    ports:
+      - name: REST
+        target: 8081
+        published: 8081
+    environment:
+      fraud_dns: "fraud_detection:50051"
+      transaction_verification_dns: "transaction_verification:50052"
+      suggestions_dns: "suggestions_service:50053"
 
   suggestions_service:
     build:
