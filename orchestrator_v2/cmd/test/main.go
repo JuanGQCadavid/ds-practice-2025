@@ -80,7 +80,7 @@ func initOrder() {
 	}
 
 	log.Println("InitOrder")
-	log.Println("code: ", r.OrderId)
+	log.Println("code: ", r.IsValid)
 	log.Println("------------------")
 }
 
