@@ -8,15 +8,22 @@ from google.protobuf import json_format
 # Change these lines only if strictly needed.
 FILE = __file__ if '__file__' in globals() else os.getenv("PYTHONFILE", "")
 
+all_pb = os.path.abspath(os.path.join(FILE, '../../../utils/pb'))
+sys.path.insert(0, all_pb)
+
+common_grpc_path = os.path.abspath(os.path.join(FILE, '../../../utils/pb/common'))
+sys.path.insert(0, common_grpc_path)
+
+
 fraud_detection_grpc_path = os.path.abspath(os.path.join(FILE, '../../../utils/pb/fraud_detection'))
 sys.path.insert(0, fraud_detection_grpc_path)
 import fraud_detection_pb2 as fraud_detection
 import fraud_detection_pb2_grpc as fraud_detection_grpc
 
-common_grpc_path = os.path.abspath(os.path.join(FILE, '../../../utils/pb/common'))
-sys.path.insert(0, common_grpc_path)
-import fraud_detection_pb2 as fraud_detection
-import fraud_detection_pb2_grpc as fraud_detection_grpc
+
+
+
+import common_pb2 as common_pb
 
 
 import grpc
@@ -37,7 +44,7 @@ class FraudDetectionService(fraud_detection_grpc.FraudDetectionServiceServicer):
         print(f"Received order ID {order_id}")
         print(f"{order_json}")
 
-        response = fraud_detection.FraudDetectionResponse()
+        response = common_pb.InitResponse()
 
         if order_id not in self.orders:
             self.orders[order_id] = {
@@ -60,9 +67,9 @@ class FraudDetectionService(fraud_detection_grpc.FraudDetectionServiceServicer):
                 "device_language": order.deviceLanguage,
                 "vc": [0] * self.max_services,
             }
-            response.code = "200"
+            response.isValid = True
         else:
-            response.code = "400"
+            response.isValid = False
         return response
 
     def merge_and_increment(self, local_vc, received_vc):

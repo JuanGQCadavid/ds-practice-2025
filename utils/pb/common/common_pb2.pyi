@@ -110,12 +110,12 @@ class InitRequest(_message.Message):
     def __init__(self, orderId: _Optional[str] = ..., order: _Optional[_Union[Order, _Mapping]] = ...) -> None: ...
 
 class InitResponse(_message.Message):
-    __slots__ = ("orderId", "order")
-    ORDERID_FIELD_NUMBER: _ClassVar[int]
-    ORDER_FIELD_NUMBER: _ClassVar[int]
-    orderId: str
-    order: Order
-    def __init__(self, orderId: _Optional[str] = ..., order: _Optional[_Union[Order, _Mapping]] = ...) -> None: ...
+    __slots__ = ("errMessage", "isValid")
+    ERRMESSAGE_FIELD_NUMBER: _ClassVar[int]
+    ISVALID_FIELD_NUMBER: _ClassVar[int]
+    errMessage: str
+    isValid: bool
+    def __init__(self, errMessage: _Optional[str] = ..., isValid: bool = ...) -> None: ...
 
 class NextRequest(_message.Message):
     __slots__ = ("orderId", "incommingVectorClock")
