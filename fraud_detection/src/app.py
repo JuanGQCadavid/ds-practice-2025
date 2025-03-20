@@ -35,8 +35,7 @@ class FraudDetectionService(fraud_detection_grpc.FraudDetectionServiceServicer):
         order = request.order
 
         order_json = json_format.MessageToDict(order)
-        print(f"Received order ID {order_id}")
-        print(f"{order_json}")
+        print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Received order ID {order_id}")
 
         response = common_pb.InitResponse()
 

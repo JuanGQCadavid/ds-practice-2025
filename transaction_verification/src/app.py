@@ -40,8 +40,7 @@ class TransactionVerificationService(transaction_verification_grpc.TransactionVe
         order = request.order
 
         order_json = json_format.MessageToDict(order)
-        print(f"Received order ID {order_id}")
-        print(f"{order_json}")
+        print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Received order ID {order_id}")
 
         response = common_pb.InitResponse()
         
@@ -137,11 +136,11 @@ class TransactionVerificationService(transaction_verification_grpc.TransactionVe
 
         response_ai_model = self.ai_model.generate_content(prompt)
         user_score = int(response_ai_model.text.strip())
-        print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} checkUser score {user_score}")
 
         if user_score > 80:
-            print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} User data is untruthful")
-            return self.error_response("User data is untruthful")
+            print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} User data is suspicious")
+            return self.error_response("User data is suspicious")
+        
         print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order ID {order_id} checkUser completed")
 
         return common_pb.NextResponse(
@@ -161,16 +160,12 @@ class TransactionVerificationService(transaction_verification_grpc.TransactionVe
 
         print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order ID {order_id} checkFormatCreditCard {entry['vc']}")
         
-        print("================")
-        print(entry["credit_card"].number)
-        print("================")
-        
-        if len(entry["credit_card"].number) != 16:
+        if len(entry["credit_card"].number) != 16:  # strict to VISA / MasterCard format
             print(entry["credit_card"].number)
             print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Credit card number format is not valid")
             return self.error_response("Credit card number format is not valid")
 
-        if len(entry["credit_card"].cvv) != 3:
+        if len(entry["credit_card"].cvv) != 3:  # strict to VISA / MasterCard format
             print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} CVV number format is not valid")
             return self.error_response("CVV number format is not valid")
 
