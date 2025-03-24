@@ -67,7 +67,7 @@ class FraudDetectionService(fraud_detection_grpc.FraudDetectionServiceServicer):
         response.isValid = True
         return response
 
-    def merge_and_increment(self, local_vc, received_vc):
+    def merge_and_increment (self, local_vc, received_vc):
         while not self.vector_clock_access:
             continue
         self.vector_clock_access = False

@@ -160,7 +160,7 @@ class TransactionVerificationService(transaction_verification_grpc.TransactionVe
 
         print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order ID {order_id} checkFormatCreditCard {entry['vc']}")
         
-        if len(entry["credit_card"].number) != 16:  # strict to VISA / MasterCard format
+        if len(entry["credit_card"].number) != 16 or len(entry["credit_card"].number) != 15:  # strict to VISA / MasterCard / AmericanExpress format
             print(entry["credit_card"].number)
             print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Credit card number format is not valid")
             return self.error_response("Credit card number format is not valid")
