@@ -45,17 +45,18 @@ message Order {
     repeated Item items = 4;
     string discountCode = 5;
     string shippingMethod = 6;
-    string giftMessage = 7;
-    Address billingAddress = 8;
-    bool giftWrapping = 9;
-    bool termsAccepted = 10;
-    repeated string notificationPreferences = 11;
-    Device device = 12;
-    Browser browser = 13;
-    string appVersion = 14;
-    string screenResolution = 15;
-    string referrer = 16;
-    string deviceLanguage = 17;
+    string clientCard = 7;
+    string giftMessage = 8;
+    Address billingAddress = 9;
+    bool giftWrapping = 10;
+    bool termsAccepted = 11;
+    repeated string notificationPreferences = 12;
+    Device device = 13;
+    Browser browser = 14;
+    string appVersion = 15;
+    string screenResolution = 16;
+    string referrer = 17;
+    string deviceLanguage = 18;
 }
 
 message InitRequest {
