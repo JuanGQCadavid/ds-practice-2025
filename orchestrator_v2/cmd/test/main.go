@@ -64,7 +64,7 @@ func enqueue() {
 				Cvv:            "903",
 			},
 			ShippingMethod: "Standard",
-			ClientCard: "Premium",
+			ClientCard: "None",
 			BillingAddress: &commonProtoBus.Address{
 				Street:  "Tartu",
 				City:    "Tartu",
@@ -127,7 +127,7 @@ func clean () {
 	ctx, cancel := context.WithTimeout(context.Background(), 4*time.Second)
 	defer cancel()
 
-	r, err := c.Dequeue(ctx, &queueProtoBus.EmptyRequest{})
+	r, err := c.Clean(ctx, &queueProtoBus.EmptyRequest{})
 
 	if err != nil {
 		log.Panic("Error while calling: ", err.Error())
@@ -143,5 +143,4 @@ func main() {
 	enqueue()
 	dequeue()
 	clean()
-
 }
