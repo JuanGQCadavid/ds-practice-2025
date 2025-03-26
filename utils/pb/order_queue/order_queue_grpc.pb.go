@@ -20,7 +20,6 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	OrderQueueService_Init_FullMethodName    = "/queue.OrderQueueService/init"
 	OrderQueueService_Enqueue_FullMethodName = "/queue.OrderQueueService/enqueue"
 	OrderQueueService_Dequeue_FullMethodName = "/queue.OrderQueueService/dequeue"
 	OrderQueueService_Clean_FullMethodName   = "/queue.OrderQueueService/clean"
@@ -30,10 +29,9 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OrderQueueServiceClient interface {
-	Init(ctx context.Context, in *common.InitRequest, opts ...grpc.CallOption) (*common.InitResponse, error)
-	Enqueue(ctx context.Context, in *common.NextRequest, opts ...grpc.CallOption) (*common.NextResponse, error)
-	Dequeue(ctx context.Context, in *common.NextRequest, opts ...grpc.CallOption) (*common.NextResponse, error)
-	Clean(ctx context.Context, in *common.NextRequest, opts ...grpc.CallOption) (*common.NextResponse, error)
+	Enqueue(ctx context.Context, in *EnqueueRequest, opts ...grpc.CallOption) (*common.NextResponse, error)
+	Dequeue(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*DequeueResponse, error)
+	Clean(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*common.NextResponse, error)
 }
 
 type orderQueueServiceClient struct {
@@ -44,17 +42,7 @@ func NewOrderQueueServiceClient(cc grpc.ClientConnInterface) OrderQueueServiceCl
 	return &orderQueueServiceClient{cc}
 }
 
-func (c *orderQueueServiceClient) Init(ctx context.Context, in *common.InitRequest, opts ...grpc.CallOption) (*common.InitResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(common.InitResponse)
-	err := c.cc.Invoke(ctx, OrderQueueService_Init_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *orderQueueServiceClient) Enqueue(ctx context.Context, in *common.NextRequest, opts ...grpc.CallOption) (*common.NextResponse, error) {
+func (c *orderQueueServiceClient) Enqueue(ctx context.Context, in *EnqueueRequest, opts ...grpc.CallOption) (*common.NextResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(common.NextResponse)
 	err := c.cc.Invoke(ctx, OrderQueueService_Enqueue_FullMethodName, in, out, cOpts...)
@@ -64,9 +52,9 @@ func (c *orderQueueServiceClient) Enqueue(ctx context.Context, in *common.NextRe
 	return out, nil
 }
 
-func (c *orderQueueServiceClient) Dequeue(ctx context.Context, in *common.NextRequest, opts ...grpc.CallOption) (*common.NextResponse, error) {
+func (c *orderQueueServiceClient) Dequeue(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*DequeueResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(common.NextResponse)
+	out := new(DequeueResponse)
 	err := c.cc.Invoke(ctx, OrderQueueService_Dequeue_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -74,7 +62,7 @@ func (c *orderQueueServiceClient) Dequeue(ctx context.Context, in *common.NextRe
 	return out, nil
 }
 
-func (c *orderQueueServiceClient) Clean(ctx context.Context, in *common.NextRequest, opts ...grpc.CallOption) (*common.NextResponse, error) {
+func (c *orderQueueServiceClient) Clean(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*common.NextResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(common.NextResponse)
 	err := c.cc.Invoke(ctx, OrderQueueService_Clean_FullMethodName, in, out, cOpts...)
@@ -88,10 +76,9 @@ func (c *orderQueueServiceClient) Clean(ctx context.Context, in *common.NextRequ
 // All implementations must embed UnimplementedOrderQueueServiceServer
 // for forward compatibility.
 type OrderQueueServiceServer interface {
-	Init(context.Context, *common.InitRequest) (*common.InitResponse, error)
-	Enqueue(context.Context, *common.NextRequest) (*common.NextResponse, error)
-	Dequeue(context.Context, *common.NextRequest) (*common.NextResponse, error)
-	Clean(context.Context, *common.NextRequest) (*common.NextResponse, error)
+	Enqueue(context.Context, *EnqueueRequest) (*common.NextResponse, error)
+	Dequeue(context.Context, *EmptyRequest) (*DequeueResponse, error)
+	Clean(context.Context, *EmptyRequest) (*common.NextResponse, error)
 	mustEmbedUnimplementedOrderQueueServiceServer()
 }
 
@@ -102,16 +89,13 @@ type OrderQueueServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedOrderQueueServiceServer struct{}
 
-func (UnimplementedOrderQueueServiceServer) Init(context.Context, *common.InitRequest) (*common.InitResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Init not implemented")
-}
-func (UnimplementedOrderQueueServiceServer) Enqueue(context.Context, *common.NextRequest) (*common.NextResponse, error) {
+func (UnimplementedOrderQueueServiceServer) Enqueue(context.Context, *EnqueueRequest) (*common.NextResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Enqueue not implemented")
 }
-func (UnimplementedOrderQueueServiceServer) Dequeue(context.Context, *common.NextRequest) (*common.NextResponse, error) {
+func (UnimplementedOrderQueueServiceServer) Dequeue(context.Context, *EmptyRequest) (*DequeueResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Dequeue not implemented")
 }
-func (UnimplementedOrderQueueServiceServer) Clean(context.Context, *common.NextRequest) (*common.NextResponse, error) {
+func (UnimplementedOrderQueueServiceServer) Clean(context.Context, *EmptyRequest) (*common.NextResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Clean not implemented")
 }
 func (UnimplementedOrderQueueServiceServer) mustEmbedUnimplementedOrderQueueServiceServer() {}
@@ -135,26 +119,8 @@ func RegisterOrderQueueServiceServer(s grpc.ServiceRegistrar, srv OrderQueueServ
 	s.RegisterService(&OrderQueueService_ServiceDesc, srv)
 }
 
-func _OrderQueueService_Init_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(common.InitRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OrderQueueServiceServer).Init(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: OrderQueueService_Init_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrderQueueServiceServer).Init(ctx, req.(*common.InitRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _OrderQueueService_Enqueue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(common.NextRequest)
+	in := new(EnqueueRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -166,13 +132,13 @@ func _OrderQueueService_Enqueue_Handler(srv interface{}, ctx context.Context, de
 		FullMethod: OrderQueueService_Enqueue_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrderQueueServiceServer).Enqueue(ctx, req.(*common.NextRequest))
+		return srv.(OrderQueueServiceServer).Enqueue(ctx, req.(*EnqueueRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _OrderQueueService_Dequeue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(common.NextRequest)
+	in := new(EmptyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -184,13 +150,13 @@ func _OrderQueueService_Dequeue_Handler(srv interface{}, ctx context.Context, de
 		FullMethod: OrderQueueService_Dequeue_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrderQueueServiceServer).Dequeue(ctx, req.(*common.NextRequest))
+		return srv.(OrderQueueServiceServer).Dequeue(ctx, req.(*EmptyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _OrderQueueService_Clean_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(common.NextRequest)
+	in := new(EmptyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -202,7 +168,7 @@ func _OrderQueueService_Clean_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: OrderQueueService_Clean_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrderQueueServiceServer).Clean(ctx, req.(*common.NextRequest))
+		return srv.(OrderQueueServiceServer).Clean(ctx, req.(*EmptyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -214,10 +180,6 @@ var OrderQueueService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "queue.OrderQueueService",
 	HandlerType: (*OrderQueueServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "init",
-			Handler:    _OrderQueueService_Init_Handler,
-		},
 		{
 			MethodName: "enqueue",
 			Handler:    _OrderQueueService_Enqueue_Handler,

@@ -6,8 +6,26 @@ option go_package = "github.com/JuanGQCadavid/ds-practice-2025/utils/pb/order_qu
 import "common/common.proto";
 
 service OrderQueueService {
-    rpc init (common.InitRequest) returns (common.InitResponse);
-    rpc enqueue (common.NextRequest) returns (common.NextResponse);
-    rpc dequeue (common.NextRequest) returns (common.NextResponse);
-    rpc clean (common.NextRequest) returns (common.NextResponse);
+    rpc enqueue (EnqueueRequest) returns (common.NextResponse);
+    rpc dequeue (EmptyRequest) returns (DequeueResponse);
+    rpc clean (EmptyRequest) returns (common.NextResponse);
+}
+
+message EmptyRequest {}
+
+message EnqueueRequest {
+    string orderID = 1;
+    common.Order order = 2;
+}
+
+message EnqueueResponse {
+    string errMessage = 1;
+    bool isValid = 2;
+}
+
+message DequeueResponse {
+    string orderID = 1;
+    common.Order order = 2;
+    string errMessage = 3;
+    bool isValid = 4;
 }

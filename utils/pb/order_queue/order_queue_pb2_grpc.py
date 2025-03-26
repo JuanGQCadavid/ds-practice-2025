@@ -3,6 +3,7 @@
 import grpc
 
 from common import common_pb2 as common_dot_common__pb2
+from order_queue import order_queue_pb2 as order__queue_dot_order__queue__pb2
 
 
 class OrderQueueServiceStub(object):
@@ -14,36 +15,25 @@ class OrderQueueServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.init = channel.unary_unary(
-                '/queue.OrderQueueService/init',
-                request_serializer=common_dot_common__pb2.InitRequest.SerializeToString,
-                response_deserializer=common_dot_common__pb2.InitResponse.FromString,
-                )
         self.enqueue = channel.unary_unary(
                 '/queue.OrderQueueService/enqueue',
-                request_serializer=common_dot_common__pb2.NextRequest.SerializeToString,
+                request_serializer=order__queue_dot_order__queue__pb2.EnqueueRequest.SerializeToString,
                 response_deserializer=common_dot_common__pb2.NextResponse.FromString,
                 )
         self.dequeue = channel.unary_unary(
                 '/queue.OrderQueueService/dequeue',
-                request_serializer=common_dot_common__pb2.NextRequest.SerializeToString,
-                response_deserializer=common_dot_common__pb2.NextResponse.FromString,
+                request_serializer=order__queue_dot_order__queue__pb2.EmptyRequest.SerializeToString,
+                response_deserializer=order__queue_dot_order__queue__pb2.DequeueResponse.FromString,
                 )
         self.clean = channel.unary_unary(
                 '/queue.OrderQueueService/clean',
-                request_serializer=common_dot_common__pb2.NextRequest.SerializeToString,
+                request_serializer=order__queue_dot_order__queue__pb2.EmptyRequest.SerializeToString,
                 response_deserializer=common_dot_common__pb2.NextResponse.FromString,
                 )
 
 
 class OrderQueueServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
-
-    def init(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
 
     def enqueue(self, request, context):
         """Missing associated documentation comment in .proto file."""
@@ -66,24 +56,19 @@ class OrderQueueServiceServicer(object):
 
 def add_OrderQueueServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'init': grpc.unary_unary_rpc_method_handler(
-                    servicer.init,
-                    request_deserializer=common_dot_common__pb2.InitRequest.FromString,
-                    response_serializer=common_dot_common__pb2.InitResponse.SerializeToString,
-            ),
             'enqueue': grpc.unary_unary_rpc_method_handler(
                     servicer.enqueue,
-                    request_deserializer=common_dot_common__pb2.NextRequest.FromString,
+                    request_deserializer=order__queue_dot_order__queue__pb2.EnqueueRequest.FromString,
                     response_serializer=common_dot_common__pb2.NextResponse.SerializeToString,
             ),
             'dequeue': grpc.unary_unary_rpc_method_handler(
                     servicer.dequeue,
-                    request_deserializer=common_dot_common__pb2.NextRequest.FromString,
-                    response_serializer=common_dot_common__pb2.NextResponse.SerializeToString,
+                    request_deserializer=order__queue_dot_order__queue__pb2.EmptyRequest.FromString,
+                    response_serializer=order__queue_dot_order__queue__pb2.DequeueResponse.SerializeToString,
             ),
             'clean': grpc.unary_unary_rpc_method_handler(
                     servicer.clean,
-                    request_deserializer=common_dot_common__pb2.NextRequest.FromString,
+                    request_deserializer=order__queue_dot_order__queue__pb2.EmptyRequest.FromString,
                     response_serializer=common_dot_common__pb2.NextResponse.SerializeToString,
             ),
     }
@@ -97,23 +82,6 @@ class OrderQueueService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def init(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/queue.OrderQueueService/init',
-            common_dot_common__pb2.InitRequest.SerializeToString,
-            common_dot_common__pb2.InitResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
     def enqueue(request,
             target,
             options=(),
@@ -125,7 +93,7 @@ class OrderQueueService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/queue.OrderQueueService/enqueue',
-            common_dot_common__pb2.NextRequest.SerializeToString,
+            order__queue_dot_order__queue__pb2.EnqueueRequest.SerializeToString,
             common_dot_common__pb2.NextResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -142,8 +110,8 @@ class OrderQueueService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/queue.OrderQueueService/dequeue',
-            common_dot_common__pb2.NextRequest.SerializeToString,
-            common_dot_common__pb2.NextResponse.FromString,
+            order__queue_dot_order__queue__pb2.EmptyRequest.SerializeToString,
+            order__queue_dot_order__queue__pb2.DequeueResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -159,7 +127,7 @@ class OrderQueueService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/queue.OrderQueueService/clean',
-            common_dot_common__pb2.NextRequest.SerializeToString,
+            order__queue_dot_order__queue__pb2.EmptyRequest.SerializeToString,
             common_dot_common__pb2.NextResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
