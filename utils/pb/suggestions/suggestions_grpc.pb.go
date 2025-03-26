@@ -22,6 +22,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	BookSuggestionsService_InitOrder_FullMethodName    = "/transaction.BookSuggestionsService/initOrder"
 	BookSuggestionsService_SuggestBooks_FullMethodName = "/transaction.BookSuggestionsService/suggestBooks"
+	BookSuggestionsService_CleanOrder_FullMethodName   = "/transaction.BookSuggestionsService/cleanOrder"
 )
 
 // BookSuggestionsServiceClient is the client API for BookSuggestionsService service.
@@ -30,6 +31,7 @@ const (
 type BookSuggestionsServiceClient interface {
 	InitOrder(ctx context.Context, in *common.InitRequest, opts ...grpc.CallOption) (*common.InitResponse, error)
 	SuggestBooks(ctx context.Context, in *common.NextRequest, opts ...grpc.CallOption) (*BookSuggest, error)
+	CleanOrder(ctx context.Context, in *common.NextRequest, opts ...grpc.CallOption) (*common.NextResponse, error)
 }
 
 type bookSuggestionsServiceClient struct {
@@ -60,12 +62,23 @@ func (c *bookSuggestionsServiceClient) SuggestBooks(ctx context.Context, in *com
 	return out, nil
 }
 
+func (c *bookSuggestionsServiceClient) CleanOrder(ctx context.Context, in *common.NextRequest, opts ...grpc.CallOption) (*common.NextResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(common.NextResponse)
+	err := c.cc.Invoke(ctx, BookSuggestionsService_CleanOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BookSuggestionsServiceServer is the server API for BookSuggestionsService service.
 // All implementations must embed UnimplementedBookSuggestionsServiceServer
 // for forward compatibility.
 type BookSuggestionsServiceServer interface {
 	InitOrder(context.Context, *common.InitRequest) (*common.InitResponse, error)
 	SuggestBooks(context.Context, *common.NextRequest) (*BookSuggest, error)
+	CleanOrder(context.Context, *common.NextRequest) (*common.NextResponse, error)
 	mustEmbedUnimplementedBookSuggestionsServiceServer()
 }
 
@@ -81,6 +94,9 @@ func (UnimplementedBookSuggestionsServiceServer) InitOrder(context.Context, *com
 }
 func (UnimplementedBookSuggestionsServiceServer) SuggestBooks(context.Context, *common.NextRequest) (*BookSuggest, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SuggestBooks not implemented")
+}
+func (UnimplementedBookSuggestionsServiceServer) CleanOrder(context.Context, *common.NextRequest) (*common.NextResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CleanOrder not implemented")
 }
 func (UnimplementedBookSuggestionsServiceServer) mustEmbedUnimplementedBookSuggestionsServiceServer() {
 }
@@ -140,6 +156,24 @@ func _BookSuggestionsService_SuggestBooks_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BookSuggestionsService_CleanOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(common.NextRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BookSuggestionsServiceServer).CleanOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BookSuggestionsService_CleanOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BookSuggestionsServiceServer).CleanOrder(ctx, req.(*common.NextRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BookSuggestionsService_ServiceDesc is the grpc.ServiceDesc for BookSuggestionsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -154,6 +188,10 @@ var BookSuggestionsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "suggestBooks",
 			Handler:    _BookSuggestionsService_SuggestBooks_Handler,
+		},
+		{
+			MethodName: "cleanOrder",
+			Handler:    _BookSuggestionsService_CleanOrder_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

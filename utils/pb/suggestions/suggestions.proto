@@ -7,15 +7,8 @@ import "common/common.proto";
 service BookSuggestionsService {
     rpc initOrder (common.InitRequest) returns (common.InitResponse);
     rpc suggestBooks (common.NextRequest) returns (BookSuggest);
+    rpc cleanOrder (common.NextRequest) returns (common.NextResponse);
 }
-
-// message ItemsBought {
-//     message Item {
-//         string name = 1;
-//         string quantity = 2;
-//     }
-//     repeated Item items = 1;
-// }
 
 message BookSuggest {
     message Book {
