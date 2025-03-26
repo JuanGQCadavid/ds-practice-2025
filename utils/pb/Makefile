@@ -4,6 +4,7 @@ PROTOS = \
 	fraud_detection/fraud_detection.proto \
 	transaction_verification/transaction_verification.proto \
 	suggestions/suggestions.proto \
+	order_queue/order_queue.proto \
 
 # gen:
 # 	@for proto in $(PROTOS); do \
