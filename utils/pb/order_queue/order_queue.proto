@@ -14,7 +14,7 @@ service OrderQueueService {
 message EmptyRequest {}
 
 message EnqueueRequest {
-    string orderID = 1;
+    string orderId = 1;
     common.Order order = 2;
 }
 
@@ -24,7 +24,7 @@ message EnqueueResponse {
 }
 
 message DequeueResponse {
-    string orderID = 1;
+    string orderId = 1;
     common.Order order = 2;
     string errMessage = 3;
     bool isValid = 4;

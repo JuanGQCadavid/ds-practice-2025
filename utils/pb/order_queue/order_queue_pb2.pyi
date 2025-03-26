@@ -10,12 +10,12 @@ class EmptyRequest(_message.Message):
     def __init__(self) -> None: ...
 
 class EnqueueRequest(_message.Message):
-    __slots__ = ("orderID", "order")
+    __slots__ = ("orderId", "order")
     ORDERID_FIELD_NUMBER: _ClassVar[int]
     ORDER_FIELD_NUMBER: _ClassVar[int]
-    orderID: str
+    orderId: str
     order: _common_pb2.Order
-    def __init__(self, orderID: _Optional[str] = ..., order: _Optional[_Union[_common_pb2.Order, _Mapping]] = ...) -> None: ...
+    def __init__(self, orderId: _Optional[str] = ..., order: _Optional[_Union[_common_pb2.Order, _Mapping]] = ...) -> None: ...
 
 class EnqueueResponse(_message.Message):
     __slots__ = ("errMessage", "isValid")
@@ -26,13 +26,13 @@ class EnqueueResponse(_message.Message):
     def __init__(self, errMessage: _Optional[str] = ..., isValid: bool = ...) -> None: ...
 
 class DequeueResponse(_message.Message):
-    __slots__ = ("orderID", "order", "errMessage", "isValid")
+    __slots__ = ("orderId", "order", "errMessage", "isValid")
     ORDERID_FIELD_NUMBER: _ClassVar[int]
     ORDER_FIELD_NUMBER: _ClassVar[int]
     ERRMESSAGE_FIELD_NUMBER: _ClassVar[int]
     ISVALID_FIELD_NUMBER: _ClassVar[int]
-    orderID: str
+    orderId: str
     order: _common_pb2.Order
     errMessage: str
     isValid: bool
-    def __init__(self, orderID: _Optional[str] = ..., order: _Optional[_Union[_common_pb2.Order, _Mapping]] = ..., errMessage: _Optional[str] = ..., isValid: bool = ...) -> None: ...
+    def __init__(self, orderId: _Optional[str] = ..., order: _Optional[_Union[_common_pb2.Order, _Mapping]] = ..., errMessage: _Optional[str] = ..., isValid: bool = ...) -> None: ...
