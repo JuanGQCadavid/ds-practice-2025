@@ -67,6 +67,8 @@ components:
           type: string
         shippingMethod:
           type: string
+        clientCard:
+          type: string
         giftMessage:
           type: string
         billingAddress:
