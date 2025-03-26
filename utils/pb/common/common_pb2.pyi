@@ -64,13 +64,14 @@ class Browser(_message.Message):
     def __init__(self, name: _Optional[str] = ..., version: _Optional[str] = ...) -> None: ...
 
 class Order(_message.Message):
-    __slots__ = ("user", "creditCard", "userComment", "items", "discountCode", "shippingMethod", "giftMessage", "billingAddress", "giftWrapping", "termsAccepted", "notificationPreferences", "device", "browser", "appVersion", "screenResolution", "referrer", "deviceLanguage")
+    __slots__ = ("user", "creditCard", "userComment", "items", "discountCode", "shippingMethod", "clientCard", "giftMessage", "billingAddress", "giftWrapping", "termsAccepted", "notificationPreferences", "device", "browser", "appVersion", "screenResolution", "referrer", "deviceLanguage")
     USER_FIELD_NUMBER: _ClassVar[int]
     CREDITCARD_FIELD_NUMBER: _ClassVar[int]
     USERCOMMENT_FIELD_NUMBER: _ClassVar[int]
     ITEMS_FIELD_NUMBER: _ClassVar[int]
     DISCOUNTCODE_FIELD_NUMBER: _ClassVar[int]
     SHIPPINGMETHOD_FIELD_NUMBER: _ClassVar[int]
+    CLIENTCARD_FIELD_NUMBER: _ClassVar[int]
     GIFTMESSAGE_FIELD_NUMBER: _ClassVar[int]
     BILLINGADDRESS_FIELD_NUMBER: _ClassVar[int]
     GIFTWRAPPING_FIELD_NUMBER: _ClassVar[int]
@@ -88,6 +89,7 @@ class Order(_message.Message):
     items: _containers.RepeatedCompositeFieldContainer[Item]
     discountCode: str
     shippingMethod: str
+    clientCard: str
     giftMessage: str
     billingAddress: Address
     giftWrapping: bool
@@ -99,7 +101,7 @@ class Order(_message.Message):
     screenResolution: str
     referrer: str
     deviceLanguage: str
-    def __init__(self, user: _Optional[_Union[User, _Mapping]] = ..., creditCard: _Optional[_Union[CreditCard, _Mapping]] = ..., userComment: _Optional[str] = ..., items: _Optional[_Iterable[_Union[Item, _Mapping]]] = ..., discountCode: _Optional[str] = ..., shippingMethod: _Optional[str] = ..., giftMessage: _Optional[str] = ..., billingAddress: _Optional[_Union[Address, _Mapping]] = ..., giftWrapping: bool = ..., termsAccepted: bool = ..., notificationPreferences: _Optional[_Iterable[str]] = ..., device: _Optional[_Union[Device, _Mapping]] = ..., browser: _Optional[_Union[Browser, _Mapping]] = ..., appVersion: _Optional[str] = ..., screenResolution: _Optional[str] = ..., referrer: _Optional[str] = ..., deviceLanguage: _Optional[str] = ...) -> None: ...
+    def __init__(self, user: _Optional[_Union[User, _Mapping]] = ..., creditCard: _Optional[_Union[CreditCard, _Mapping]] = ..., userComment: _Optional[str] = ..., items: _Optional[_Iterable[_Union[Item, _Mapping]]] = ..., discountCode: _Optional[str] = ..., shippingMethod: _Optional[str] = ..., clientCard: _Optional[str] = ..., giftMessage: _Optional[str] = ..., billingAddress: _Optional[_Union[Address, _Mapping]] = ..., giftWrapping: bool = ..., termsAccepted: bool = ..., notificationPreferences: _Optional[_Iterable[str]] = ..., device: _Optional[_Union[Device, _Mapping]] = ..., browser: _Optional[_Union[Browser, _Mapping]] = ..., appVersion: _Optional[str] = ..., screenResolution: _Optional[str] = ..., referrer: _Optional[str] = ..., deviceLanguage: _Optional[str] = ...) -> None: ...
 
 class InitRequest(_message.Message):
     __slots__ = ("orderId", "order")

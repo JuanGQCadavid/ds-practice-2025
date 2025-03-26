@@ -15,7 +15,7 @@ _sym_db = _symbol_database.Default()
 from common import common_pb2 as common_dot_common__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1dsuggestions/suggestions.proto\x12\x0btransaction\x1a\x13\x63ommon/common.proto\"c\n\x0bItemsBought\x12,\n\x05items\x18\x01 \x03(\x0b\x32\x1d.transaction.ItemsBought.Item\x1a&\n\x04Item\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08quantity\x18\x02 \x01(\t\"r\n\x0b\x42ookSuggest\x12,\n\x05\x62ooks\x18\x01 \x03(\x0b\x32\x1d.transaction.BookSuggest.Book\x1a\x35\n\x04\x42ook\x12\x0e\n\x06\x62ookId\x18\x01 \x01(\t\x12\r\n\x05title\x18\x02 \x01(\t\x12\x0e\n\x06\x61uthor\x18\x03 \x01(\t2\x94\x01\n\x16\x42ookSuggestionsService\x12\x36\n\tinitOrder\x12\x13.common.InitRequest\x1a\x14.common.InitResponse\x12\x42\n\x0csuggestBooks\x12\x18.transaction.ItemsBought\x1a\x18.transaction.BookSuggestB@Z>github.com/JuanGQCadavid/ds-practice-2025/utils/pb/suggestionsb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1dsuggestions/suggestions.proto\x12\x0btransaction\x1a\x13\x63ommon/common.proto\"r\n\x0b\x42ookSuggest\x12,\n\x05\x62ooks\x18\x01 \x03(\x0b\x32\x1d.transaction.BookSuggest.Book\x1a\x35\n\x04\x42ook\x12\x0e\n\x06\x62ookId\x18\x01 \x01(\t\x12\r\n\x05title\x18\x02 \x01(\t\x12\x0e\n\x06\x61uthor\x18\x03 \x01(\t2\xc8\x01\n\x16\x42ookSuggestionsService\x12\x36\n\tinitOrder\x12\x13.common.InitRequest\x1a\x14.common.InitResponse\x12=\n\x0csuggestBooks\x12\x13.common.NextRequest\x1a\x18.transaction.BookSuggest\x12\x37\n\ncleanOrder\x12\x13.common.NextRequest\x1a\x14.common.NextResponseB@Z>github.com/JuanGQCadavid/ds-practice-2025/utils/pb/suggestionsb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -23,14 +23,10 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'suggestions.suggestions_pb2
 if _descriptor._USE_C_DESCRIPTORS == False:
   _globals['DESCRIPTOR']._options = None
   _globals['DESCRIPTOR']._serialized_options = b'Z>github.com/JuanGQCadavid/ds-practice-2025/utils/pb/suggestions'
-  _globals['_ITEMSBOUGHT']._serialized_start=67
-  _globals['_ITEMSBOUGHT']._serialized_end=166
-  _globals['_ITEMSBOUGHT_ITEM']._serialized_start=128
-  _globals['_ITEMSBOUGHT_ITEM']._serialized_end=166
-  _globals['_BOOKSUGGEST']._serialized_start=168
-  _globals['_BOOKSUGGEST']._serialized_end=282
-  _globals['_BOOKSUGGEST_BOOK']._serialized_start=229
-  _globals['_BOOKSUGGEST_BOOK']._serialized_end=282
-  _globals['_BOOKSUGGESTIONSSERVICE']._serialized_start=285
-  _globals['_BOOKSUGGESTIONSSERVICE']._serialized_end=433
+  _globals['_BOOKSUGGEST']._serialized_start=67
+  _globals['_BOOKSUGGEST']._serialized_end=181
+  _globals['_BOOKSUGGEST_BOOK']._serialized_start=128
+  _globals['_BOOKSUGGEST_BOOK']._serialized_end=181
+  _globals['_BOOKSUGGESTIONSSERVICE']._serialized_start=184
+  _globals['_BOOKSUGGESTIONSSERVICE']._serialized_end=384
 # @@protoc_insertion_point(module_scope)
