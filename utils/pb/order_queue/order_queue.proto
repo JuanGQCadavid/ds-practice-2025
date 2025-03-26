@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package queue;
+option go_package = "github.com/JuanGQCadavid/ds-practice-2025/utils/pb/order_queue";
+
+import "common/common.proto";
+
+service OrderQueueService {
+    rpc init (common.InitRequest) returns (common.InitResponse);
+    rpc enqueue (common.NextRequest) returns (common.NextResponse);
+    rpc dequeue (common.NextRequest) returns (common.NextResponse);
+    rpc clean (common.NextRequest) returns (common.NextResponse);
+}
