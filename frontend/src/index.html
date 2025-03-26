@@ -58,6 +58,14 @@
                     <option value="Next-Day">Next-Day</option>
                 </select>
             </div>
+            <div class="mb-4">
+                <label for="clientCard" class="block text-sm font-medium text-gray-700">Client card</label>
+                <select id="clientCard" name="clientCard" required class="w-full border border-gray-300 rounded-lg p-2 mt-1">
+                    <option value="None" selected>None</option>
+                    <option value="Basic">Basic</option>
+                    <option value="Premium">Premium</option>
+                </select>
+            </div>
             <div class="mb-4 flex items-center">
                 <input type="checkbox" id="giftWrapping" name="giftWrapping" checked class="mr-2 border border-gray-300 rounded">
                 <label for="giftWrapping" class="text-sm font-medium text-gray-700">Gift Wrapping</label>
@@ -110,6 +118,7 @@
                     country: formData.get('billingCountry'),
                 },
                 shippingMethod: formData.get('shippingMethod'),
+                clientCard: formData.get('clientCard'),
                 giftWrapping: formData.get('giftWrapping') === 'on',
                 termsAccepted: formData.get('terms') === 'on',
             };
