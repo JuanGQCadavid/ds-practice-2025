@@ -43,6 +43,7 @@ type Checkout struct {
 	Items                      []Item         `json:"items"`
 	DiscountCode               string         `json:"discountCode"`
 	ShippingMethod             string         `json:"shippingMethod"`
+	ClientCard                 string         `json:"clientCard"`
 	GiftMessage                string         `json:"giftMessage"`
 	BillingAddress             BillingAddress `json:"billingAddress"`
 	GiftWrapping               bool           `json:"giftWrapping"`
@@ -94,6 +95,7 @@ func FromCheckoutToCommon(checkout *Checkout) *common.Order {
 		UserComment:    checkout.UserComment,
 		DiscountCode:   checkout.DiscountCode,
 		ShippingMethod: checkout.ShippingMethod,
+		ClientCard:     checkout.ClientCard,
 		GiftMessage:    checkout.GiftMessage,
 		BillingAddress: &common.Address{
 			Street:  checkout.BillingAddress.Street,

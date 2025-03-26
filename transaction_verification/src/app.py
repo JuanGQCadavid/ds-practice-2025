@@ -56,6 +56,7 @@ class TransactionVerificationService(transaction_verification_grpc.TransactionVe
             "items": order.items,
             "discount_code": order.discountCode,
             "shipping_method": order.shippingMethod,
+            "clientCard": order.clientCard,
             "gift_message": order.giftMessage,
             "billing_address": order.billingAddress,
             "gift_wrapping": order.giftWrapping,
