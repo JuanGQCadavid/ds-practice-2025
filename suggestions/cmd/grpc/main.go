@@ -33,12 +33,12 @@ type Server struct {
 }
 
 func (srv *Server) SuggestBooks(ctx context.Context, rq *common.NextRequest) (*pb.BookSuggest, error) {
-	log.Println("SUGGEST, Id", rq.OrderId)
+	log.Println("SUGGEST, Id", rq.OrderId) // TODO: print order ID and vector clock
 	return srv.coreService.BooksSuggestions(rq), nil
 }
 
 func (srv *Server) InitOrder(ctx context.Context, rq *common.InitRequest) (*common.InitResponse, error) {
-	log.Println("INIT, Id", rq.OrderId)
+	log.Println("Received order ID", rq.OrderId)
 	return srv.coreService.Init(rq), nil
 }
 

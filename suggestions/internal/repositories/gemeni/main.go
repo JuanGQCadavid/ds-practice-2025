@@ -39,14 +39,12 @@ func (svc *GemeniAI) SuggestBooks(books []string, size int) []*domain.Book {
 	ctx := context.Background()
 
 	customQuery := fmt.Sprintf(randomBooksQuery, books, size, size)
-	log.Println("The query", customQuery)
 	resp, err := svc.model.GenerateContent(ctx, genai.Text(customQuery))
 	if err != nil {
 		log.Println("Error on calling Gemini AI, ", err.Error())
 	}
 
 	return svc.castBooks(resp)
-
 }
 
 func (svc *GemeniAI) castBooks(resp *genai.GenerateContentResponse) []*domain.Book {
@@ -60,8 +58,6 @@ func (svc *GemeniAI) castBooks(resp *genai.GenerateContentResponse) []*domain.Bo
 		var books []*domain.Book = make([]*domain.Book, 0)
 		msg = strings.ReplaceAll(msg, "```json", "")
 		msg = strings.ReplaceAll(msg, "```", "")
-
-		log.Println(msg)
 
 		if err := json.Unmarshal([]byte(msg), &books); err != nil {
 			log.Println("Error on casting Gemini AI, ", err.Error())
