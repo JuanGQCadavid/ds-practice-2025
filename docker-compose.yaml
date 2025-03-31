@@ -76,3 +76,9 @@ services:
       - ./order_queue/src:/app/order_queue/src
     env_file:
       - .env
+  
+  order_service:
+    build:
+      context: ./order_service
+    environment:
+      order_queue_dns: "order_queue:50054"

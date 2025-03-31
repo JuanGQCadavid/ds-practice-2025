@@ -6,7 +6,7 @@ import (
 	"time"
 
 	commonProtoBus "github.com/JuanGQCadavid/ds-practice-2025/utils/pb/common"
-// 	transactionProtoBus "github.com/JuanGQCadavid/ds-practice-2025/utils/pb/transaction_verification"
+	// 	transactionProtoBus "github.com/JuanGQCadavid/ds-practice-2025/utils/pb/transaction_verification"
 	//fraudProtoBus "github.com/JuanGQCadavid/ds-practice-2025/utils/pb/fraud_detection"
 	queueProtoBus "github.com/JuanGQCadavid/ds-practice-2025/utils/pb/order_queue"
 	"google.golang.org/grpc"
@@ -64,7 +64,7 @@ func enqueue() {
 				Cvv:            "903",
 			},
 			ShippingMethod: "Standard",
-			ClientCard: "None",
+			ClientCard:     "None",
 			BillingAddress: &commonProtoBus.Address{
 				Street:  "Tartu",
 				City:    "Tartu",
@@ -79,9 +79,9 @@ func enqueue() {
 			},
 		},
 	})
-    if err != nil {
-        log.Panic("Error while calling: ", err.Error())
-    }
+	if err != nil {
+		log.Panic("Error while calling: ", err.Error())
+	}
 	log.Println("Enqueue")
 	log.Println("IsValid: ", r.IsValid) // if IsValid is False, handle error
 	log.Println("ErrMessage", r.ErrMessage)
@@ -89,7 +89,7 @@ func enqueue() {
 }
 
 func dequeue() {
-    conn, err := grpc.NewClient(target, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient(target, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	if err != nil {
 		log.Panic("Error while creating conn: ", err.Error())
@@ -114,11 +114,11 @@ func dequeue() {
 	log.Println("------------------")
 }
 
-func clean () {
+func clean() {
 
-    conn, err := grpc.NewClient(target, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient(target, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
-    if err != nil {
+	if err != nil {
 		log.Panic("Error while creating conn: ", err.Error())
 	}
 

@@ -1,2 +1,2 @@
 run:
-	source .env && go run cmd/http/main.go
+	source .env && go run cmd/server/main.go

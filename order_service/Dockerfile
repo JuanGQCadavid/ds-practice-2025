@@ -4,7 +4,7 @@ ENV GOOS="linux"
 ENV CGO_ENABLED="0"
 ARG GOARCH="arm64"
 
-ARG CMD="http"
+ARG CMD="server"
 
 WORKDIR /app
 
