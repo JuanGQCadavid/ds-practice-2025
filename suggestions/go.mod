@@ -3,7 +3,7 @@ module github.com/JuanGQCadavid/ds-practice-2025/suggestions
 go 1.23.6
 
 require (
-	github.com/JuanGQCadavid/ds-practice-2025/utils v0.0.0-20250319173624-5e42f953522f
+	github.com/JuanGQCadavid/ds-practice-2025/utils v0.0.0-20250326093757-b6e776e7687d
 	github.com/google/generative-ai-go v0.19.0
 	google.golang.org/api v0.186.0
 	google.golang.org/grpc v1.71.0

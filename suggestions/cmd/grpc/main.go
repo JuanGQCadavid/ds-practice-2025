@@ -42,6 +42,11 @@ func (srv *Server) InitOrder(ctx context.Context, rq *common.InitRequest) (*comm
 	return srv.coreService.Init(rq), nil
 }
 
+func (srv *Server) CleanOrder(ctx context.Context, rq *common.NextRequest) (*common.NextResponse, error) {
+	log.Println("Received order ID", rq.OrderId)
+	return srv.coreService.Clean(rq), nil
+}
+
 func init() {
 
 	portTo, ok := os.LookupEnv(PORT_NUMBER_ENV_NAME)

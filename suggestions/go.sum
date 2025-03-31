@@ -12,8 +12,8 @@ cloud.google.com/go/compute/metadata v0.6.0/go.mod h1:FjyFAW1MW0C203CEOMDTu3Dk1F
 cloud.google.com/go/longrunning v0.5.7 h1:WLbHekDbjK1fVFD3ibpFFVoyizlLRl73I7YKuAKilhU=
 cloud.google.com/go/longrunning v0.5.7/go.mod h1:8GClkudohy1Fxm3owmBGid8W0pSgodEMwEAztp38Xng=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
-github.com/JuanGQCadavid/ds-practice-2025/utils v0.0.0-20250319173624-5e42f953522f h1:VUDA4NHP3+9CuXB5Y5rGcSRJsRrSI5Lhfc4Hynwiczg=
-github.com/JuanGQCadavid/ds-practice-2025/utils v0.0.0-20250319173624-5e42f953522f/go.mod h1:wZiD0thCpOCIrxDG2KRPODwsxdiimEJBtZRacSScfr4=
+github.com/JuanGQCadavid/ds-practice-2025/utils v0.0.0-20250326093757-b6e776e7687d h1:C5BPw3rYZJOVajKSR0DvGVATEkpL4yZHDa6SuMfzz7c=
+github.com/JuanGQCadavid/ds-practice-2025/utils v0.0.0-20250326093757-b6e776e7687d/go.mod h1:wZiD0thCpOCIrxDG2KRPODwsxdiimEJBtZRacSScfr4=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
 github.com/cncf/udpa/go v0.0.0-20191209042840-269d4d468f6f/go.mod h1:M8M6+tZqaGXZJjfX53e64911xZQV5JYwmTeXPW+k8Sc=

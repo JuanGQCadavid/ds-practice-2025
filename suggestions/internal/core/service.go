@@ -100,3 +100,9 @@ func (svc *SuggestionSrv) Init(request *common.InitRequest) *common.InitResponse
 		IsValid: true,
 	}
 }
+func (svc *SuggestionSrv) Clean(request *common.NextRequest) *common.NextResponse {
+	delete(svc.state, request.OrderId)
+	return &common.NextResponse{
+		IsValid: true,
+	}
+}
