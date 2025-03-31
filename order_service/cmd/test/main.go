@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"time"
 
 	"github.com/JuanGQCadavid/ds-practice-2025/order_service/internal/repositories/queue"
 )
@@ -18,12 +19,35 @@ func init() {
 	repo = queue.NewQueueRepository(QUEUE_TARGET)
 }
 func main() {
-	pullMessage := repo.Pull()
+	log.Println("Listening queue.")
 
-	if pullMessage == nil {
-		log.Println("Empty")
-		return
+	var (
+		consecutivesEmpty uint16 = 0
+	)
+
+	for true {
+		pullMessage := repo.Pull()
+
+		if pullMessage == nil {
+			consecutivesEmpty++
+
+			if consecutivesEmpty < 10 {
+				time.Sleep(1 * time.Second)
+				continue
+			} else if consecutivesEmpty < 20 {
+				time.Sleep(2 * time.Second)
+				continue
+			} else if consecutivesEmpty < 100 {
+				time.Sleep(3 * time.Second)
+				continue
+			}
+			consecutivesEmpty = 0
+			continue
+		}
+
+		consecutivesEmpty = 0
+
+		log.Printf("Order %s recieved.\n", pullMessage.OrderId)
 	}
 
-	log.Printf("Order %s recieved.\n", pullMessage.OrderId)
 }
