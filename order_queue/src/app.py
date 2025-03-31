@@ -53,6 +53,7 @@ class OrderQueueService(order_queue_grpc.OrderQueueServiceServicer):
     def dequeue(self, request, context):
         with self._lock:
             if len(self._queue) == 0:
+                print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Queue is empty, request not served")
                 return order_queue.DequeueResponse(
                     isValid=False,
                     errMessage="Queue is empty"
