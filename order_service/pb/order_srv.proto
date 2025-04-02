@@ -7,7 +7,9 @@ service Consensus {
     rpc YeahImStillAliveBitch (Empty) returns (Empty); // Heartbit
 }
 
-message Empty{}
+message Empty{
+    int64 term = 1;
+}
 
 message CoupDEtatResponse {
     bool oks = 1;

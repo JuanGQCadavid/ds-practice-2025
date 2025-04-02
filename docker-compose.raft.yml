@@ -1,0 +1,61 @@
+# version: '3'
+services:
+  order_queue:
+    build:
+      context: ./
+      dockerfile: ./order_queue/Dockerfile
+    ports:
+      - 50054:50054
+    environment:
+      - PYTHONUNBUFFERED=TRUE
+      - PYTHONFILE=/app/order_queue/src/app.py
+    volumes:
+      - ./utils:/app/utils
+      - ./order_queue/src:/app/order_queue/src
+    env_file:
+      - .env
+  
+  order_service_1:
+    depends_on:
+      - order_queue
+    build:
+      context: ./order_service
+    ports:
+      - name: gRPC
+        target: 50052
+        published: 50501
+    environment:
+      order_queue_dns: "order_queue:50054"
+      order_service_1_dns: "order_service_2:50502"
+      order_service_2_dns: "order_service_3:50503"
+      heart_beat:  ${RAFT_HEART_BEAT}
+  
+  order_service_2:
+    depends_on:
+      - order_queue
+    build:
+      context: ./order_service
+    ports:
+      - name: gRPC
+        target: 50052
+        published: 50502
+    environment:
+      order_queue_dns: "order_queue:50054"
+      order_service_1_dns: "order_service_1:50501"
+      order_service_2_dns: "order_service_3:50503"
+      heart_beat:  ${RAFT_HEART_BEAT}
+
+  order_service_3:
+    depends_on:
+      - order_queue
+    build:
+      context: ./order_service
+    ports:
+      - name: gRPC
+        target: 50052
+        published: 50503
+    environment:
+      order_queue_dns: "order_queue:50054"
+      order_service_1_dns: "order_service_1:50501"
+      order_service_2_dns: "order_service_2:50502"
+      heart_beat:  ${RAFT_HEART_BEAT}
