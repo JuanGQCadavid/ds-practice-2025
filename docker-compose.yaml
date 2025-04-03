@@ -79,10 +79,52 @@ services:
     env_file:
       - .env
   
-  # order_service:
-  #   depends_on:
-  #     - order_queue
-  #   build:
-  #     context: ./order_service
-  #   environment:
-  #     order_queue_dns: "order_queue:50054"
+  order_service_1:
+    depends_on:
+      - order_queue
+    build:
+      context: ./order_service
+    ports:
+      # - 50501:50501
+      - name: gRPC
+        target: 50501
+        published: 50501
+    environment:
+      PORT: 50501
+      order_queue_dns: "order_queue:50054"
+      order_service_1_dns: "order_service_2:50502"
+      order_service_2_dns: "order_service_3:50503"
+  
+  order_service_2:
+    depends_on:
+      - order_queue
+    build:
+      context: ./order_service
+    ports:
+      # - 50502:50502
+      - name: gRPC
+        target: 50502
+        published: 50502
+    environment:
+      PORT: 50502
+      order_queue_dns: "order_queue:50054"
+      order_service_1_dns: "order_service_1:50501"
+      order_service_2_dns: "order_service_3:50503"
+
+  order_service_3:
+    depends_on:
+      - order_queue
+    build:
+      context: ./order_service
+    ports:
+      - name: gRPC
+        target: 50503
+        published: 50503
+    environment:
+      PORT: 50503
+      order_queue_dns: "order_queue:50054"
+      order_service_1_dns: "order_service_1:50501"
+      order_service_2_dns: "order_service_2:50502"
+
+networks:
+  services:

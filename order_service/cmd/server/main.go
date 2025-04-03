@@ -27,7 +27,7 @@ func init() {
 }
 func main() {
 	var (
-		service = core.NewService(repo)
+		service = core.NewService(repo, nil)
 	)
 	service.Listen()
 

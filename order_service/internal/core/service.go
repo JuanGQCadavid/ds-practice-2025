@@ -4,17 +4,40 @@ import (
 	"log"
 	"time"
 
+	"github.com/JuanGQCadavid/ds-practice-2025/order_service/internal/core/domain"
 	"github.com/JuanGQCadavid/ds-practice-2025/order_service/internal/repositories/queue"
 )
 
 type Service struct {
-	repository *queue.QueueRepository
+	repository       *queue.QueueRepository
+	democracyUpdates <-chan domain.StatesOfDemocracy
+	pull             bool
 }
 
-func NewService(repository *queue.QueueRepository) *Service {
+func NewService(repository *queue.QueueRepository, democracyUpdates <-chan domain.StatesOfDemocracy) *Service {
 	return &Service{
-		repository: repository,
+		repository:       repository,
+		pull:             false,
+		democracyUpdates: democracyUpdates,
 	}
+}
+
+func (srv *Service) Init() {
+	log.Println("Puller: listening to democracy updates")
+	go func() {
+		for msg := range srv.democracyUpdates {
+			log.Println("New state saved on the puller: ", msg)
+
+			if msg == domain.Reich {
+				srv.pull = true
+				log.Println("Oh shit, time to work....")
+				continue
+			}
+
+			srv.pull = false
+		}
+		log.Println("Puller stop listening the democracy updates")
+	}()
 }
 
 func (srv *Service) Listen() {
@@ -25,6 +48,11 @@ func (srv *Service) Listen() {
 	)
 
 	for true {
+
+		if !srv.pull {
+			continue
+		}
+
 		pullMessage := srv.repository.Pull()
 
 		if pullMessage == nil {

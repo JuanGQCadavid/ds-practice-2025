@@ -7,162 +7,44 @@ import (
 	"math/rand"
 	"net"
 	"os"
-	"strings"
 	"sync"
 	"time"
 
+	"github.com/JuanGQCadavid/ds-practice-2025/order_service/internal/core"
+	"github.com/JuanGQCadavid/ds-practice-2025/order_service/internal/core/domain"
+	"github.com/JuanGQCadavid/ds-practice-2025/order_service/internal/repositories/queue"
 	"github.com/JuanGQCadavid/ds-practice-2025/order_service/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-type StatesOfDemocracy string
-
 const (
-	Submission  StatesOfDemocracy = "(Follower) Well.. it could be worst" // Follower
-	ALaLanterne StatesOfDemocracy = "(Candidate) À la lanterne!!"         // Candidate
-	Reich       StatesOfDemocracy = "(Leader) I'm the Reich!"             // Leader
-)
-
-type MessageFromThePlebeTypes string
-type MessageFromThePlebe struct {
-	MesssageType MessageFromThePlebeTypes
-	Term         int
-}
-
-const (
-	// Messages
-	CoupDeAaaahType           MessageFromThePlebeTypes = "Coup d'état!!"
-	TheSonOfBitchIsStillAlive MessageFromThePlebeTypes = "Damn it! Not yet"
-
 	// To hear about the other
-	PROTOCOL = "tcp"
+	PROTOCOL       = "tcp"
+	QUEUE_ENV_NAME = "order_queue_dns"
+
+	PLEBE_1_DNS_ENV_NAME = "order_service_1_dns"
+	PLEBE_2_DNS_ENV_NAME = "order_service_2_dns"
 )
-
-// -----------------------------
-//
-// SERVER
-//
-// -----------------------------
-
-type Server struct {
-	pb.UnimplementedConsensusServer
-
-	messages         chan MessageFromThePlebe
-	democracyUpdates <-chan StatesOfDemocracy
-
-	latestStateOfDemocracy StatesOfDemocracy
-}
 
 var (
 	// gRPC
 	listener             net.Listener
-	messagesFromThePlebe chan MessageFromThePlebe
+	messagesFromThePlebe chan domain.MessageFromThePlebe
 
 	// Raft
 	heartBeat = time.Duration(2 * time.Second)
-	miniKafka *Kafki
+	miniKafka *core.Kafki
+
+	// Puller
+	repo *queue.QueueRepository
 
 	// Docker
-	DEFAULT_PORT = os.Getenv("PORT")
-
-	thePlebeAddress = []string{
-		"localhost:50052",
-		"localhost:50053",
-		"localhost:50054",
-		// "localhost:50055",
-	}
+	DEFAULT_PORT    = os.Getenv("PORT")
+	thePlebeAddress []string
 
 	thePlebe []pb.ConsensusClient
 )
-
-func (srv *Server) InitServer() *Server {
-	go func() {
-		for msg := range srv.democracyUpdates {
-			log.Println("New state saved on server", msg)
-			srv.latestStateOfDemocracy = msg
-		}
-		log.Println("Server stop listening democracy updates")
-	}()
-
-	return srv
-}
-
-func (srv *Server) CoupDeAaaah(ctx context.Context, rq *pb.Empty) (*pb.CoupDEtatResponse, error) {
-	log.Println("Oh shit! This is getting bananas!")
-
-	srv.messages <- MessageFromThePlebe{
-		MesssageType: CoupDeAaaahType,
-	}
-
-	if srv.latestStateOfDemocracy == Submission {
-		return &pb.CoupDEtatResponse{
-			Oks: true,
-		}, nil
-	}
-
-	return &pb.CoupDEtatResponse{
-		Oks: false,
-	}, nil
-
-}
-
-func (srv *Server) YeahImStillAliveBitch(ctx context.Context, rq *pb.Empty) (*pb.Empty, error) {
-	log.Println("Yet...")
-
-	srv.messages <- MessageFromThePlebe{
-		MesssageType: TheSonOfBitchIsStillAlive,
-		Term:         int(rq.Term),
-	}
-
-	return &pb.Empty{}, nil
-}
-
-// -----------------------------
-//
-// # Inner Kafka
-//
-// -----------------------------
-
-type Kafki struct {
-	mu     sync.Mutex
-	subs   []chan StatesOfDemocracy
-	quit   chan struct{}
-	closed bool
-}
-
-func NewAgent() *Kafki {
-	return &Kafki{
-		subs: make([]chan StatesOfDemocracy, 0),
-		quit: make(chan struct{}),
-	}
-}
-
-func (b *Kafki) Publish(state StatesOfDemocracy) {
-	b.mu.Lock()
-	defer b.mu.Unlock()
-
-	if b.closed {
-		return
-	}
-	// THis could be abottle neck
-	for _, ch := range b.subs {
-		ch <- state
-	}
-}
-
-func (b *Kafki) Subscribe() <-chan StatesOfDemocracy {
-	b.mu.Lock()
-	defer b.mu.Unlock()
-
-	if b.closed {
-		return nil
-	}
-
-	ch := make(chan StatesOfDemocracy, 100)
-	b.subs = append(b.subs, ch)
-	return ch
-}
 
 // -----------------------------
 //
@@ -170,19 +52,28 @@ func (b *Kafki) Subscribe() <-chan StatesOfDemocracy {
 //
 // -----------------------------
 func init() {
+	// Preparing the plebe
+
+	plebe1, ok := os.LookupEnv(PLEBE_1_DNS_ENV_NAME)
+
+	if !ok {
+		log.Fatalln("Missing the plebe 1 dns")
+	}
+
+	plebe2, ok := os.LookupEnv(PLEBE_2_DNS_ENV_NAME)
+
+	if !ok {
+		log.Fatalln("Missing plebe 2 dns")
+	}
+
+	thePlebeAddress = []string{
+		plebe1,
+		plebe2,
+	}
+
 	if DEFAULT_PORT == "" {
 		log.Fatalln("Missing port babe")
 	}
-
-	//Removing my self from the list // REMOVE ME
-	newList := make([]string, 0)
-	for _, addr := range thePlebeAddress {
-		if !strings.Contains(addr, DEFAULT_PORT) {
-			newList = append(newList, addr)
-		}
-	}
-	thePlebeAddress = newList
-	// DELETE ME
 
 	var err error
 	listener, err = net.Listen(PROTOCOL, fmt.Sprintf(":%s", DEFAULT_PORT))
@@ -190,10 +81,19 @@ func init() {
 	if err != nil {
 		log.Panic("Unable to start listener in port ", DEFAULT_PORT, PROTOCOL, " err: ", err.Error())
 	}
-	messagesFromThePlebe = make(chan MessageFromThePlebe, 100)
+	messagesFromThePlebe = make(chan domain.MessageFromThePlebe, 100)
+
+	// Puller config
+	dns, ok := os.LookupEnv(QUEUE_ENV_NAME)
+
+	if !ok {
+		log.Fatalln("Missing QUEUE dns")
+	}
+
+	repo = queue.NewQueueRepository(dns)
 
 	// Creating mini kafka
-	miniKafka = NewAgent()
+	miniKafka = core.NewAgent()
 
 	// Creating connection with the Plebe
 	thePlebe = make([]pb.ConsensusClient, len(thePlebeAddress))
@@ -219,20 +119,16 @@ func init() {
 
 }
 
-func startServer(thePlebeSpoke chan MessageFromThePlebe, democracyUpdates <-chan StatesOfDemocracy) {
+func startServer(thePlebeSpoke chan domain.MessageFromThePlebe, democracyUpdates <-chan domain.StatesOfDemocracy) {
+	var (
+		grpcServer = grpc.NewServer()
+		server     = core.NewServer(thePlebeSpoke, democracyUpdates, domain.Submission)
+	)
 
-	grpcServer := grpc.NewServer()
-
-	server := &Server{
-		messages:               thePlebeSpoke,
-		democracyUpdates:       democracyUpdates,
-		latestStateOfDemocracy: Submission,
-	}
 	server.InitServer()
-
 	pb.RegisterConsensusServer(grpcServer, server)
-
 	log.Println("Listening to all the madafuckers")
+
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
 	}
@@ -244,15 +140,18 @@ func I_am_not_dead_yet(term int) {
 			go func(plebe pb.ConsensusClient) {
 				ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 				defer cancel()
-				plebe.YeahImStillAliveBitch(ctx, &pb.Empty{
+				if _, err := plebe.YeahImStillAliveBitch(ctx, &pb.Empty{
 					Term: int64(term),
-				})
+				}); err != nil {
+					log.Println("I cant not send a hear bit to ", plebe, " error: ", err.Error())
+				}
+
 			}(plebe)
 		}
 	}
 }
 
-func I_Have_A_Dream() StatesOfDemocracy {
+func I_Have_A_Dream() domain.StatesOfDemocracy {
 	var (
 		votes        int = 0
 		wg           sync.WaitGroup
@@ -279,6 +178,8 @@ func I_Have_A_Dream() StatesOfDemocracy {
 						votes += 1
 						voteMux.Unlock()
 					}
+				} else {
+					log.Println("I cant not send a votation process to ", plebe, " error: ", err.Error())
 				}
 			}(plebe)
 		} else {
@@ -292,30 +193,43 @@ func I_Have_A_Dream() StatesOfDemocracy {
 	log.Println("Votes: ", votes, "/", activePeople)
 	if votes >= (activePeople / 2) {
 		log.Println("The People's Will Has Spoken! A Pope Rises!")
-		return Reich
+		return domain.Reich
 	}
 
-	return Submission
+	return domain.Submission
 }
 
 func main() {
 	var (
 		// Democracy
-		actualState StatesOfDemocracy = Submission
-		term        int
+		actualState domain.StatesOfDemocracy = domain.Submission
+		prevState   domain.StatesOfDemocracy = domain.ALaLanterne // Just a trick for getting a log...
+
+		term int
 
 		// Election concerns
-		baseElectionTimeOutMs = 150
-		upToElectionTimeoutMs = 300
+		baseElectionTimeOutMs = 200  //150
+		upToElectionTimeoutMs = 1000 //300
 		electionTimeoutRandMs = baseElectionTimeOutMs + rand.Intn(upToElectionTimeoutMs-baseElectionTimeOutMs)
 		electionTimeout       = time.Millisecond * time.Duration(electionTimeoutRandMs)
 
 		iAmStillAliveDuration = 200 * time.Millisecond
 	)
 
+	log.Println("Election MS: ", electionTimeoutRandMs)
+
+	// gRPC
 	go func() {
 		serverDemocracyUpdates := miniKafka.Subscribe()
 		startServer(messagesFromThePlebe, serverDemocracyUpdates)
+	}()
+
+	// The puller
+	go func() {
+		serverDemocracyUpdates := miniKafka.Subscribe()
+		service := core.NewService(repo, serverDemocracyUpdates)
+		service.Init()
+		service.Listen()
 	}()
 
 	heartbit := time.NewTicker(heartBeat)
@@ -326,13 +240,18 @@ func main() {
 	iAmStillAliveTimer := time.NewTicker(iAmStillAliveDuration)
 
 	for {
-		log.Println("-------------------")
-		log.Println("I'am ", actualState, "Term", term)
-		log.Println("-------------------")
+
+		if actualState != prevState {
+			log.Println("-------------------")
+			log.Println("I'am ", actualState, "Term", term)
+			log.Println("-------------------")
+			prevState = actualState
+		}
+
 		select {
 		// Send life signals
 		case <-iAmStillAliveTimer.C:
-			if actualState == Reich {
+			if actualState == domain.Reich {
 				I_am_not_dead_yet(term)
 			}
 
@@ -340,31 +259,31 @@ func main() {
 		case msg := <-messagesFromThePlebe:
 			electionTicker.Stop()
 
-			if msg.MesssageType == TheSonOfBitchIsStillAlive {
-				log.Println("Damn it! He is alive...")
+			if msg.MesssageType == domain.TheSonOfBitchIsStillAlive {
+				// log.Println("Damn it! He is alive...")
 
 				if msg.Term > term {
 					log.Println("Well, It seems I'm not longer the leader :'( ")
 					term = msg.Term
-					actualState = Submission
-					miniKafka.Publish(Submission)
+					actualState = domain.Submission
+					miniKafka.Publish(domain.Submission)
 				}
-			} else if msg.MesssageType == CoupDeAaaahType {
+			} else if msg.MesssageType == domain.CoupDeAaaahType {
 				log.Println("Someone start the democrazy! Jaaa, crazy...")
-				actualState = Submission
-				miniKafka.Publish(Submission)
+				actualState = domain.Submission
+				miniKafka.Publish(domain.Submission)
 			}
 
 			heartbit.Reset(heartBeat)
 
 		// My timers
 		case time := <-heartbit.C:
-			if actualState == Reich {
+			// case <-heartbit.C:
+			if actualState == domain.Reich {
 				continue
 			}
 
-			log.Println("Heartbit!!", time)
-			log.Println("Lets prepare for the Independecy!!!")
+			log.Println("I did not hear from the leader' for a while', time for a change..", time)
 
 			electionTicker.Reset(electionTimeout)
 			heartbit.Reset(heartBeat)
@@ -372,18 +291,16 @@ func main() {
 		case time := <-electionTicker.C:
 			log.Println("Today, we will write down a new chapter on the history fo this great nation, ", time)
 
-			// No need to go back to election
 			electionTicker.Stop()
 			heartbit.Reset(heartBeat)
 
 			actualState = I_Have_A_Dream()
 
-			if actualState == Reich {
+			if actualState == domain.Reich {
 				term += 1
 			}
 
-			miniKafka.Publish(Submission)
+			miniKafka.Publish(domain.Reich)
 		}
 	}
-
 }
