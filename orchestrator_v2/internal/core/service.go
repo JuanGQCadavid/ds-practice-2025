@@ -14,17 +14,20 @@ type Service struct {
 	fraudDetection     ports.IFraudDetection
 	transactionChecker ports.ITransactionVerification
 	suggestedBooks     ports.ISuggestionsService
+	orderQueue         ports.IOrderQueue
 }
 
 func NewService(
 	fraudDetection ports.IFraudDetection,
 	transactionChecker ports.ITransactionVerification,
 	suggestedBooks ports.ISuggestionsService,
+	orderQueue ports.IOrderQueue,
 ) *Service {
 	return &Service{
 		fraudDetection:     fraudDetection,
 		transactionChecker: transactionChecker,
 		suggestedBooks:     suggestedBooks,
+		orderQueue:         orderQueue,
 	}
 }
 
@@ -166,6 +169,8 @@ func (srv *Service) Checkout(checkout *domain.Checkout) (*domain.CheckoutRespons
 	clock = srv.updateClock(clock, tack)
 
 	suggestedBooks, _ := srv.suggestedBooks.SuggestBooks(orderId, clock)
+
+	srv.orderQueue.Enqueue(orderId, checkout)
 
 	return &domain.CheckoutResponse{
 		Status:         "Order Approved",

@@ -14,6 +14,7 @@ services:
       - fraud_detection
       - suggestions_service
       - transaction_verification
+      - order_queue
     build:
       context: ./orchestrator_v2
     ports:
@@ -24,6 +25,7 @@ services:
       fraud_dns: "fraud_detection:50051"
       transaction_verification_dns: "transaction_verification:50052"
       suggestions_dns: "suggestions_service:50053"
+      order_queue_dns: "order_queue:50054"
 
   suggestions_service:
     build:
@@ -77,10 +79,10 @@ services:
     env_file:
       - .env
   
-  order_service:
-    depends_on:
-      - order_queue
-    build:
-      context: ./order_service
-    environment:
-      order_queue_dns: "order_queue:50054"
+  # order_service:
+  #   depends_on:
+  #     - order_queue
+  #   build:
+  #     context: ./order_service
+  #   environment:
+  #     order_queue_dns: "order_queue:50054"

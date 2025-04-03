@@ -9,6 +9,7 @@ import (
 	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/core/ports"
 	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/handlers/httphdl"
 	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/repositories/fraud"
+	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/repositories/orderqueue"
 	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/repositories/suggestions"
 	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/repositories/transcheck"
 	"github.com/gin-gonic/gin"
@@ -18,6 +19,7 @@ const (
 	FRAUD_DNS_ENV_NAME         string = "fraud_dns"
 	TRANS_CHECKER_DNS_ENV_NAME string = "transaction_verification_dns"
 	SUGGEST_BOOKS_DNS_ENV_NAME string = "suggestions_dns"
+	ORDER_QUEUE_DNS_ENV_NAME   string = "order_queue_dns"
 	SERVICE_PORT               string = ":8081"
 )
 
@@ -25,6 +27,7 @@ var (
 	fraudService        ports.IFraudDetection
 	transCheckerService ports.ITransactionVerification
 	suggestService      ports.ISuggestionsService
+	orderQueue          ports.IOrderQueue
 	defaultTimeOut      = 4 * time.Second
 )
 
@@ -49,6 +52,13 @@ func init() {
 	}
 
 	suggestService = suggestions.NewSuggestionService(suggestionsServiceDNS, defaultTimeOut)
+
+	orderDNS, ok := os.LookupEnv(ORDER_QUEUE_DNS_ENV_NAME)
+	if !ok {
+		log.Panic("Order queue dns system DNS is needed")
+	}
+
+	orderQueue = orderqueue.NewOrderQueue(orderDNS, defaultTimeOut)
 }
 
 func CORSMiddleware() gin.HandlerFunc {
@@ -71,6 +81,7 @@ func main() {
 			fraudService,
 			transCheckerService,
 			suggestService,
+			orderQueue,
 		)
 		hdl    = httphdl.NewHTTPHandler(srv)
 		router = gin.Default()
