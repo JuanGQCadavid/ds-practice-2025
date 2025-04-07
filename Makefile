@@ -1,10 +1,10 @@
 run:
 	docker compose --env-file .env up --build
 
-logs-all:
+logs_all:
 	docker compose logs -f
 
-logs-raft:
+logs_raft:
 	docker compose logs order_service_2 order_service_1 order_service_3 -f
 
 logs_queue:
