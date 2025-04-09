@@ -20,6 +20,8 @@ We use:
 ## Raft
 ![Raft](./utils/img/raft.png)
 
+![Communication](./utils/img/communications_raft.png)
+
 ## System model
 
 The online bookstore operates using a **client-server architecture**, where the client (user) interacts with a centralized web server to proceed with the checkout process, setting contact details, address, shipping method, and other additional details. It is assumed that the order is already set and, thus, not handled dynamically on the checkout page.
