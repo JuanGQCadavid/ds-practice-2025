@@ -85,7 +85,6 @@ services:
     build:
       context: ./order_service
     ports:
-      - 50501:50501
       - name: gRPC
         target: 50501
         published: 50501
@@ -95,37 +94,6 @@ services:
       order_service_1_dns: "order_service_2:50502"
       order_service_2_dns: "order_service_3:50503"
   
-  order_service_2:
-    depends_on:
-      - order_queue
-    build:
-      context: ./order_service
-    ports:
-      # - 50502:50502
-      - name: gRPC
-        target: 50502
-        published: 50502
-    environment:
-      PORT: 50502
-      order_queue_dns: "order_queue:50054"
-      order_service_1_dns: "order_service_1:50501"
-      order_service_2_dns: "order_service_3:50503"
-
-  order_service_3:
-    depends_on:
-      - order_queue
-    build:
-      context: ./order_service
-    ports:
-      - name: gRPC
-        target: 50503
-        published: 50503
-    environment:
-      PORT: 50503
-      order_queue_dns: "order_queue:50054"
-      order_service_1_dns: "order_service_1:50501"
-      order_service_2_dns: "order_service_2:50502"
-
   db_replica1:
     build:
       context: ./
@@ -140,42 +108,9 @@ services:
     volumes:
       - ./utils:/app/utils
       - ./database/src:/app/database/src
-    networks:
-      - db_network
+    # networks:
+    #   - db_network
 
-  db_replica2:
-    build:
-      context: ./
-      dockerfile: ./database/Dockerfile
-    container_name: db_replica2
-    ports:
-      - 50062:50062
-    environment:
-      - PYTHONUNBUFFERED=TRUE
-      - PYTHONFILE=/app/database/src/app.py
-      - RANK=2
-    volumes:
-      - ./utils:/app/utils
-      - ./database/src:/app/database/src
-    networks:
-      - db_network
-
-  db_replica3:
-    build:
-      context: ./
-      dockerfile: ./database/Dockerfile
-    container_name: db_replica3
-    ports:
-      - 50063:50063
-    environment:
-      - PYTHONUNBUFFERED=TRUE
-      - PYTHONFILE=/app/database/src/app.py
-      - RANK=3
-    volumes:
-      - ./utils:/app/utils
-      - ./database/src:/app/database/src
-    networks:
-      - db_network
 
 networks:
   services:

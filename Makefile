@@ -12,3 +12,6 @@ logs_queue:
 
 kill:
 	docker compose restart order_service_${ID}
+
+run_simple:
+	docker compose --env-file .env -f docker docker-compose.simple.yaml up --build

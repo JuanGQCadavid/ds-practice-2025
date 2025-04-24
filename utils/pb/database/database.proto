@@ -13,15 +13,6 @@ service DatabaseService {
     rpc abort (AbortRequest) returns (AbortResponse); // Abort
 }
 
-message InitRequest {
-    string message = 1;
-}
-
-message InitResponse {
-    string message = 1;
-    bool isValid = 2;
-}
-
 message StockRequest {
     string bookID = 1;
     string bookName = 2;

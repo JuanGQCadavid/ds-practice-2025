@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x17\x64\x61tabase/database.proto\x12\x08\x64\x61tabase\"\x1e\n\x0bInitRequest\x12\x0f\n\x07message\x18\x01 \x01(\t\"0\n\x0cInitResponse\x12\x0f\n\x07message\x18\x01 \x01(\t\x12\x0f\n\x07isValid\x18\x02 \x01(\x08\"C\n\x0cStockRequest\x12\x0e\n\x06\x62ookID\x18\x01 \x01(\t\x12\x10\n\x08\x62ookName\x18\x02 \x01(\t\x12\x11\n\tbookStock\x18\x03 \x01(\x05\"k\n\rStockResponse\x12\x10\n\x08\x62ookName\x18\x01 \x01(\t\x12\x11\n\tbookStock\x18\x02 \x01(\x05\x12\x0f\n\x07isValid\x18\x03 \x01(\x08\x12\x12\n\nerrMessage\x18\x04 \x01(\t\x12\x10\n\x08leaderID\x18\x05 \x01(\x03\"b\n\x12ReplicationRequest\x12\x0e\n\x06\x62ookID\x18\x01 \x01(\t\x12\x10\n\x08\x62ookName\x18\x02 \x01(\t\x12\x11\n\tbookStock\x18\x03 \x01(\x05\x12\x17\n\x0fsourceReplicaID\x18\x04 \x01(\x03\":\n\x13ReplicationResponse\x12\x0f\n\x07isValid\x18\x01 \x01(\x08\x12\x12\n\nerrMessage\x18\x02 \x01(\t\"G\n\x0eStatusResponse\x12\x10\n\x08isLeader\x18\x01 \x01(\x08\x12\x11\n\treplicaID\x18\x02 \x01(\x03\x12\x10\n\x08leaderID\x18\x03 \x01(\x03\"\x0e\n\x0c\x45mptyRequest\"6\n\x12\x42ookRequestPrepare\x12\x0e\n\x06\x62ookID\x18\x01 \x01(\t\x12\x10\n\x08quantity\x18\x02 \x01(\x05\"U\n\x0ePrepareRequest\x12\x32\n\x0c\x62ookRequests\x18\x01 \x03(\x0b\x32\x1c.database.BookRequestPrepare\x12\x0f\n\x07orderID\x18\x02 \x01(\t\"V\n\x0fPrepareResponse\x12\x0f\n\x07isValid\x18\x01 \x01(\x08\x12\x32\n\x0c\x62ookRequests\x18\x02 \x03(\x0b\x32\x1c.database.BookRequestPrepare\" \n\rCommitRequest\x12\x0f\n\x07orderID\x18\x01 \x01(\t\"5\n\x0e\x43ommitResponse\x12\x0f\n\x07isValid\x18\x01 \x01(\x08\x12\x12\n\nerrMessage\x18\x02 \x01(\t\"\x1f\n\x0c\x41\x62ortRequest\x12\x0f\n\x07orderID\x18\x01 \x01(\t\"4\n\rAbortResponse\x12\x0f\n\x07isValid\x18\x01 \x01(\x08\x12\x12\n\nerrMessage\x18\x02 \x01(\t2\xe1\x03\n\x0f\x44\x61tabaseService\x12\x43\n\x10performStockRead\x12\x16.database.StockRequest\x1a\x17.database.StockResponse\x12\x44\n\x11performStockWrite\x12\x16.database.StockRequest\x1a\x17.database.StockResponse\x12M\n\x0ereplicateWrite\x12\x1c.database.ReplicationRequest\x1a\x1d.database.ReplicationResponse\x12=\n\tgetStatus\x12\x16.database.EmptyRequest\x1a\x18.database.StatusResponse\x12>\n\x07prepare\x12\x18.database.PrepareRequest\x1a\x19.database.PrepareResponse\x12;\n\x06\x63ommit\x12\x17.database.CommitRequest\x1a\x18.database.CommitResponse\x12\x38\n\x05\x61\x62ort\x12\x16.database.AbortRequest\x1a\x17.database.AbortResponseB=Z;github.com/JuanGQCadavid/ds-practice-2025/utils/pb/databaseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x17\x64\x61tabase/database.proto\x12\x08\x64\x61tabase\"C\n\x0cStockRequest\x12\x0e\n\x06\x62ookID\x18\x01 \x01(\t\x12\x10\n\x08\x62ookName\x18\x02 \x01(\t\x12\x11\n\tbookStock\x18\x03 \x01(\x05\"k\n\rStockResponse\x12\x10\n\x08\x62ookName\x18\x01 \x01(\t\x12\x11\n\tbookStock\x18\x02 \x01(\x05\x12\x0f\n\x07isValid\x18\x03 \x01(\x08\x12\x12\n\nerrMessage\x18\x04 \x01(\t\x12\x10\n\x08leaderID\x18\x05 \x01(\x03\"b\n\x12ReplicationRequest\x12\x0e\n\x06\x62ookID\x18\x01 \x01(\t\x12\x10\n\x08\x62ookName\x18\x02 \x01(\t\x12\x11\n\tbookStock\x18\x03 \x01(\x05\x12\x17\n\x0fsourceReplicaID\x18\x04 \x01(\x03\":\n\x13ReplicationResponse\x12\x0f\n\x07isValid\x18\x01 \x01(\x08\x12\x12\n\nerrMessage\x18\x02 \x01(\t\"G\n\x0eStatusResponse\x12\x10\n\x08isLeader\x18\x01 \x01(\x08\x12\x11\n\treplicaID\x18\x02 \x01(\x03\x12\x10\n\x08leaderID\x18\x03 \x01(\x03\"\x0e\n\x0c\x45mptyRequest\"6\n\x12\x42ookRequestPrepare\x12\x0e\n\x06\x62ookID\x18\x01 \x01(\t\x12\x10\n\x08quantity\x18\x02 \x01(\x05\"U\n\x0ePrepareRequest\x12\x32\n\x0c\x62ookRequests\x18\x01 \x03(\x0b\x32\x1c.database.BookRequestPrepare\x12\x0f\n\x07orderID\x18\x02 \x01(\t\"V\n\x0fPrepareResponse\x12\x0f\n\x07isValid\x18\x01 \x01(\x08\x12\x32\n\x0c\x62ookRequests\x18\x02 \x03(\x0b\x32\x1c.database.BookRequestPrepare\" \n\rCommitRequest\x12\x0f\n\x07orderID\x18\x01 \x01(\t\"5\n\x0e\x43ommitResponse\x12\x0f\n\x07isValid\x18\x01 \x01(\x08\x12\x12\n\nerrMessage\x18\x02 \x01(\t\"\x1f\n\x0c\x41\x62ortRequest\x12\x0f\n\x07orderID\x18\x01 \x01(\t\"4\n\rAbortResponse\x12\x0f\n\x07isValid\x18\x01 \x01(\x08\x12\x12\n\nerrMessage\x18\x02 \x01(\t2\xe1\x03\n\x0f\x44\x61tabaseService\x12\x43\n\x10performStockRead\x12\x16.database.StockRequest\x1a\x17.database.StockResponse\x12\x44\n\x11performStockWrite\x12\x16.database.StockRequest\x1a\x17.database.StockResponse\x12M\n\x0ereplicateWrite\x12\x1c.database.ReplicationRequest\x1a\x1d.database.ReplicationResponse\x12=\n\tgetStatus\x12\x16.database.EmptyRequest\x1a\x18.database.StatusResponse\x12>\n\x07prepare\x12\x18.database.PrepareRequest\x1a\x19.database.PrepareResponse\x12;\n\x06\x63ommit\x12\x17.database.CommitRequest\x1a\x18.database.CommitResponse\x12\x38\n\x05\x61\x62ort\x12\x16.database.AbortRequest\x1a\x17.database.AbortResponseB=Z;github.com/JuanGQCadavid/ds-practice-2025/utils/pb/databaseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -22,36 +22,32 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'database.database_pb2', _gl
 if _descriptor._USE_C_DESCRIPTORS == False:
   _globals['DESCRIPTOR']._options = None
   _globals['DESCRIPTOR']._serialized_options = b'Z;github.com/JuanGQCadavid/ds-practice-2025/utils/pb/database'
-  _globals['_INITREQUEST']._serialized_start=37
-  _globals['_INITREQUEST']._serialized_end=67
-  _globals['_INITRESPONSE']._serialized_start=69
-  _globals['_INITRESPONSE']._serialized_end=117
-  _globals['_STOCKREQUEST']._serialized_start=119
-  _globals['_STOCKREQUEST']._serialized_end=186
-  _globals['_STOCKRESPONSE']._serialized_start=188
-  _globals['_STOCKRESPONSE']._serialized_end=295
-  _globals['_REPLICATIONREQUEST']._serialized_start=297
-  _globals['_REPLICATIONREQUEST']._serialized_end=395
-  _globals['_REPLICATIONRESPONSE']._serialized_start=397
-  _globals['_REPLICATIONRESPONSE']._serialized_end=455
-  _globals['_STATUSRESPONSE']._serialized_start=457
-  _globals['_STATUSRESPONSE']._serialized_end=528
-  _globals['_EMPTYREQUEST']._serialized_start=530
-  _globals['_EMPTYREQUEST']._serialized_end=544
-  _globals['_BOOKREQUESTPREPARE']._serialized_start=546
-  _globals['_BOOKREQUESTPREPARE']._serialized_end=600
-  _globals['_PREPAREREQUEST']._serialized_start=602
-  _globals['_PREPAREREQUEST']._serialized_end=687
-  _globals['_PREPARERESPONSE']._serialized_start=689
-  _globals['_PREPARERESPONSE']._serialized_end=775
-  _globals['_COMMITREQUEST']._serialized_start=777
-  _globals['_COMMITREQUEST']._serialized_end=809
-  _globals['_COMMITRESPONSE']._serialized_start=811
-  _globals['_COMMITRESPONSE']._serialized_end=864
-  _globals['_ABORTREQUEST']._serialized_start=866
-  _globals['_ABORTREQUEST']._serialized_end=897
-  _globals['_ABORTRESPONSE']._serialized_start=899
-  _globals['_ABORTRESPONSE']._serialized_end=951
-  _globals['_DATABASESERVICE']._serialized_start=954
-  _globals['_DATABASESERVICE']._serialized_end=1435
+  _globals['_STOCKREQUEST']._serialized_start=37
+  _globals['_STOCKREQUEST']._serialized_end=104
+  _globals['_STOCKRESPONSE']._serialized_start=106
+  _globals['_STOCKRESPONSE']._serialized_end=213
+  _globals['_REPLICATIONREQUEST']._serialized_start=215
+  _globals['_REPLICATIONREQUEST']._serialized_end=313
+  _globals['_REPLICATIONRESPONSE']._serialized_start=315
+  _globals['_REPLICATIONRESPONSE']._serialized_end=373
+  _globals['_STATUSRESPONSE']._serialized_start=375
+  _globals['_STATUSRESPONSE']._serialized_end=446
+  _globals['_EMPTYREQUEST']._serialized_start=448
+  _globals['_EMPTYREQUEST']._serialized_end=462
+  _globals['_BOOKREQUESTPREPARE']._serialized_start=464
+  _globals['_BOOKREQUESTPREPARE']._serialized_end=518
+  _globals['_PREPAREREQUEST']._serialized_start=520
+  _globals['_PREPAREREQUEST']._serialized_end=605
+  _globals['_PREPARERESPONSE']._serialized_start=607
+  _globals['_PREPARERESPONSE']._serialized_end=693
+  _globals['_COMMITREQUEST']._serialized_start=695
+  _globals['_COMMITREQUEST']._serialized_end=727
+  _globals['_COMMITRESPONSE']._serialized_start=729
+  _globals['_COMMITRESPONSE']._serialized_end=782
+  _globals['_ABORTREQUEST']._serialized_start=784
+  _globals['_ABORTREQUEST']._serialized_end=815
+  _globals['_ABORTRESPONSE']._serialized_start=817
+  _globals['_ABORTRESPONSE']._serialized_end=869
+  _globals['_DATABASESERVICE']._serialized_start=872
+  _globals['_DATABASESERVICE']._serialized_end=1353
 # @@protoc_insertion_point(module_scope)
