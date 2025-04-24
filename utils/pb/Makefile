@@ -5,6 +5,8 @@ PROTOS = \
 	transaction_verification/transaction_verification.proto \
 	suggestions/suggestions.proto \
 	order_queue/order_queue.proto \
+	database/database.proto \
+	replica/replica.proto \
 
 # gen:
 # 	@for proto in $(PROTOS); do \

@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+service Replica {
+    rpc shareID (IDRequest) returns (IDResponse);
+
+    rpc notifyNewLeader (LeaderNotification) returns (IDResponse);
+
+    rpc becomeLeader (LeaderTransfer) returns (IDResponse);
+
+    rpc heartbeat (HeartbeatRequest) returns (HeartbeatResponse);
+
+    rpc getStatus(StatusRequest) returns (StatusResponse) {}
+
+}
+
+message IDRequest {
+    int64 ID = 1;
+}
+
+message IDResponse {
+    bool isValid = 1;
+    repeated int64 knownIDs = 2;
+}
+
+message LeaderNotification {
+    int64 leaderID = 1;
+}
+
+message LeaderTransfer {
+    int64 oldLeaderID = 1;
+    int64 newLeaderID = 2;
+}
+
+message HeartbeatRequest {
+    int64 leaderID = 1;
+}
+
+message HeartbeatResponse {
+    int64 replicaID = 1;
+    bool isAlive = 2;
+}
+
+message StatusRequest {
+}
+
+message StatusResponse {
+  int32 replicaID = 1;
+  bool isLeader = 2;
+  int32 leader = 3;
+  string lastAccess = 4;
+  repeated int32 knownReplicas = 5;
+}

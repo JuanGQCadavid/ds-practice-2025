@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package database;
+
+service DatabaseService {
+    rpc initReplica (InitRequest) returns (InitResponse);
+    rpc performStockRead (StockRequest) returns (StockResponse);
+    rpc performStockWrite (StockRequest) returns (StockResponse);
+    rpc replicateWrite (ReplicationRequest) returns (ReplicationResponse);
+    rpc getStatus (EmptyRequest) returns (StatusResponse);
+}
+
+message InitRequest {
+    string message = 1;
+}
+
+message InitResponse {
+    string message = 1;
+    bool isValid = 2;
+}
+
+message StockRequest {
+    string bookID = 1;
+    string bookName = 2;
+    int32 bookStock = 3;
+}
+
+message StockResponse {
+    string bookName = 1;
+    int32 bookStock = 2;
+    bool isValid = 3;
+    string errMessage = 4;
+    int64 leaderID = 5;
+}
+
+message ReplicationRequest {
+    string bookID = 1;
+    string bookName = 2;
+    int32 bookStock = 3;
+    int64 sourceReplicaID = 4;
+}
+
+message ReplicationResponse {
+    bool isValid = 1;
+    string errMessage = 2;
+}
+
+message StatusResponse {
+    bool isLeader = 1;
+    int64 replicaID = 2;
+    int64 leaderID = 3;
+}
+
+message EmptyRequest {}
