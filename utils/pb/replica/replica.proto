@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+option go_package = "github.com/JuanGQCadavid/ds-practice-2025/utils/pb/replica";
+
 service Replica {
     rpc shareID (IDRequest) returns (IDResponse);
 

@@ -1,13 +1,13 @@
 syntax = "proto3";
 
 package database;
+option go_package = "github.com/JuanGQCadavid/ds-practice-2025/utils/pb/database";
 
 service DatabaseService {
-    rpc initReplica (InitRequest) returns (InitResponse);
-    rpc performStockRead (StockRequest) returns (StockResponse);
-    rpc performStockWrite (StockRequest) returns (StockResponse);
+    rpc performStockRead (StockRequest) returns (StockResponse); // Lectura
+    rpc performStockWrite (StockRequest) returns (StockResponse); // Escritura
     rpc replicateWrite (ReplicationRequest) returns (ReplicationResponse);
-    rpc getStatus (EmptyRequest) returns (StatusResponse);
+    rpc getStatus (EmptyRequest) returns (StatusResponse); // Me dice quien es el leader
 }
 
 message InitRequest {

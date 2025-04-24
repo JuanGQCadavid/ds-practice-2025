@@ -7,6 +7,7 @@ PROTOS = \
 	order_queue/order_queue.proto \
 	database/database.proto \
 	replica/replica.proto \
+	database/database.proto
 
 # gen:
 # 	@for proto in $(PROTOS); do \
