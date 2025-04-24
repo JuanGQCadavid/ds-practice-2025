@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package payment;
+option go_package = "github.com/JuanGQCadavid/ds-practice-2025/utils/pb/payment";
+import "common/common.proto";
+
+
+service PaymentService {
+    rpc prepare (PrepareRequest) returns (common.NextResponse); // Prepare
+    rpc commit (CommitRequest) returns (common.NextResponse); // Commit
+    rpc abort (AbortRequest) returns (common.NextResponse); // Abort
+}
+
+
+message PrepareRequest {
+    string orderID = 1;
+    common.CreditCard creditCard = 2;
+}
+
+message CommitRequest {
+    int32 orderID = 1;
+}
+
+message AbortRequest {
+    int32 orderID = 1;
+}

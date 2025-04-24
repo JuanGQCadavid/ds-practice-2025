@@ -4,7 +4,7 @@ import grpc
 import warnings
 
 from common import common_pb2 as common_dot_common__pb2
-from order_queue import order_queue_pb2 as order__queue_dot_order__queue__pb2
+from payment import payment_pb2 as payment_dot_payment__pb2
 
 GRPC_GENERATED_VERSION = '1.70.0'
 GRPC_VERSION = grpc.__version__
@@ -19,14 +19,14 @@ except ImportError:
 if _version_not_supported:
     raise RuntimeError(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + f' but the generated code in order_queue/order_queue_pb2_grpc.py depends on'
+        + f' but the generated code in payment/payment_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
     )
 
 
-class OrderQueueServiceStub(object):
+class PaymentServiceStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -35,75 +35,78 @@ class OrderQueueServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.enqueue = channel.unary_unary(
-                '/queue.OrderQueueService/enqueue',
-                request_serializer=order__queue_dot_order__queue__pb2.EnqueueRequest.SerializeToString,
+        self.prepare = channel.unary_unary(
+                '/payment.PaymentService/prepare',
+                request_serializer=payment_dot_payment__pb2.PrepareRequest.SerializeToString,
                 response_deserializer=common_dot_common__pb2.NextResponse.FromString,
                 _registered_method=True)
-        self.dequeue = channel.unary_unary(
-                '/queue.OrderQueueService/dequeue',
-                request_serializer=order__queue_dot_order__queue__pb2.EmptyRequest.SerializeToString,
-                response_deserializer=order__queue_dot_order__queue__pb2.DequeueResponse.FromString,
+        self.commit = channel.unary_unary(
+                '/payment.PaymentService/commit',
+                request_serializer=payment_dot_payment__pb2.CommitRequest.SerializeToString,
+                response_deserializer=common_dot_common__pb2.NextResponse.FromString,
                 _registered_method=True)
-        self.clean = channel.unary_unary(
-                '/queue.OrderQueueService/clean',
-                request_serializer=order__queue_dot_order__queue__pb2.EmptyRequest.SerializeToString,
+        self.abort = channel.unary_unary(
+                '/payment.PaymentService/abort',
+                request_serializer=payment_dot_payment__pb2.AbortRequest.SerializeToString,
                 response_deserializer=common_dot_common__pb2.NextResponse.FromString,
                 _registered_method=True)
 
 
-class OrderQueueServiceServicer(object):
+class PaymentServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def enqueue(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+    def prepare(self, request, context):
+        """Prepare
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def dequeue(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+    def commit(self, request, context):
+        """Commit
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def clean(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+    def abort(self, request, context):
+        """Abort
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
 
-def add_OrderQueueServiceServicer_to_server(servicer, server):
+def add_PaymentServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'enqueue': grpc.unary_unary_rpc_method_handler(
-                    servicer.enqueue,
-                    request_deserializer=order__queue_dot_order__queue__pb2.EnqueueRequest.FromString,
+            'prepare': grpc.unary_unary_rpc_method_handler(
+                    servicer.prepare,
+                    request_deserializer=payment_dot_payment__pb2.PrepareRequest.FromString,
                     response_serializer=common_dot_common__pb2.NextResponse.SerializeToString,
             ),
-            'dequeue': grpc.unary_unary_rpc_method_handler(
-                    servicer.dequeue,
-                    request_deserializer=order__queue_dot_order__queue__pb2.EmptyRequest.FromString,
-                    response_serializer=order__queue_dot_order__queue__pb2.DequeueResponse.SerializeToString,
+            'commit': grpc.unary_unary_rpc_method_handler(
+                    servicer.commit,
+                    request_deserializer=payment_dot_payment__pb2.CommitRequest.FromString,
+                    response_serializer=common_dot_common__pb2.NextResponse.SerializeToString,
             ),
-            'clean': grpc.unary_unary_rpc_method_handler(
-                    servicer.clean,
-                    request_deserializer=order__queue_dot_order__queue__pb2.EmptyRequest.FromString,
+            'abort': grpc.unary_unary_rpc_method_handler(
+                    servicer.abort,
+                    request_deserializer=payment_dot_payment__pb2.AbortRequest.FromString,
                     response_serializer=common_dot_common__pb2.NextResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'queue.OrderQueueService', rpc_method_handlers)
+            'payment.PaymentService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('queue.OrderQueueService', rpc_method_handlers)
+    server.add_registered_method_handlers('payment.PaymentService', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
-class OrderQueueService(object):
+class PaymentService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def enqueue(request,
+    def prepare(request,
             target,
             options=(),
             channel_credentials=None,
@@ -116,8 +119,8 @@ class OrderQueueService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/queue.OrderQueueService/enqueue',
-            order__queue_dot_order__queue__pb2.EnqueueRequest.SerializeToString,
+            '/payment.PaymentService/prepare',
+            payment_dot_payment__pb2.PrepareRequest.SerializeToString,
             common_dot_common__pb2.NextResponse.FromString,
             options,
             channel_credentials,
@@ -130,7 +133,7 @@ class OrderQueueService(object):
             _registered_method=True)
 
     @staticmethod
-    def dequeue(request,
+    def commit(request,
             target,
             options=(),
             channel_credentials=None,
@@ -143,9 +146,9 @@ class OrderQueueService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/queue.OrderQueueService/dequeue',
-            order__queue_dot_order__queue__pb2.EmptyRequest.SerializeToString,
-            order__queue_dot_order__queue__pb2.DequeueResponse.FromString,
+            '/payment.PaymentService/commit',
+            payment_dot_payment__pb2.CommitRequest.SerializeToString,
+            common_dot_common__pb2.NextResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -157,7 +160,7 @@ class OrderQueueService(object):
             _registered_method=True)
 
     @staticmethod
-    def clean(request,
+    def abort(request,
             target,
             options=(),
             channel_credentials=None,
@@ -170,8 +173,8 @@ class OrderQueueService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/queue.OrderQueueService/clean',
-            order__queue_dot_order__queue__pb2.EmptyRequest.SerializeToString,
+            '/payment.PaymentService/abort',
+            payment_dot_payment__pb2.AbortRequest.SerializeToString,
             common_dot_common__pb2.NextResponse.FromString,
             options,
             channel_credentials,
