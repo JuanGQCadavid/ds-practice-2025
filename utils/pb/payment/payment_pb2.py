@@ -25,7 +25,7 @@ _sym_db = _symbol_database.Default()
 from common import common_pb2 as common_dot_common__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x15payment/payment.proto\x12\x07payment\x1a\x13\x63ommon/common.proto\"I\n\x0ePrepareRequest\x12\x0f\n\x07orderID\x18\x01 \x01(\t\x12&\n\ncreditCard\x18\x02 \x01(\x0b\x32\x12.common.CreditCard\" \n\rCommitRequest\x12\x0f\n\x07orderID\x18\x01 \x01(\x05\"\x1f\n\x0c\x41\x62ortRequest\x12\x0f\n\x07orderID\x18\x01 \x01(\x05\x32\xb8\x01\n\x0ePaymentService\x12\x38\n\x07prepare\x12\x17.payment.PrepareRequest\x1a\x14.common.NextResponse\x12\x36\n\x06\x63ommit\x12\x16.payment.CommitRequest\x1a\x14.common.NextResponse\x12\x34\n\x05\x61\x62ort\x12\x15.payment.AbortRequest\x1a\x14.common.NextResponseB<Z:github.com/JuanGQCadavid/ds-practice-2025/utils/pb/paymentb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x15payment/payment.proto\x12\x07payment\x1a\x13\x63ommon/common.proto\"I\n\x0ePrepareRequest\x12\x0f\n\x07orderID\x18\x01 \x01(\t\x12&\n\ncreditCard\x18\x02 \x01(\x0b\x32\x12.common.CreditCard\" \n\rCommitRequest\x12\x0f\n\x07orderID\x18\x01 \x01(\t\"\x1f\n\x0c\x41\x62ortRequest\x12\x0f\n\x07orderID\x18\x01 \x01(\t2\xb8\x01\n\x0ePaymentService\x12\x38\n\x07prepare\x12\x17.payment.PrepareRequest\x1a\x14.common.NextResponse\x12\x36\n\x06\x63ommit\x12\x16.payment.CommitRequest\x1a\x14.common.NextResponse\x12\x34\n\x05\x61\x62ort\x12\x15.payment.AbortRequest\x1a\x14.common.NextResponseB<Z:github.com/JuanGQCadavid/ds-practice-2025/utils/pb/paymentb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)

@@ -16,11 +16,11 @@ class PrepareRequest(_message.Message):
 class CommitRequest(_message.Message):
     __slots__ = ("orderID",)
     ORDERID_FIELD_NUMBER: _ClassVar[int]
-    orderID: int
-    def __init__(self, orderID: _Optional[int] = ...) -> None: ...
+    orderID: str
+    def __init__(self, orderID: _Optional[str] = ...) -> None: ...
 
 class AbortRequest(_message.Message):
     __slots__ = ("orderID",)
     ORDERID_FIELD_NUMBER: _ClassVar[int]
-    orderID: int
-    def __init__(self, orderID: _Optional[int] = ...) -> None: ...
+    orderID: str
+    def __init__(self, orderID: _Optional[str] = ...) -> None: ...

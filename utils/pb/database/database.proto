@@ -73,7 +73,7 @@ message PrepareResponse {
 
 
 message CommitRequest {
-    int32 orderID = 1;
+    string orderID = 1;
 }
 
 message CommitResponse { // once commit is done, propagate
@@ -82,7 +82,7 @@ message CommitResponse { // once commit is done, propagate
 }
 
 message AbortRequest {
-    int32 orderID = 1;
+    string orderID = 1;
 }
 
 message AbortResponse {

@@ -18,9 +18,9 @@ message PrepareRequest {
 }
 
 message CommitRequest {
-    int32 orderID = 1;
+    string orderID = 1;
 }
 
 message AbortRequest {
-    int32 orderID = 1;
+    string orderID = 1;
 }
