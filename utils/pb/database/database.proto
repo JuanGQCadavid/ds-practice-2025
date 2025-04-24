@@ -8,6 +8,9 @@ service DatabaseService {
     rpc performStockWrite (StockRequest) returns (StockResponse); // Escritura
     rpc replicateWrite (ReplicationRequest) returns (ReplicationResponse);
     rpc getStatus (EmptyRequest) returns (StatusResponse); // Me dice quien es el leader
+    rpc prepare (PrepareRequest) returns (PrepareResponse); // Prepare
+    rpc commit (CommitRequest) returns (CommitResponse); // Commit
+    rpc abort (AbortRequest) returns (AbortResponse); // Abort
 }
 
 message InitRequest {
@@ -52,3 +55,37 @@ message StatusResponse {
 }
 
 message EmptyRequest {}
+
+message BookRequestPrepare {
+    string bookID = 1;
+    int32 quantity = 2;
+}
+
+message PrepareRequest {
+    repeated BookRequestPrepare bookRequests = 1;
+    string orderID = 2;
+}
+
+message PrepareResponse {
+    bool isValid = 1;
+    repeated BookRequestPrepare bookRequests = 3;
+}
+
+
+message CommitRequest {
+    int32 orderID = 1;
+}
+
+message CommitResponse { // once commit is done, propagate
+    bool isValid = 1;
+    string errMessage  = 2;
+}
+
+message AbortRequest {
+    int32 orderID = 1;
+}
+
+message AbortResponse {
+    bool isValid = 1;
+    string errMessage = 2;
+}

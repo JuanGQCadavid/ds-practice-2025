@@ -1,6 +1,7 @@
+from google.protobuf.internal import containers as _containers
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
-from typing import ClassVar as _ClassVar, Optional as _Optional
+from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Mapping, Optional as _Optional, Union as _Union
 
 DESCRIPTOR: _descriptor.FileDescriptor
 
@@ -75,3 +76,55 @@ class StatusResponse(_message.Message):
 class EmptyRequest(_message.Message):
     __slots__ = ()
     def __init__(self) -> None: ...
+
+class BookRequestPrepare(_message.Message):
+    __slots__ = ("bookID", "quantity")
+    BOOKID_FIELD_NUMBER: _ClassVar[int]
+    QUANTITY_FIELD_NUMBER: _ClassVar[int]
+    bookID: str
+    quantity: int
+    def __init__(self, bookID: _Optional[str] = ..., quantity: _Optional[int] = ...) -> None: ...
+
+class PrepareRequest(_message.Message):
+    __slots__ = ("bookRequests", "orderID")
+    BOOKREQUESTS_FIELD_NUMBER: _ClassVar[int]
+    ORDERID_FIELD_NUMBER: _ClassVar[int]
+    bookRequests: _containers.RepeatedCompositeFieldContainer[BookRequestPrepare]
+    orderID: str
+    def __init__(self, bookRequests: _Optional[_Iterable[_Union[BookRequestPrepare, _Mapping]]] = ..., orderID: _Optional[str] = ...) -> None: ...
+
+class PrepareResponse(_message.Message):
+    __slots__ = ("isValid", "bookRequests")
+    ISVALID_FIELD_NUMBER: _ClassVar[int]
+    BOOKREQUESTS_FIELD_NUMBER: _ClassVar[int]
+    isValid: bool
+    bookRequests: _containers.RepeatedCompositeFieldContainer[BookRequestPrepare]
+    def __init__(self, isValid: bool = ..., bookRequests: _Optional[_Iterable[_Union[BookRequestPrepare, _Mapping]]] = ...) -> None: ...
+
+class CommitRequest(_message.Message):
+    __slots__ = ("orderID",)
+    ORDERID_FIELD_NUMBER: _ClassVar[int]
+    orderID: int
+    def __init__(self, orderID: _Optional[int] = ...) -> None: ...
+
+class CommitResponse(_message.Message):
+    __slots__ = ("isValid", "errMessage")
+    ISVALID_FIELD_NUMBER: _ClassVar[int]
+    ERRMESSAGE_FIELD_NUMBER: _ClassVar[int]
+    isValid: bool
+    errMessage: str
+    def __init__(self, isValid: bool = ..., errMessage: _Optional[str] = ...) -> None: ...
+
+class AbortRequest(_message.Message):
+    __slots__ = ("orderID",)
+    ORDERID_FIELD_NUMBER: _ClassVar[int]
+    orderID: int
+    def __init__(self, orderID: _Optional[int] = ...) -> None: ...
+
+class AbortResponse(_message.Message):
+    __slots__ = ("isValid", "errMessage")
+    ISVALID_FIELD_NUMBER: _ClassVar[int]
+    ERRMESSAGE_FIELD_NUMBER: _ClassVar[int]
+    isValid: bool
+    errMessage: str
+    def __init__(self, isValid: bool = ..., errMessage: _Optional[str] = ...) -> None: ...
