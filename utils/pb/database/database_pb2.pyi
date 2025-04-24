@@ -104,8 +104,8 @@ class PrepareResponse(_message.Message):
 class CommitRequest(_message.Message):
     __slots__ = ("orderID",)
     ORDERID_FIELD_NUMBER: _ClassVar[int]
-    orderID: int
-    def __init__(self, orderID: _Optional[int] = ...) -> None: ...
+    orderID: str
+    def __init__(self, orderID: _Optional[str] = ...) -> None: ...
 
 class CommitResponse(_message.Message):
     __slots__ = ("isValid", "errMessage")
@@ -118,8 +118,8 @@ class CommitResponse(_message.Message):
 class AbortRequest(_message.Message):
     __slots__ = ("orderID",)
     ORDERID_FIELD_NUMBER: _ClassVar[int]
-    orderID: int
-    def __init__(self, orderID: _Optional[int] = ...) -> None: ...
+    orderID: str
+    def __init__(self, orderID: _Optional[str] = ...) -> None: ...
 
 class AbortResponse(_message.Message):
     __slots__ = ("isValid", "errMessage")

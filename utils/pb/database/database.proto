@@ -68,21 +68,21 @@ message PrepareRequest {
 
 message PrepareResponse {
     bool isValid = 1;
-    repeated BookRequestPrepare bookRequests = 3;
+    repeated BookRequestPrepare bookRequests = 2;
 }
 
 
 message CommitRequest {
-    int32 orderID = 1;
+    string orderID = 1;
 }
 
-message CommitResponse { // once commit is done, propagate
+message CommitResponse {
     bool isValid = 1;
     string errMessage  = 2;
 }
 
 message AbortRequest {
-    int32 orderID = 1;
+    string orderID = 1;
 }
 
 message AbortResponse {

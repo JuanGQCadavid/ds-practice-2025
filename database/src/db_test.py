@@ -14,8 +14,6 @@ import database_pb2_grpc as database_grpc
 import replica_pb2 as replica
 
 REPLICA_PORTS = {
-    1: "localhost:50061",
-    2: "localhost:50062",
     3: "localhost:50063",
 }
 
@@ -41,6 +39,7 @@ def find_leader():
 
 def write_stock(book_name, book_stock):
     leader_id = find_leader()
+    print(f"[INFO] Leader ID: {leader_id}")
     if leader_id == -1:
         print("[ERROR] Cannot write stock because no valid leader was found.")
         return
@@ -93,10 +92,55 @@ def read_stock(book_id):
     except grpc.RpcError as e:
         print(f"[WARN] Could not contact replica {leader_id}: {e}")
 
+def prepare(book_requests):
+    leader_id = find_leader()
+    
+    stub, _ = get_stub(leader_id)
+    pb_requests = []
+    try:
+        for book in book_requests:
+            # Assuming book is something like [bookID, quantity]
+            req = database.BookRequestPrepare(
+                bookID=str(book[0]),
+                quantity=book[1]
+            )
+            pb_requests.append(req)
+        response = stub.prepare(database.PrepareRequest(bookRequests=pb_requests, orderID="1"))
+        print(response.isValid)
+        print(response.bookRequests)
+    except grpc.RpcError as e:
+        print(f"[WARN] Could not contact replica {leader_id}: {e}")
+        
+        
+        
+def commit(order_id):
+    leader_id = find_leader()
+    
+    stub, _ = get_stub(leader_id)
+    try:
+        response = stub.commit(database.CommitRequest(orderID=order_id))
+        print(response.isValid)
+        print(response.errMessage)
+    except grpc.RpcError as e:
+        print(f"[WARN] Could not contact replica {leader_id}: {e}")
+
+
+def abort(order_id):
+    leader_id = find_leader()
+    stub, _ = get_stub(leader_id)
+    
+    try:
+        response = stub.abort(database.AbortRequest(orderID=order_id))
+        print(response.isValid)
+        print(response.errMessage)
+    except grpc.RpcError as e:
+        print(f"[WARN] Could not contact replica {leader_id}: {e}")
+
+    
 if __name__ == '__main__':
     print("Starting client...")
     while True:
-        action = input("\nChoose action: [w]rite / [r]ead / [q]uit: ").strip().lower()
+        action = input("\nChoose action: [w]rite / [r]ead / [p]repare / [c]ommit / [a]bort / [q]uit: ").strip().lower()
         if action == 'q':
             print("Exiting client.")
             break
@@ -111,6 +155,17 @@ if __name__ == '__main__':
         elif action == 'r':
             book_id = input("Enter book ID to read: ")
             read_stock(book_id)
+        elif action == 'p':
+            bookRequests = [
+                [1, 2], [2, 2]    
+            ]
+            prepare(bookRequests)
+        elif action == 'c':
+            order_id = str(input("Enter order ID: "))
+            commit(order_id)
+        elif action == 'a':
+            order_id = str(input("Enter order ID: "))
+            abort(order_id)
         else:
             print("Invalid option.")
 

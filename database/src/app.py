@@ -32,7 +32,19 @@ from concurrent import futures
 class DatabaseService(database_grpc.DatabaseServiceServicer, replica_grpc.ReplicaServicer):
     def __init__(self):
         self.rank = int(os.environ.get("RANK", -1))
-        self.stock = {}
+        self.stock = {
+            "1": ["Fourth Wing", 3],
+            "2": ["Iron Flame", 3],
+            "3": ["The Empyrean", 3],
+            "4": ["The Hunger Games", 3],
+            "5": ["Catching Fire", 3],
+            "6": ["Mockingjay", 3],
+            "7": ["Divergent", 3],
+            "8": ["Insurgent", 3],
+            "9": ["Allegiant", 3],
+        }
+        self.taken_books = {}
+        
         self.last_access = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
         self.replicas_id = {self.rank}  # Incluir nuestro propio ID desde el inicio
         self.replica_endpoints = {
@@ -371,6 +383,94 @@ class DatabaseService(database_grpc.DatabaseServiceServicer, replica_grpc.Replic
                 lastAccess=self.last_access,
                 knownReplicas=list(self.replicas_id)
             )
+            
+    def prepare(self, request, context):
+        with self.lock:
+            order_id = request.orderID
+            books = request.bookRequests
+            books_id = []
+            quantities = []
+            insufficient_stock = []
+            enough_stock = True
+            
+            for book in books:
+                books_id.append(book.bookID)
+                quantities.append(book.quantity)
+                
+            print(self.stock)
+            for book in books:
+                book_id = book.bookID
+                stock = self.stock.get(book_id)
+                if stock is None:  # No such book in stock
+                    self.log(f"Error prepare. Not such books in stock")
+                    return database.PrepareResponse(
+                        isValid=False
+                    )
+                if book.quantity < 1:
+                    self.log(f"Error prepare. Required quantity must be greater than 0")
+                    return database.PrepareResponse(
+                        isValid=False
+                    )
+                _, quantity_stock = stock
+                if quantity_stock < book.quantity:  # Not enough stock
+                    enough_stock = False
+                    resp = database.BookRequestPrepare(
+                        bookID=book_id,
+                        quantity=quantity_stock
+                    )
+                    insufficient_stock.append(resp)  # bookID and available stock     
+                
+            # Everything is fine
+            self.taken_books[order_id] = books
+                                    
+            if enough_stock:  # True
+                self.log(f"Prepared order {order_id}")
+                return database.PrepareResponse(
+                    isValid=True,
+                )
+
+            else:  # False
+                self.log(f"Error, not enough stock for order {order_id}")
+                return database.PrepareResponse(
+                    isValid=False,
+                    bookRequests=insufficient_stock
+                )
+                
+
+    def commit(self, request, context):
+        order_id = request.orderID
+        saved_books = self.taken_books.get(order_id)
+        
+        if saved_books is None:
+            self.log(f"Commit failed: Order {order_id} not found")
+            return database.CommitResponse(
+                isValid=False,
+                errMessage=f"Commit failed: Order {order_id} not found"
+            )
+        for saved_book in saved_books:
+            book_id = saved_book.bookID
+            quantity = saved_book.quantity
+            
+            book_name, book_stock = self.stock[book_id]
+            new_quantity = book_stock - quantity
+            self.stock[book_id] = [book_name, new_quantity]
+            self.propagate_write(book_id, book_name, new_quantity)
+            
+            return database.CommitResponse(
+                isValid=True
+            )
+            
+    def abort(self, request, context):
+        order_id = request.orderID
+        if self.taken_books.get(order_id) is not None:
+            del self.taken_books[order_id]
+            return database.AbortResponse(
+                isValid=True
+            )
+        return database.AbortResponse(
+            isValid=False,
+            errMessage=f"Abort failed. Order {order_id} not found"
+        )
 
 
 def serve():
