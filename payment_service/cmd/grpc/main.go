@@ -57,16 +57,15 @@ func (srv *Server) Commit(ctx context.Context, rq *pb.CommitRequest) (*common.Ne
 	}
 
 	log.Println("Processing payment of Order ID: ", rq.OrderID)
-	log.Println("Computing the most elaborate encryption algorithm")
-	log.Println("Requesting more CPU units from the NASA servers")
-	log.Println("....")
-	log.Println("....")
-	log.Println("....")
-	log.Println("NASA remove the international space station compute power for us")
-	log.Println("....")
-	log.Println("....")
-	log.Println("....")
-	log.Println("DONE.")
+	log.Println(`
+		Computing the most elaborate encryption algorithm
+		Requesting more CPU units from the NASA servers
+		...
+		...
+		NASA remove the international space station compute power for us
+		...
+		DONE.
+	`)
 
 	delete(srv.Pending, rq.OrderID)
 
@@ -86,8 +85,10 @@ func (srv *Server) Abort(ctx context.Context, rq *pb.AbortRequest) (*common.Next
 	}
 
 	log.Println("Aborting ", rq.OrderID)
-	log.Println("It is not you.... It is me.....")
-	log.Println("and the executor btw us....")
+	log.Println(` 
+		It is not you.... It is me..... 
+		and the executor btw us....
+		`)
 
 	delete(srv.Pending, rq.OrderID)
 
