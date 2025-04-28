@@ -43,7 +43,6 @@ func (repo *QueueRepository) Pull() *queueProtoBus.DequeueResponse {
 	}
 
 	if strings.ContainsAny(r.ErrMessage, "empty") {
-		// log.Println("No data from queue")
 		return nil
 	}
 
