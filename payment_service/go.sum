@@ -1,5 +1,5 @@
-github.com/JuanGQCadavid/ds-practice-2025/utils v0.0.0-20250424091904-42db0bb04634 h1:Xi1hMy9rL7Jxkdu6zVHLu1iArxYZGyye53uPWGyUBfw=
-github.com/JuanGQCadavid/ds-practice-2025/utils v0.0.0-20250424091904-42db0bb04634/go.mod h1:wZiD0thCpOCIrxDG2KRPODwsxdiimEJBtZRacSScfr4=
+github.com/JuanGQCadavid/ds-practice-2025/utils v0.0.0-20250424140419-73e1bb9fbeb3 h1:FWjCO9ldaTDI95V+HKtWglU1s6k/1yLSO8newh/6zBY=
+github.com/JuanGQCadavid/ds-practice-2025/utils v0.0.0-20250424140419-73e1bb9fbeb3/go.mod h1:wZiD0thCpOCIrxDG2KRPODwsxdiimEJBtZRacSScfr4=
 github.com/go-logr/logr v1.4.2 h1:6pFjapn8bFcIbiKo3XT4j/BhANplGihG6tvd+8rYgrY=
 github.com/go-logr/logr v1.4.2/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
 github.com/go-logr/stdr v1.2.2 h1:hSWxHoqTgW2S2qGc0LTAI563KZ5YKYRhT3MFKZMbjag=

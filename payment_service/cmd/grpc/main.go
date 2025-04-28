@@ -68,6 +68,8 @@ func (srv *Server) Commit(ctx context.Context, rq *pb.CommitRequest) (*common.Ne
 	log.Println("....")
 	log.Println("DONE.")
 
+	delete(srv.Pending, rq.OrderID)
+
 	return &common.NextResponse{
 		IsValid: true,
 	}, nil
@@ -86,6 +88,8 @@ func (srv *Server) Abort(ctx context.Context, rq *pb.AbortRequest) (*common.Next
 	log.Println("Aborting ", rq.OrderID)
 	log.Println("It is not you.... It is me.....")
 	log.Println("and the executor btw us....")
+
+	delete(srv.Pending, rq.OrderID)
 
 	return &common.NextResponse{
 		ErrMessage: "",

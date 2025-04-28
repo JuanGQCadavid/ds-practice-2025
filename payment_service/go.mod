@@ -3,7 +3,7 @@ module github.com/JuanGQCadavid/ds-practice-2025/payment_service
 go 1.23.6
 
 require (
-	github.com/JuanGQCadavid/ds-practice-2025/utils v0.0.0-20250424091904-42db0bb04634
+	github.com/JuanGQCadavid/ds-practice-2025/utils v0.0.0-20250424140419-73e1bb9fbeb3
 	google.golang.org/grpc v1.71.0
 )
 
