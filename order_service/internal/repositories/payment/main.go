@@ -30,6 +30,7 @@ func NewPaymentService(target string) *PaymentService {
 }
 
 func (srv *PaymentService) Prepare(orderId string, creditCard *common.CreditCard) error {
+	log.Println("Payment - Prepare - orderId: ", orderId, " credit card ending: ", creditCard.Number[len(creditCard.Number)-5:])
 	ctx, cancel := context.WithTimeout(context.Background(), srv.timeout)
 	defer cancel()
 
@@ -47,10 +48,12 @@ func (srv *PaymentService) Prepare(orderId string, creditCard *common.CreditCard
 		return fmt.Errorf("err %s", resp.ErrMessage)
 	}
 
+	log.Println("Payment - Prepare -  orderId: ", orderId, " - STATUS OK.")
 	return nil
 }
 
 func (srv *PaymentService) Commit(orderId string) error {
+	log.Println("Payment - Commit - orderId: ", orderId)
 	ctx, cancel := context.WithTimeout(context.Background(), srv.timeout)
 	defer cancel()
 
@@ -67,10 +70,12 @@ func (srv *PaymentService) Commit(orderId string) error {
 		return fmt.Errorf("err %s", resp.ErrMessage)
 	}
 
+	log.Println("Payment - Commit -  orderId: ", orderId, " - STATUS OK.")
 	return nil
 }
 
 func (srv *PaymentService) Abort(orderId string) error {
+	log.Println("Payment - Abort - orderId: ", orderId)
 	ctx, cancel := context.WithTimeout(context.Background(), srv.timeout)
 	defer cancel()
 
@@ -87,5 +92,6 @@ func (srv *PaymentService) Abort(orderId string) error {
 		return fmt.Errorf("err %s", resp.ErrMessage)
 	}
 
+	log.Println("Payment - Abort -  orderId: ", orderId, " - STATUS OK.")
 	return nil
 }

@@ -151,39 +151,39 @@ services:
     networks:
       - db_network
 
-  # db_replica2:
-  #   build:
-  #     context: ./
-  #     dockerfile: ./database/Dockerfile
-  #   container_name: db_replica2
-  #   ports:
-  #     - 50062:50062
-  #   environment:
-  #     - PYTHONUNBUFFERED=TRUE
-  #     - PYTHONFILE=/app/database/src/app.py
-  #     - RANK=2
-  #   volumes:
-  #     - ./utils:/app/utils
-  #     - ./database/src:/app/database/src
-  #   networks:
-  #     - db_network
+  db_replica2:
+    build:
+      context: ./
+      dockerfile: ./database/Dockerfile
+    container_name: db_replica2
+    ports:
+      - 50062:50062
+    environment:
+      - PYTHONUNBUFFERED=TRUE
+      - PYTHONFILE=/app/database/src/app.py
+      - RANK=2
+    volumes:
+      - ./utils:/app/utils
+      - ./database/src:/app/database/src
+    networks:
+      - db_network
 
-  # db_replica3:
-  #   build:
-  #     context: ./
-  #     dockerfile: ./database/Dockerfile
-  #   container_name: db_replica3
-  #   ports:
-  #     - 50063:50063
-  #   environment:
-  #     - PYTHONUNBUFFERED=TRUE
-  #     - PYTHONFILE=/app/database/src/app.py
-  #     - RANK=3
-  #   volumes:
-  #     - ./utils:/app/utils
-  #     - ./database/src:/app/database/src
-  #   networks:
-  #     - db_network
+  db_replica3:
+    build:
+      context: ./
+      dockerfile: ./database/Dockerfile
+    container_name: db_replica3
+    ports:
+      - 50063:50063
+    environment:
+      - PYTHONUNBUFFERED=TRUE
+      - PYTHONFILE=/app/database/src/app.py
+      - RANK=3
+    volumes:
+      - ./utils:/app/utils
+      - ./database/src:/app/database/src
+    networks:
+      - db_network
 
 networks:
   services:

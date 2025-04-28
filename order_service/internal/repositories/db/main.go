@@ -81,8 +81,9 @@ func (srv *DBService) checkService() error {
 	}
 
 	// TODO - should we lock this ?
+	log.Println("Target ", srv.actualTarget, " deffers from leader, ", resp.LeaderID, " Updating my self.")
 
-	log.Println("knock knock! ", srv.targets[resp.LeaderID])
+	log.Println("knock knock! ", resp.LeaderID, srv.targets[resp.LeaderID])
 
 	conn, err := grpc.NewClient(srv.targets[resp.LeaderID], grpc.WithTransportCredentials(insecure.NewCredentials()))
 
@@ -100,6 +101,8 @@ func (srv *DBService) checkService() error {
 }
 
 func (srv *DBService) Prepare(orderId string, items []*common.Item) error {
+	log.Println("Database - Prepare - orderId: ", orderId, ", total items: ", len(items))
+
 	// Checking leader
 	if err := srv.retry(); err != nil {
 		log.Println("Database - Prepare - no possible, db down")
@@ -133,14 +136,17 @@ func (srv *DBService) Prepare(orderId string, items []*common.Item) error {
 		for _, book := range resp.BookRequests {
 			log.Println(book.BookID, " only ", book.Quantity)
 		}
+		log.Println("Database - Prepare: orderId: ", orderId, " - ERROR.")
 
 		return fmt.Errorf("err No stock")
 	}
 
+	log.Println("Database - Prepare: orderId: ", orderId, " - STATUS OK.")
 	return nil
 }
 
 func (srv *DBService) Commit(orderId string) error {
+	log.Println("Database - Commit - orderId: ", orderId)
 	// Checking leader
 	if err := srv.retry(); err != nil {
 		log.Println("Database - Commit - no possible, db down")
@@ -162,11 +168,12 @@ func (srv *DBService) Commit(orderId string) error {
 	if !resp.IsValid {
 		return fmt.Errorf("err %s", resp.ErrMessage)
 	}
-
+	log.Println("Database - Commit: orderId: ", orderId, " - STATUS OK.")
 	return nil
 }
 
 func (srv *DBService) Abort(orderId string) error {
+	log.Println("Database - Abort - orderId: ", orderId)
 	if err := srv.retry(); err != nil {
 		log.Println("Database - Abort - no possible, db down")
 		return err
@@ -187,6 +194,6 @@ func (srv *DBService) Abort(orderId string) error {
 	if !resp.IsValid {
 		return fmt.Errorf("err %s", resp.ErrMessage)
 	}
-
+	log.Println("Database - Abort - orderId: ", orderId, " - STATUS OK.")
 	return nil
 }

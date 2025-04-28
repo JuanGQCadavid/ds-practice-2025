@@ -91,10 +91,8 @@ func (srv *Service) Listen() {
 		consecutivesEmpty = 0
 		log.Printf("Order %s recieved.\n", pullMessage.OrderId)
 		// Here 2PC
-		log.Println("payment service")
-		srv.paymentService.Prepare(pullMessage.OrderId, pullMessage.Order.CreditCard)
 
-		log.Println("DB service")
+		srv.paymentService.Prepare(pullMessage.OrderId, pullMessage.Order.CreditCard)
 		srv.dbRepositoy.Prepare(pullMessage.OrderId, pullMessage.Order.Items)
 	}
 
