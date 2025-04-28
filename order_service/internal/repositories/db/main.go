@@ -15,9 +15,9 @@ import (
 var (
 	PREFERED    int64 = 1
 	DB_REPLICAS       = map[int64]string{
-		1: "db_replica1",
-		2: "db_replica2",
-		3: "db_replica3",
+		1: "db_replica1:50061",
+		2: "db_replica2:50062",
+		3: "db_replica3:50063",
 	}
 )
 

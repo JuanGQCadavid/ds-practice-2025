@@ -159,7 +159,7 @@ func I_am_not_dead_yet(term int) {
 				if _, err := plebe.YeahImStillAliveBitch(ctx, &pb.Empty{
 					Term: int64(term),
 				}); err != nil {
-					log.Println("I cant not send a hear bit to ", plebe, " error: ", err.Error())
+					// log.Println("I cant not send a hear bit to ", plebe, " error: ", err.Error())
 				}
 
 			}(plebe)

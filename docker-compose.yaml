@@ -87,21 +87,21 @@ services:
     environment:
       PORT: 50055
   
-  # order_service_1:
-  #   depends_on:
-  #     - order_queue
-  #   build:
-  #     context: ./order_service
-  #   ports:
-  #     - 50501:50501
-  #     - name: gRPC
-  #       target: 50501
-  #       published: 50501
-  #   environment:
-  #     PORT: 50501
-  #     order_queue_dns: "order_queue:50054"
-  #     order_service_1_dns: "order_service_2:50502"
-  #     order_service_2_dns: "order_service_3:50503"
+  order_service_1:
+    depends_on:
+      - order_queue
+    build:
+      context: ./order_service
+    ports:
+      - name: gRPC
+        target: 50501
+        published: 50501
+    environment:
+      PORT: 50501
+      order_queue_dns: "order_queue:50054"
+      payment_dns: "payment_service:50055"
+      order_service_1_dns: "order_service_2:50502"
+      order_service_2_dns: "order_service_3:50503"
   
   # order_service_2:
   #   depends_on:
@@ -116,6 +116,7 @@ services:
   #   environment:
   #     PORT: 50502
   #     order_queue_dns: "order_queue:50054"
+        # payment_dns: "payment_service:50055"
   #     order_service_1_dns: "order_service_1:50501"
   #     order_service_2_dns: "order_service_3:50503"
 
@@ -148,8 +149,6 @@ services:
     volumes:
       - ./utils:/app/utils
       - ./database/src:/app/database/src
-    networks:
-      - db_network
 
   db_replica2:
     build:
@@ -165,8 +164,6 @@ services:
     volumes:
       - ./utils:/app/utils
       - ./database/src:/app/database/src
-    networks:
-      - db_network
 
   db_replica3:
     build:
@@ -182,10 +179,3 @@ services:
     volumes:
       - ./utils:/app/utils
       - ./database/src:/app/database/src
-    networks:
-      - db_network
-
-networks:
-  services:
-  db_network:
-    driver: bridge
