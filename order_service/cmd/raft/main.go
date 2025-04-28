@@ -12,6 +12,8 @@ import (
 
 	"github.com/JuanGQCadavid/ds-practice-2025/order_service/internal/core"
 	"github.com/JuanGQCadavid/ds-practice-2025/order_service/internal/core/domain"
+	"github.com/JuanGQCadavid/ds-practice-2025/order_service/internal/repositories/db"
+	"github.com/JuanGQCadavid/ds-practice-2025/order_service/internal/repositories/payment"
 	"github.com/JuanGQCadavid/ds-practice-2025/order_service/internal/repositories/queue"
 	"github.com/JuanGQCadavid/ds-practice-2025/order_service/pb"
 	"google.golang.org/grpc"
@@ -20,8 +22,9 @@ import (
 
 const (
 	// To hear about the other
-	PROTOCOL       = "tcp"
-	QUEUE_ENV_NAME = "order_queue_dns"
+	PROTOCOL         = "tcp"
+	QUEUE_ENV_NAME   = "order_queue_dns"
+	PAYMENT_ENV_NAME = "payment_dns"
 
 	PLEBE_1_DNS_ENV_NAME = "order_service_1_dns"
 	PLEBE_2_DNS_ENV_NAME = "order_service_2_dns"
@@ -37,7 +40,9 @@ var (
 	miniKafka *core.Kafki
 
 	// Puller
-	repo *queue.QueueRepository
+	repo        *queue.QueueRepository
+	dbRepo      *db.DBService
+	paymentRepo *payment.PaymentService
 
 	// Docker
 	DEFAULT_PORT    = os.Getenv("PORT")
@@ -52,6 +57,17 @@ var (
 //
 // -----------------------------
 func init() {
+	// For the server
+
+	paymentDns, ok := os.LookupEnv(PAYMENT_ENV_NAME)
+
+	if !ok {
+		log.Fatalln("Missing PAYMENT dns")
+	}
+
+	paymentRepo = payment.NewPaymentService(paymentDns)
+	dbRepo = db.NewDBService()
+
 	// Preparing the plebe
 
 	plebe1, ok := os.LookupEnv(PLEBE_1_DNS_ENV_NAME)
@@ -227,7 +243,7 @@ func main() {
 	// The puller
 	go func() {
 		serverDemocracyUpdates := miniKafka.Subscribe()
-		service := core.NewService(repo, serverDemocracyUpdates)
+		service := core.NewService(repo, dbRepo, paymentRepo, serverDemocracyUpdates)
 		service.Init()
 		service.Listen()
 	}()
