@@ -3,7 +3,7 @@ module github.com/JuanGQCadavid/ds-practice-2025/order_service
 go 1.23.6
 
 require (
-	github.com/JuanGQCadavid/ds-practice-2025/utils v0.0.0-20250424080147-50c592303c20
+	github.com/JuanGQCadavid/ds-practice-2025/utils v0.0.0-20250424140419-73e1bb9fbeb3
 	google.golang.org/grpc v1.71.0
 	google.golang.org/protobuf v1.36.5
 )

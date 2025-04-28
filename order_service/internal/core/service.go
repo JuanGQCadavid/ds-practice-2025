@@ -5,18 +5,34 @@ import (
 	"time"
 
 	"github.com/JuanGQCadavid/ds-practice-2025/order_service/internal/core/domain"
+	"github.com/JuanGQCadavid/ds-practice-2025/order_service/internal/repositories/db"
+	"github.com/JuanGQCadavid/ds-practice-2025/order_service/internal/repositories/payment"
 	"github.com/JuanGQCadavid/ds-practice-2025/order_service/internal/repositories/queue"
 )
 
 type Service struct {
-	repository       *queue.QueueRepository
+	repository     *queue.QueueRepository
+	dbRepositoy    *db.DBService
+	paymentService *payment.PaymentService
+
 	democracyUpdates <-chan domain.StatesOfDemocracy
 	pull             bool
 }
 
-func NewService(repository *queue.QueueRepository, democracyUpdates <-chan domain.StatesOfDemocracy) *Service {
+func (srv *Service) Shhhhhhhhhhh() {
+	srv.pull = true
+}
+
+func NewService(
+	repository *queue.QueueRepository,
+	dbRepositoy *db.DBService,
+	paymentService *payment.PaymentService,
+	democracyUpdates <-chan domain.StatesOfDemocracy,
+) *Service {
 	return &Service{
 		repository:       repository,
+		dbRepositoy:      dbRepositoy,
+		paymentService:   paymentService,
 		pull:             false,
 		democracyUpdates: democracyUpdates,
 	}
@@ -74,6 +90,12 @@ func (srv *Service) Listen() {
 
 		consecutivesEmpty = 0
 		log.Printf("Order %s recieved.\n", pullMessage.OrderId)
+		// Here 2PC
+		log.Println("payment service")
+		srv.paymentService.Prepare(pullMessage.OrderId, pullMessage.Order.CreditCard)
+
+		log.Println("DB service")
+		srv.dbRepositoy.Prepare(pullMessage.OrderId, pullMessage.Order.Items)
 	}
 
 }

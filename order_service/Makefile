@@ -1,8 +1,6 @@
 run:
 	source .env && go run cmd/server/main.go
 
-export order_service_1_dns=""
-export order_service_2_dns=""
 1:
 	source .env \
 	&& export PORT="50501"  \
