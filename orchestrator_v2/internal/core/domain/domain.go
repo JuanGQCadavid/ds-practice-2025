@@ -14,6 +14,7 @@ type CreditCard struct {
 }
 
 type Item struct {
+	Id       string `json:"id"`
 	Name     string `json:"name"`
 	Quantity int    `json:"quantity"`
 }
@@ -77,6 +78,7 @@ func FromCheckoutToCommon(checkout *Checkout) *common.Order {
 
 	for i := range items {
 		items[i] = &common.Item{
+			Id:       checkout.Items[i].Id,
 			Name:     checkout.Items[i].Name,
 			Quantity: int32(checkout.Items[i].Quantity),
 		}

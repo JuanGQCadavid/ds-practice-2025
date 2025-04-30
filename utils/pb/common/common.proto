@@ -15,8 +15,9 @@ message CreditCard {
 }
 
 message Item {
-    string name = 1;
-    int32 quantity = 2;
+    string id = 1;
+    string name = 2;
+    int32 quantity = 3;
 }
 
 message Address {

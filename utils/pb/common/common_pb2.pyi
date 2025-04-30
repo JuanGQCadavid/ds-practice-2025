@@ -24,12 +24,14 @@ class CreditCard(_message.Message):
     def __init__(self, number: _Optional[str] = ..., expirationDate: _Optional[str] = ..., cvv: _Optional[str] = ...) -> None: ...
 
 class Item(_message.Message):
-    __slots__ = ("name", "quantity")
+    __slots__ = ("id", "name", "quantity")
+    ID_FIELD_NUMBER: _ClassVar[int]
     NAME_FIELD_NUMBER: _ClassVar[int]
     QUANTITY_FIELD_NUMBER: _ClassVar[int]
+    id: str
     name: str
     quantity: int
-    def __init__(self, name: _Optional[str] = ..., quantity: _Optional[int] = ...) -> None: ...
+    def __init__(self, id: _Optional[str] = ..., name: _Optional[str] = ..., quantity: _Optional[int] = ...) -> None: ...
 
 class Address(_message.Message):
     __slots__ = ("street", "city", "state", "zip", "country")
