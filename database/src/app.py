@@ -114,7 +114,7 @@ class DatabaseService(database_grpc.DatabaseServiceServicer, replica_grpc.Replic
                     method = getattr(stub, method_name)
                     response = method(request, timeout=3)
                     responses[rep_rank] = response
-                    self.log(f"Message {method_name} sent to replica {rep_rank}")
+                    # self.log(f"Message {method_name} sent to replica {rep_rank}")
             except Exception as e:
                 self.log(f"Error sending {method_name} to replica {rep_rank}")
                 responses[rep_rank] = None
@@ -244,7 +244,7 @@ class DatabaseService(database_grpc.DatabaseServiceServicer, replica_grpc.Replic
         with self.lock:
             if self.leader_rank == leader_id:
                 self.last_heartbeat = time.time()
-                self.log(f"Replica {leader_id} still alive")
+                # self.log(f"Replica {leader_id} still alive")
 
         return replica.HeartbeatResponse(
             replicaID=self.rank,
@@ -259,7 +259,7 @@ class DatabaseService(database_grpc.DatabaseServiceServicer, replica_grpc.Replic
                     self.log("It was a pleasure to be your leader")
                     break
 
-                self.log("Still alive, sending heartbeats")
+                # self.log("Still alive, sending heartbeats")
                 self.broadcast(
                     "heartbeat",
                     replica.HeartbeatRequest(leaderID=self.rank)

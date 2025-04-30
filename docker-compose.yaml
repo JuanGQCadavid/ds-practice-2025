@@ -1,69 +1,69 @@
 # version: '3'
 services:
-  # frontend:
-  #   build:
-  #     context: ./
-  #     dockerfile: ./frontend/Dockerfile
-  #   ports:
-  #     - "8080:80"
-  #   volumes:
-  #     - ./frontend/src:/usr/share/nginx/html
+  frontend:
+    build:
+      context: ./
+      dockerfile: ./frontend/Dockerfile
+    ports:
+      - "8080:80"
+    volumes:
+      - ./frontend/src:/usr/share/nginx/html
 
-  # orchestrator_v2:
-  #   depends_on:
-  #     - fraud_detection
-  #     - suggestions_service
-  #     - transaction_verification
-  #     - order_queue
-  #   build:
-  #     context: ./orchestrator_v2
-  #   ports:
-  #     - name: REST
-  #       target: 8081
-  #       published: 8081
-  #   environment:
-  #     fraud_dns: "fraud_detection:50051"
-  #     transaction_verification_dns: "transaction_verification:50052"
-  #     suggestions_dns: "suggestions_service:50053"
-  #     order_queue_dns: "order_queue:50054"
+  orchestrator_v2:
+    depends_on:
+      - fraud_detection
+      - suggestions_service
+      - transaction_verification
+      - order_queue
+    build:
+      context: ./orchestrator_v2
+    ports:
+      - name: REST
+        target: 8081
+        published: 8081
+    environment:
+      fraud_dns: "fraud_detection:50051"
+      transaction_verification_dns: "transaction_verification:50052"
+      suggestions_dns: "suggestions_service:50053"
+      order_queue_dns: "order_queue:50054"
 
-  # suggestions_service:
-  #   build:
-  #     context: ./suggestions
-  #   ports:
-  #     - name: gRPC
-  #       target: 50053
-  #       published: 50053
-  #   environment:
-  #     port_to_listening: 50053
-  #     gemini_api_key: ${GEMINI_API_KEY}
+  suggestions_service:
+    build:
+      context: ./suggestions
+    ports:
+      - name: gRPC
+        target: 50053
+        published: 50053
+    environment:
+      port_to_listening: 50053
+      gemini_api_key: ${GEMINI_API_KEY}
 
-  # fraud_detection:
-  #   build:
-  #     context: ./
-  #     dockerfile: ./fraud_detection/Dockerfile
-  #   ports:
-  #     - 50051:50051
-  #   environment:
-  #     - PYTHONUNBUFFERED=TRUE
-  #     - PYTHONFILE=/app/fraud_detection/src/app.py
-  #   volumes:
-  #     - ./utils:/app/utils
-  #     - ./fraud_detection/src:/app/fraud_detection/src
-  # transaction_verification:
-  #   build:
-  #     context: ./
-  #     dockerfile: ./transaction_verification/Dockerfile
-  #   ports:
-  #     - 50052:50052
-  #   environment:
-  #     - PYTHONUNBUFFERED=TRUE
-  #     - PYTHONFILE=/app/transaction_verification/src/app.py
-  #   volumes:
-  #     - ./utils:/app/utils
-  #     - ./transaction_verification/src:/app/transaction_verification/src
-  #   env_file:
-  #     - .env
+  fraud_detection:
+    build:
+      context: ./
+      dockerfile: ./fraud_detection/Dockerfile
+    ports:
+      - 50051:50051
+    environment:
+      - PYTHONUNBUFFERED=TRUE
+      - PYTHONFILE=/app/fraud_detection/src/app.py
+    volumes:
+      - ./utils:/app/utils
+      - ./fraud_detection/src:/app/fraud_detection/src
+  transaction_verification:
+    build:
+      context: ./
+      dockerfile: ./transaction_verification/Dockerfile
+    ports:
+      - 50052:50052
+    environment:
+      - PYTHONUNBUFFERED=TRUE
+      - PYTHONFILE=/app/transaction_verification/src/app.py
+    volumes:
+      - ./utils:/app/utils
+      - ./transaction_verification/src:/app/transaction_verification/src
+    env_file:
+      - .env
   order_queue:
     build:
       context: ./

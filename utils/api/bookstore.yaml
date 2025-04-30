@@ -59,6 +59,8 @@ components:
           items:
             type: object
             properties:
+              id:
+                type: string
               name:
                 type: string
               quantity:
