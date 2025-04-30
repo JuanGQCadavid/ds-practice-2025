@@ -116,7 +116,7 @@ func (srv *DBService) Prepare(orderId string, items []*common.Item) error {
 
 	for i, book := range items {
 		booksRequest[i] = &database.BookRequestPrepare{
-			BookID:   book.Name,
+			BookID:   book.Id,
 			Quantity: book.Quantity,
 		}
 	}
