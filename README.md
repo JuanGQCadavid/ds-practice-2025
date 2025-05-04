@@ -20,6 +20,9 @@ We use:
 ## Raft
 ![Raft](./utils/img/raft.png)
 
+## Database
+![Database](./utils/img/database.png)
+
 ![Communication](./utils/img/communications_raft.png)
 
 ## System model
