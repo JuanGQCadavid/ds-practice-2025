@@ -35,11 +35,34 @@ class TransactionVerificationService(transaction_verification_grpc.TransactionVe
         self.ai_model = genai.GenerativeModel("gemini-1.5-flash-002")
         self.vector_clock_access = True  # variable to check vc access on concurrent execution
 
+    def validate_order(self, order, order_id):
+        validations = {
+            'user.name': lambda: order.user.name != "",
+            'user.contact': lambda: order.user.contact != "",
+            'creditCard.number': lambda: order.creditCard.number != "",
+            'creditCard.cvv': lambda: order.creditCard.cvv != "",
+            'creditCard.expirationDate': lambda: order.creditCard.expirationDate != "",
+            'items': lambda: len(order.items) > 0,
+            'billingAddress.street': lambda: order.billingAddress.street != "",
+            'billingAddress.city': lambda: order.billingAddress.city != "",
+            'billingAddress.state': lambda: order.billingAddress.state != "",
+            'billingAddress.zip': lambda: order.billingAddress.zip != "",
+            'billingAddress.country': lambda: order.billingAddress.country != "",
+            'shippingMethod': lambda: order.shippingMethod != "",
+            'clientCard': lambda: order.clientCard != "",
+        }
+
+        for field, validator in validations.items():
+            if not validator():
+                print(
+                    f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order ID {order_id} has empty/invalid field {field}")
+                return False
+        return True
+
     def initOrder(self, request, context):
         order_id = request.orderId
         order = request.order
 
-        order_json = json_format.MessageToDict(order)
         print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Received order ID {order_id}")
 
         response = common_pb.InitResponse()
@@ -47,6 +70,11 @@ class TransactionVerificationService(transaction_verification_grpc.TransactionVe
         if order_id in self.orders:
             response.isValid = False
             response.errMessage = "Order ID already exists"
+            return response
+
+        if not self.validate_order(order, order_id):
+            response.isValid = False
+            response.errMessage = "Order has invalid or empty fields"
             return response
 
         self.orders[order_id] = {
@@ -97,7 +125,7 @@ class TransactionVerificationService(transaction_verification_grpc.TransactionVe
         order_id = request.orderId 
 
         if not self.exist_order(order_id):
-            print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order ID{order_id} does not exist")
+            print(f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} Order ID {order_id} does not exist")
             return self.error_response("Order does not exist")
 
         entry = self.orders[order_id]
