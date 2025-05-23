@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"os"
 	"time"
@@ -13,6 +14,7 @@ import (
 	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/repositories/suggestions"
 	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/repositories/transcheck"
 	"github.com/gin-gonic/gin"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 )
 
 const (
@@ -87,7 +89,16 @@ func main() {
 		router = gin.Default()
 	)
 
+	shutdown, err := SetupOTelSDK(context.Background())
+
+	if err != nil {
+		log.Fatal("Imposible to setup OTEL")
+	}
+
+	defer shutdown(context.Background())
+
 	router.Use(CORSMiddleware())
+	router.Use(otelgin.Middleware("orchestactor"))
 	hdl.SetRouter(router)
 	router.Run(SERVICE_PORT)
 }

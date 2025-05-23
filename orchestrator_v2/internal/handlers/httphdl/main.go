@@ -8,7 +8,12 @@ import (
 	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/core/domain"
 	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/core/ports"
 	"github.com/gin-gonic/gin"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 )
+
+var tracer = otel.Tracer("orchestactor-server")
 
 type HTTPHandler struct {
 	service *core.Service
@@ -25,6 +30,16 @@ func (hdl *HTTPHandler) SetRouter(router *gin.Engine) {
 }
 
 func (hdl *HTTPHandler) CheckOut(context *gin.Context) {
+	// body, _ := context.Request.GetBody()
+	// bodyBytes, err := io.ReadAll(body)
+	// if err != nil {
+	// 	log.Println("We fail to read the body")
+	// }
+	// bodyString := string(bodyBytes)
+
+	_, span := tracer.Start(context.Request.Context(), "checkout", trace.WithAttributes(attribute.String("request", "Dude")))
+	defer span.End()
+
 	var checkoutRequest *domain.Checkout = &domain.Checkout{}
 
 	if err := context.BindJSON(&checkoutRequest); err != nil {
