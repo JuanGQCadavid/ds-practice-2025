@@ -1,8 +1,10 @@
 package httphdl
 
 import (
-	"log"
 	"net/http"
+
+	"github.com/google/uuid"
+	"github.com/rs/zerolog/log"
 
 	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/core"
 	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/core/domain"
@@ -30,6 +32,14 @@ func (hdl *HTTPHandler) SetRouter(router *gin.Engine) {
 }
 
 func (hdl *HTTPHandler) CheckOut(context *gin.Context) {
+	logger := log.
+		With().
+		Str("path", context.Request.URL.Path).
+		Str("trace_ID", uuid.NewString()).
+		Logger()
+
+	ctx := logger.WithContext(context)
+
 	// body, _ := context.Request.GetBody()
 	// bodyBytes, err := io.ReadAll(body)
 	// if err != nil {
@@ -43,7 +53,7 @@ func (hdl *HTTPHandler) CheckOut(context *gin.Context) {
 	var checkoutRequest *domain.Checkout = &domain.Checkout{}
 
 	if err := context.BindJSON(&checkoutRequest); err != nil {
-		log.Println("error while casting request")
+		logger.Error().Msg("error while casting request")
 		context.AbortWithStatusJSON(http.StatusBadRequest, ErrorResponse{
 			ErrorType: ErrorType{
 				Code:    "NO IDEA",
@@ -53,7 +63,7 @@ func (hdl *HTTPHandler) CheckOut(context *gin.Context) {
 		return
 	}
 
-	response, genErr := hdl.service.Checkout(checkoutRequest)
+	response, genErr := hdl.service.Checkout(ctx, checkoutRequest)
 
 	switch genErr {
 	case ports.ErrInternalError:
@@ -92,7 +102,7 @@ func (hdl *HTTPHandler) CheckOut(context *gin.Context) {
 		return
 	}
 
-	log.Printf("%+v\n", response)
+	logger.Info().Msgf("%+v\n", response)
 
 	context.JSON(http.StatusOK, response)
 }

@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"log"
 	"os"
 	"time"
 
@@ -15,6 +14,9 @@ import (
 	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/repositories/transcheck"
 	"github.com/gin-gonic/gin"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
+
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 const (
@@ -36,28 +38,28 @@ var (
 func init() {
 	fraudDNS, isThereFraud := os.LookupEnv(FRAUD_DNS_ENV_NAME)
 	if !isThereFraud {
-		log.Panic("Fraud detection system DNS is needed")
+		log.Fatal().Msg("Fraud detection system DNS is needed")
 	}
 
 	fraudService = fraud.NewFraudDetectionService(fraudDNS, defaultTimeOut)
 
 	tranServiceDNS, ok := os.LookupEnv(TRANS_CHECKER_DNS_ENV_NAME)
 	if !ok {
-		log.Panic("Transaction dns system DNS is needed")
+		log.Fatal().Msg("Transaction dns system DNS is needed")
 	}
 
 	transCheckerService = transcheck.NewTransactionVerification(tranServiceDNS, defaultTimeOut)
 
 	suggestionsServiceDNS, ok := os.LookupEnv(SUGGEST_BOOKS_DNS_ENV_NAME)
 	if !ok {
-		log.Panic("Suggestions dns system DNS is needed")
+		log.Fatal().Msg("Suggestions dns system DNS is needed")
 	}
 
 	suggestService = suggestions.NewSuggestionService(suggestionsServiceDNS, defaultTimeOut)
 
 	orderDNS, ok := os.LookupEnv(ORDER_QUEUE_DNS_ENV_NAME)
 	if !ok {
-		log.Panic("Order queue dns system DNS is needed")
+		log.Fatal().Msg("Order queue dns system DNS is needed")
 	}
 
 	orderQueue = orderqueue.NewOrderQueue(orderDNS, defaultTimeOut)
@@ -89,16 +91,33 @@ func main() {
 		router = gin.Default()
 	)
 
+	zerolog.TimeFieldFormat = zerolog.TimeFormatUnixMs
+
 	shutdown, err := SetupOTelSDK(context.Background())
 
 	if err != nil {
-		log.Fatal("Imposible to setup OTEL")
+		log.Fatal().Msg("Imposible to setup OTEL")
 	}
 
 	defer shutdown(context.Background())
 
 	router.Use(CORSMiddleware())
 	router.Use(otelgin.Middleware("orchestactor"))
+
+	router.Use(
+		func(c *gin.Context) {
+			start := time.Now()
+			c.Next()
+			log.Info().
+				Int("status", c.Writer.Status()).
+				Dur("latency", time.Since(start)).
+				Str("client_ip", c.ClientIP()).
+				Str("method", c.Request.Method).
+				Str("path", c.Request.URL.Path).
+				Send()
+		},
+	)
+
 	hdl.SetRouter(router)
 	router.Run(SERVICE_PORT)
 }

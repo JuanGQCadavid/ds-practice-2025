@@ -14,7 +14,7 @@ COPY internal internal
 COPY go.mod go.mod
 COPY go.sum go.sum
 
-RUN go build -o main ./cmd/${CMD}/main.go
+RUN go build -o main ./cmd/${CMD}/main.go ./cmd/${CMD}/otel.go
 
 FROM alpine:3.21 as prod
 EXPOSE 8081

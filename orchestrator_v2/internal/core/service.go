@@ -1,9 +1,11 @@
 package core
 
 import (
+	"context"
 	"fmt"
-	"log"
 	"sync"
+
+	"github.com/rs/zerolog/log"
 
 	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/core/domain"
 	"github.com/JuanGQCadavid/ds-practice-2025/orchestrator_v2/internal/core/ports"
@@ -40,7 +42,7 @@ func (srv *Service) Bradcast(
 ) {
 	wg := sync.WaitGroup{}
 	for i, f := range functions {
-		log.Printf("Broadcast: %d/%d \n", i+1, len(functions))
+		log.Info().Msgf("Broadcast: %d/%d \n", i+1, len(functions))
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
@@ -48,7 +50,7 @@ func (srv *Service) Bradcast(
 		}()
 	}
 
-	log.Println("Broadcast: Wating")
+	log.Info().Msg("Broadcast: Wating")
 	wg.Wait()
 }
 
@@ -79,7 +81,8 @@ func (srv *Service) checkState(clock, state []int32) bool {
 	return true
 }
 
-func (srv *Service) Checkout(checkout *domain.Checkout) (*domain.CheckoutResponse, error) {
+func (srv *Service) Checkout(ctx context.Context, checkout *domain.Checkout) (*domain.CheckoutResponse, error) {
+	logger := log.Ctx(ctx)
 	var (
 		orderId string  = uuid.NewString()
 		clock   []int32 = []int32{
@@ -92,6 +95,7 @@ func (srv *Service) Checkout(checkout *domain.Checkout) (*domain.CheckoutRespons
 		wg         = sync.WaitGroup{}
 	)
 
+	logger.Info().Msg("Just an example before propagaring across the whole app")
 	srv.Bradcast(
 		orderId, checkout,
 		srv.fraudDetection.Init,
@@ -103,7 +107,6 @@ func (srv *Service) Checkout(checkout *domain.Checkout) (*domain.CheckoutRespons
 	// A - C
 	go func() {
 		defer wg.Done()
-
 		tack, err := srv.transactionChecker.CheckOrder(orderId, clock)
 
 		if err != nil {
@@ -153,7 +156,7 @@ func (srv *Service) Checkout(checkout *domain.Checkout) (*domain.CheckoutRespons
 		return nil, genErr
 	}
 
-	log.Println(clock)
+	log.Info().Msgf("%v", clock)
 
 	if !srv.checkState(clock, eState) {
 		stateErr := fmt.Errorf("err Clock no on state, clock %v", clock)
