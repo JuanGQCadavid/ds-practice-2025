@@ -22,7 +22,21 @@ services:
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on: [observability]
-
+  
+  cadvisor:
+    container_name: cadvisor
+    image: gcr.io/cadvisor/cadvisor:latest
+    ports:
+      - "8888:8080"
+    volumes: 
+      - "/:/rootfs"
+      - "/var/run:/var/run"
+      - "/sys:/sys"
+      - "/var/lib/docker/:/var/lib/docker"
+      - "/dev/disk/:/dev/disk"
+    privileged: true
+    devices: 
+      - "/dev/kmsg"
 
   frontend:
     build:
@@ -50,6 +64,7 @@ services:
       transaction_verification_dns: "transaction_verification:50052"
       suggestions_dns: "suggestions_service:50053"
       order_queue_dns: "order_queue:50054"
+      OTEL_RESOURCE_ATTRIBUTES: "service.name=orchestrator,service.version=0.1.0"
     labels: 
       logging: "promtail"
 
